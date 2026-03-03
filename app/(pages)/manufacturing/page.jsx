@@ -195,7 +195,7 @@ export default function Manufacturing() {
           </div>
           <div className="grid md:grid-cols-2 gap-6">
             {qaProcesses.map((qa, i) => (
-              <div key={i} className="bg-white rounded-2xl border border-gray-100 p-6 hover:shadow-md transition-all">
+              <div key={i} className="bg-white rounded-2xl border border-gray-100 p-6 hover:shadow-lg hover:-translate-y-1 hover:border-[#d7e9da] transition-all duration-300">
                 <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ backgroundColor: "#f0f7f1" }}>
                   <qa.icon size={22} style={{ color: "#2A5C32" }} />
                 </div>
@@ -222,7 +222,7 @@ export default function Manufacturing() {
           </div>
           <div className="grid md:grid-cols-2 gap-6">
             {gmpItems.map((item, i) => (
-              <div key={i} className="bg-white rounded-2xl border-l-4 border border-gray-100 p-6" style={{ borderLeftColor: "#2A5C32" }}>
+              <div key={i} className="bg-white rounded-2xl border-l-4 border border-gray-100 p-6 hover:shadow-lg hover:-translate-y-1 hover:border-[#d7e9da] transition-all duration-300" style={{ borderLeftColor: "#2A5C32" }}>
                 <h3 className="font-bold text-gray-900 mb-3" style={{ fontFamily: "'Montserrat', sans-serif" }}>{item.title}</h3>
                 <p className="text-sm text-gray-500 leading-relaxed mb-4">{item.desc}</p>
                 <div className="flex items-center gap-2 text-xs font-semibold px-3 py-2 rounded-lg" style={{ backgroundColor: "#f0f7f1", color: "#2A5C32" }}>
@@ -242,9 +242,9 @@ export default function Manufacturing() {
           </div>
           <div className="grid md:grid-cols-3 gap-6">
             {rdCenters.map((center, i) => (
-              <div key={i} className="bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg transition-all">
+              <div key={i} className="bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg hover:-translate-y-1 hover:border-[#d7e9da] transition-all duration-300 group">
                 <div className="h-48 overflow-hidden">
-                  <img loading="lazy" decoding="async" src={center.image} alt={center.name} className="w-full h-full object-cover" />
+                  <img loading="lazy" decoding="async" src={center.image} alt={center.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                 </div>
                 <div className="p-6">
                   <h3 className="font-bold text-gray-900 mb-1" style={{ fontFamily: "'Montserrat', sans-serif" }}>{center.name}</h3>
@@ -272,7 +272,7 @@ export default function Manufacturing() {
         <div className="max-w-[1440px] mx-auto px-6 text-center text-white">
           <h2 className="text-2xl font-bold mb-4" style={{ fontFamily: "'Montserrat', sans-serif" }}>Interested in Contract Manufacturing?</h2>
           <p className="text-green-200 mb-8 max-w-lg mx-auto">Partner with our WHO-GMP certified facilities for your manufacturing requirements.</p>
-          <Link href="/contact" className="inline-flex items-center gap-2 bg-white font-bold px-8 py-3.5 rounded-full" style={{ color: "#2A5C32" }}>
+          <Link href="/contact" className="inline-flex items-center gap-2 bg-white text-[#2A5C32] font-bold px-8 py-3.5 rounded-full transition-all duration-200 hover:bg-[#f0f7f1] hover:text-[#1f4b28] hover:shadow-lg">
             Enquire Now <ArrowRight size={16} />
           </Link>
         </div>

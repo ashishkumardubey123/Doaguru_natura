@@ -12,10 +12,10 @@ export default function Footer() {
       {/* Top accent bar */ }
       <div style={ { backgroundColor: "#2A5C32" } } className="h-1" />
 
-      <div className="max-w-[1440px] mx-auto px-8 pt-16 pb-10">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 mb-14">
           {/* Brand */ }
-          <div className="lg:col-span-2 pr-8">
+          <div className="lg:col-span-2 pr-0 lg:pr-8">
             <div className="flex items-center gap-3 mb-5">
               <div className="w-11 h-11 rounded-full flex items-center justify-center" style={ { backgroundColor: "#2A5C32" } }>
                 <Leaf size={ 20 } fill="white" className="text-white" />
@@ -131,7 +131,7 @@ export default function Footer() {
                 value={ email }
                 onChange={ (e) => setEmail(e.target.value) }
                 placeholder="Your email"
-                className="flex-1 bg-white/5 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-[#2A5C32] transition-colors"
+                className="flex-1 min-w-0 bg-white/5 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-[#2A5C32] transition-colors"
               />
               <button
                 className="px-4 py-2 rounded-lg text-white text-sm font-semibold transition-all hover:opacity-90"
@@ -148,19 +148,19 @@ export default function Footer() {
           <p className="text-xs text-gray-500">
             © { new Date().getFullYear() } Natura Health Care. Designed by <a href="https://doaguru.com/" target="blank"> <span className="font-semibold">DOAGuru InfoSystems</span></a>
           </p>
-          <div className="flex gap-6">
+          <div className="flex flex-wrap justify-center gap-4">
             { [
               { label: "Privacy Policy", path: "/privacy-policy" },
               { label: "Terms of Use", path: "/terms-conditions" },
               { label: "Sitemap", path: "/sitemap" },
             ].map((item) => (
-              <a
+              <Link
                 key={ item.label }
                 href={ item.path }
                 className="text-xs text-gray-500 hover:text-gray-300 transition-colors"
               >
                 { item.label }
-              </a>
+              </Link>
             )) }
           </div>
         </div>
