@@ -200,7 +200,7 @@ export default function Countries() {
         <div className="max-w-[1440px] mx-auto px-6 text-center text-white">
           <h2 className="text-2xl font-bold mb-4" style={{ fontFamily: "'Montserrat', sans-serif" }}>Not Listed? We Can Help.</h2>
           <p className="text-green-200 mb-8 max-w-lg mx-auto">Our regulatory team is actively working to expand into new markets. Reach out to discuss your country&apos;s requirements.</p>
-          <Link href="/contact" className="inline-flex items-center gap-2 bg-white font-bold px-8 py-3.5 rounded-full" style={{ color: "#2A5C32" }}>
+          <Link href="/contact" className="inline-flex items-center gap-2 bg-white text-[#2A5C32] font-bold px-8 py-3.5 rounded-full transition-all duration-200 hover:bg-[#f0f7f1] hover:text-[#1f4b28] hover:shadow-lg">
             Enquire About Your Country <ArrowRight size={16} />
           </Link>
         </div>

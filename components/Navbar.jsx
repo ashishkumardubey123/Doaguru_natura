@@ -1,7 +1,7 @@
 'use client';
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import {
   Search, Globe, ChevronDown, Menu, X,
   ArrowRight, Leaf
@@ -110,7 +110,6 @@ export default function Navbar() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const pathname = usePathname();
-  const router = useRouter();
   const timeoutRef = useRef(null);
 
   const handleMouseEnter = (label) => {
@@ -147,20 +146,42 @@ export default function Navbar() {
     }
   };
 
+  const updateHashState = (hash) => {
+    if (window.location.hash !== `#${hash}`) {
+      window.history.replaceState(null, "", `#${hash}`);
+    }
+    // notify pages that rely on hash listeners for tab/section/filter state
+    window.dispatchEvent(new Event("hashchange"));
+  };
+
+  const scrollToHashTarget = (hash) => {
+    const element = document.getElementById(hash);
+    if (!element) return false;
+
+    const offset = 80;
+    const elementPosition = element.getBoundingClientRect().top;
+    const offsetPosition = elementPosition + window.scrollY - offset;
+    window.scrollTo({ top: offsetPosition, behavior: "smooth" });
+    updateHashState(hash);
+    return true;
+  };
+
   const handleLinkClick = (e, path) => {
-    if (path.includes('#')) {
-      const [pagePath, hash] = path.split('#');
-      if (pathname === pagePath || (pagePath === '' && pathname === '/')) {
+    if (path.includes("#")) {
+      const [pagePath, hash] = path.split("#");
+      const normalizedPath = pagePath || "/";
+      const isSamePage = pathname === normalizedPath;
+
+      if (isSamePage) {
         e.preventDefault();
-        const element = document.getElementById(hash);
-        if (element) {
-          const offset = 80;
-          const elementPosition = element.getBoundingClientRect().top;
-          const offsetPosition = elementPosition + window.scrollY - offset;
-          window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+        const scrolled = scrollToHashTarget(hash);
+        if (!scrolled) {
+          // For conditional sections (tabbed pages), update hash and let page listeners open section.
+          updateHashState(hash);
         }
       }
     }
+
     setActiveMega(null);
     closeMobileMenu(); // ✅ Resets both mobileOpen and mobileMegaOpen together
   };
@@ -169,7 +190,7 @@ export default function Navbar() {
     <header className="sticky top-0 z-50 bg-white shadow-sm" style={ { fontFamily: "'Inter', sans-serif" } }>
       {/* Top Bar */ }
       <div style={ { backgroundColor: "#2A5C32" } } className="text-white py-1.5 text-xs">
-        <div className="max-w-[1440px] mx-auto px-6 flex justify-between items-center">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 flex justify-between items-center">
           <span className="tracking-wide hidden sm:block">Global Pharmaceutical Excellence — Trusted by 50+ Countries</span>
           <div className="flex gap-5 items-center">
             <Link href="/sitemap" className="hover:text-green-200 transition-colors">Sitemap</Link>
@@ -178,7 +199,7 @@ export default function Navbar() {
       </div>
 
       {/* Main Header */ }
-      <div className="max-w-[1440px] mx-auto px-6 py-0 flex items-stretch justify-between relative">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 py-0 flex items-stretch justify-between relative">
         {/* Logo */ }
         <Link href="/" className="flex items-center gap-3 py-4 shrink-0">
           <div
@@ -246,7 +267,7 @@ export default function Navbar() {
 
       {/* Search Bar */ }
       { searchOpen && (
-        <div className="border-t border-gray-100 bg-white px-8 py-4">
+        <div className="border-t border-gray-100 bg-white px-4 sm:px-8 py-4">
           <div className="max-w-2xl mx-auto flex gap-3">
             <input
               type="text"
@@ -329,7 +350,7 @@ export default function Navbar() {
 
       {/* Mobile Menu */ }
       { mobileOpen && (
-        <div className="lg:hidden border-t border-gray-100 bg-white shadow-lg max-h-[calc(100vh-100px)] overflow-y-auto">
+        <div className="lg:hidden border-t border-gray-100 bg-white shadow-lg max-h-[calc(100dvh-100px)] overflow-y-auto">
           <div className="px-6 py-4 flex flex-col gap-1">
             { navItems.map((item) => {
               const hasMega = !!megaMenuData[item.label];

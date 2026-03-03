@@ -144,12 +144,17 @@ export default function About() {
                 const isLeftCard = i % 2 === 0;
                 
                 const TimelineCard = () => (
-                  <div className={`bg-white rounded-2xl border-2 p-6 lg:p-8 hover:shadow-2xl transition-all duration-300 group cursor-pointer hover:-translate-y-1`} style={{ borderColor: colors.primary }}>
+                  <div className={`bg-white rounded-2xl border-2 p-6 lg:p-8 hover:shadow-lg transition-all duration-300 group cursor-pointer`} style={{ borderColor: colors.primary }}>
                     <div className="flex items-center justify-between mb-4 gap-3">
                       <span className="text-xs font-bold text-white px-3 py-1.5 rounded-full" style={{ backgroundColor: colors.primary }}>{item.year}</span>
                       <span className="text-2xl" style={{ color: colors.primary }}>âœ¦</span>
                     </div>
-                    <div className="font-bold text-xl text-gray-900 mb-3 group-hover:text-white group-hover:px-3 group-hover:py-2 group-hover:rounded-lg group-hover:transition-all" style={{ fontFamily: "'Montserrat', sans-serif", color: colors.primary }}>{item.title}</div>
+                    <div
+                      className="font-bold text-xl text-gray-900 mb-3 transition-colors duration-300"
+                      style={{ fontFamily: "'Montserrat', sans-serif", color: colors.primary }}
+                    >
+                      {item.title}
+                    </div>
                     <p className="text-sm text-gray-600 leading-relaxed mb-4">{item.desc}</p>
                     <div className="h-1 w-0 group-hover:w-full transition-all duration-300 rounded-full" style={{ backgroundColor: colors.accent }}></div>
                   </div>
@@ -163,7 +168,7 @@ export default function About() {
                     </div>
                     
                     {/* Center Timeline Dot */}
-                    <div className="hidden lg:flex w-16 h-16 rounded-full items-center justify-center shrink-0 text-white font-bold text-lg z-20 ring-4 shadow-lg transition-transform hover:scale-110 duration-300" style={{ backgroundColor: colors.primary, ringColor: colors.light }}>
+                    <div className="hidden lg:flex w-16 h-16 rounded-full items-center justify-center shrink-0 text-white font-bold text-lg z-20 ring-4 shadow-lg transition-shadow duration-300 hover:shadow-xl" style={{ backgroundColor: colors.primary, ringColor: colors.light }}>
                       {i + 1}
                     </div>
                     
@@ -267,7 +272,7 @@ export default function About() {
         <div className="max-w-[1440px] mx-auto px-4 md:px-6 text-center text-white">
           <h2 className="text-xl md:text-2xl font-bold mb-4" style={{ fontFamily: "'Montserrat', sans-serif" }}>Ready to Partner with Natura?</h2>
           <p className="text-green-200 text-sm md:text-base mb-7 md:mb-8 max-w-lg mx-auto">Join hundreds of distributors and healthcare organisations that trust Natura Health Care.</p>
-          <Link href="/contact" className="inline-flex items-center gap-2 bg-white font-bold px-8 py-3.5 rounded-full" style={{ color: "#2A5C32" }}>
+          <Link href="/contact" className="inline-flex items-center gap-2 bg-white text-[#2A5C32] font-bold px-8 py-3.5 rounded-full transition-all duration-200 hover:bg-[#f0f7f1] hover:text-[#1f4b28] hover:shadow-lg">
             Contact Us Today <ArrowRight size={16} />
           </Link>
         </div>

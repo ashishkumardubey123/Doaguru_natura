@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ChevronRight, Building2, Users, Globe, Package, ArrowRight, MapPin, Phone, Mail } from "lucide-react";
 
@@ -67,6 +67,20 @@ const regions = [
   },
 ];
 
+const hashToRegion = {
+  "asia-pacific": "apac",
+  europe: "europe",
+  "north-america": "americas",
+  "emerging-markets": "mea",
+};
+
+const regionToHash = {
+  apac: "asia-pacific",
+  europe: "europe",
+  americas: "north-america",
+  mea: "emerging-markets",
+};
+
 function WorldMap({ activeRegion, onRegionClick }) {
   return (
     <div className="w-full h-[400px] bg-gray-50 rounded-3xl flex items-center justify-center border border-gray-200 relative overflow-hidden">
@@ -84,16 +98,48 @@ export default function GlobalPresence() {
   const [activeRegion, setActiveRegion] = useState(null);
 
   const handleRegionClick = (id) => {
-    setActiveRegion((prev) => (prev === id ? null : id));
+    setActiveRegion((prev) => {
+      const next = prev === id ? null : id;
+      if (next) {
+        const hash = regionToHash[next] ?? next;
+        window.history.replaceState(null, "", `#${hash}`);
+      } else if (window.location.hash) {
+        window.history.replaceState(null, "", window.location.pathname);
+      }
+      return next;
+    });
   };
 
   const selectedRegion = regions.find((r) => r.id === activeRegion) || null;
+
+  useEffect(() => {
+    const applyHashRegion = () => {
+      const hash = window.location.hash.replace("#", "");
+      if (!hash) return;
+
+      const regionId = hashToRegion[hash];
+      if (regionId) {
+        setActiveRegion(regionId);
+      }
+
+      const target = document.getElementById(hash);
+      if (!target) return;
+
+      const offset = 92;
+      const y = target.getBoundingClientRect().top + window.scrollY - offset;
+      window.scrollTo({ top: y, behavior: "smooth" });
+    };
+
+    applyHashRegion();
+    window.addEventListener("hashchange", applyHashRegion);
+    return () => window.removeEventListener("hashchange", applyHashRegion);
+  }, []);
 
   return (
     <div style={{ fontFamily: "'Inter', sans-serif" }}>
       {/* Page Hero */}
       <div style={{ background: "linear-gradient(135deg, #2A5C32 0%, #1a3c22 100%)" }} className="text-white py-16">
-        <div className="max-w-[1440px] mx-auto px-8">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-2 text-green-300 text-sm mb-4">
             <Link href="/" className="hover:text-white">Home</Link>
             <ChevronRight size={14} />
@@ -110,7 +156,7 @@ export default function GlobalPresence() {
 
       {/* Stats */}
       <div className="bg-white border-b border-gray-100">
-        <div className="max-w-[1440px] mx-auto px-8 py-6">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
               { value: "50+", label: "Countries" },
@@ -127,7 +173,7 @@ export default function GlobalPresence() {
         </div>
       </div>
 
-      <div className="max-w-[1440px] mx-auto px-8 py-12">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Instruction */}
         <div className="text-center mb-8">
           <p className="text-sm text-gray-500">
@@ -145,8 +191,9 @@ export default function GlobalPresence() {
           {regions.map((region) => (
             <button
               key={region.id}
+              id={regionToHash[region.id] ?? region.id}
               onClick={() => handleRegionClick(region.id)}
-              className={`text-left rounded-2xl p-6 border-2 transition-all duration-300 ${
+              className={`text-left rounded-2xl p-6 border-2 transition-all duration-300 scroll-mt-28 ${
                 activeRegion === region.id
                   ? "shadow-lg -translate-y-1"
                   : "border-gray-100 bg-white hover:border-gray-200 hover:shadow-md"
@@ -295,7 +342,8 @@ export default function GlobalPresence() {
             All Office Locations
           </h2>
           <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
-            <table className="w-full text-sm">
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[760px] text-sm">
               <thead>
                 <tr className="border-b border-gray-100" style={{ backgroundColor: "#f5f8f5" }}>
                   <th className="text-left px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-400">City</th>
@@ -335,14 +383,15 @@ export default function GlobalPresence() {
                   ))
                 )}
               </tbody>
-            </table>
+              </table>
+            </div>
           </div>
         </div>
       </div>
 
       {/* CTA */}
       <div className="py-16" style={{ backgroundColor: "#f5f8f5" }}>
-        <div className="max-w-[1440px] mx-auto px-8 text-center">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="font-bold text-gray-900 mb-3" style={{ fontFamily: "'Montserrat', sans-serif", fontSize: "1.6rem" }}>
             Looking to Partner in Your Region?
           </h2>

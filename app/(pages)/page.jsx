@@ -218,8 +218,7 @@ function HeroSlider() {
           <div className="flex gap-4 flex-wrap">
             <Link
               href={slide.ctaPath}
-              className="inline-flex items-center gap-2 font-semibold px-7 py-3.5 rounded-full transition-all hover:opacity-90 text-white"
-              style={{ backgroundColor: "#2A5C32" }}
+              className="inline-flex items-center gap-2 font-semibold px-7 py-3.5 rounded-full transition-all duration-200 bg-[#2A5C32] text-white hover:bg-[#234e2a] hover:shadow-lg"
             >
               {slide.cta} <ArrowRight size={16} />
             </Link>
@@ -301,15 +300,13 @@ export default function Home() {
               <div className="flex gap-4 flex-wrap">
                 <Link
                   href="/about"
-                  className="inline-flex items-center gap-2 text-white font-semibold px-7 py-3.5 rounded-full"
-                  style={{ backgroundColor: "#2A5C32" }}
+                  className="inline-flex items-center gap-2 text-white font-semibold px-7 py-3.5 rounded-full bg-[#2A5C32] transition-all duration-200 hover:bg-[#234e2a] hover:shadow-lg"
                 >
                   Our Story <ArrowRight size={16} />
                 </Link>
                 <Link
                   href="/contact"
-                  className="inline-flex items-center gap-2 font-semibold px-7 py-3.5 rounded-full border-2 hover:bg-[#2A5C32] hover:text-white transition-all"
-                  style={{ color: "#2A5C32", borderColor: "#2A5C32" }}
+                  className="inline-flex items-center gap-2 font-semibold px-7 py-3.5 rounded-full border-2 text-[#2A5C32] border-[#2A5C32] hover:bg-[#2A5C32] hover:text-white transition-all duration-200"
                 >
                   Partner With Us
                 </Link>
@@ -381,10 +378,7 @@ export default function Home() {
           <div className="text-center mt-10">
             <Link
               href="/products"
-              className="inline-flex items-center gap-2 font-semibold px-8 py-3.5 rounded-full border-2 hover:text-white transition-all"
-              style={{ borderColor: "#2A5C32", color: "#2A5C32" }}
-              onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "#2A5C32"; e.currentTarget.style.color = "white"; }}
-              onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "transparent"; e.currentTarget.style.color = "#2A5C32"; }}
+              className="inline-flex items-center gap-2 font-semibold px-8 py-3.5 rounded-full border-2 border-[#2A5C32] text-[#2A5C32] hover:bg-[#2A5C32] hover:text-white transition-all duration-200"
             >
               View Full Portfolio <ArrowRight size={16} />
             </Link>
@@ -483,8 +477,7 @@ export default function Home() {
 
               <Link
                 href="/global-presence"
-                className="inline-flex items-center gap-2 text-white font-semibold px-8 py-4 rounded-full transition-transform hover:scale-105"
-                style={{ backgroundColor: "#1a3c22" }}
+                className="inline-flex items-center gap-2 text-white font-semibold px-8 py-4 rounded-full transition-all duration-200 bg-[#1a3c22] hover:bg-[#234e2a] hover:shadow-lg"
               >
                 Explore Global Presence <ArrowRight size={18} />
               </Link>
@@ -551,8 +544,7 @@ export default function Home() {
               </p>
               <Link
                 href="/manufacturing"
-                className="inline-flex items-center gap-2 text-white font-semibold px-8 py-4 rounded-full transition-transform hover:scale-105"
-                style={{ backgroundColor: "#2A5C32" }}
+                className="inline-flex items-center gap-2 text-white font-semibold px-8 py-4 rounded-full transition-all duration-200 bg-[#2A5C32] hover:bg-[#234e2a] hover:shadow-lg"
               >
                 Explore Our Facilities <ArrowRight size={18} />
               </Link>
@@ -729,15 +721,13 @@ export default function Home() {
               <div className="flex gap-4 flex-wrap">
                 <Link
                   href="/contact"
-                  className="inline-flex items-center gap-2 text-white font-semibold px-7 py-3.5 rounded-full"
-                  style={{ backgroundColor: "#2A5C32" }}
+                  className="inline-flex items-center gap-2 text-white font-semibold px-7 py-3.5 rounded-full bg-[#2A5C32] transition-all duration-200 hover:bg-[#234e2a] hover:shadow-lg"
                 >
                   Partner With Us <ArrowRight size={16} />
                 </Link>
                 <Link
                   href="/products"
-                  className="inline-flex items-center gap-2 font-semibold px-7 py-3.5 rounded-full border-2"
-                  style={{ color: "#2A5C32", borderColor: "#2A5C32" }}
+                  className="inline-flex items-center gap-2 font-semibold px-7 py-3.5 rounded-full border-2 border-[#2A5C32] text-[#2A5C32] hover:bg-[#2A5C32] hover:text-white transition-all duration-200"
                 >
                   Our Products
                 </Link>
@@ -762,8 +752,7 @@ export default function Home() {
           <div className="flex justify-center gap-4 flex-wrap">
             <Link
               href="/contact"
-              className="inline-flex items-center gap-2 bg-white font-bold px-8 py-3.5 rounded-full hover:shadow-lg transition-all"
-              style={{ color: "#2A5C32" }}
+              className="inline-flex items-center gap-2 bg-white text-[#2A5C32] font-bold px-8 py-3.5 rounded-full transition-all duration-200 hover:bg-[#f0f7f1] hover:text-[#1f4b28] hover:shadow-lg"
             >
               Start a Conversation <ArrowRight size={16} />
             </Link>

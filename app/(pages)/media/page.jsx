@@ -72,7 +72,7 @@ export default function Media() {
                     {article.title}
                   </h3>
                   <p className="text-sm text-gray-500 leading-relaxed mb-4">{article.excerpt}</p>
-                  <button className="flex items-center gap-1 text-sm font-semibold" style={{ color: "#2A5C32" }}>
+                  <button className="flex items-center gap-1 text-sm font-semibold text-[#2A5C32] hover:text-[#234e2a] transition-colors">
                     Read More <ArrowRight size={13} />
                   </button>
                 </div>
@@ -97,7 +97,7 @@ export default function Media() {
                     <h3 className="font-bold text-gray-900 mb-2 leading-snug" style={{ fontFamily: "'Montserrat', sans-serif" }}>{pr.title}</h3>
                     <p className="text-sm text-gray-500 leading-relaxed">{pr.excerpt}</p>
                   </div>
-                  <button className="shrink-0 flex items-center gap-1 text-sm font-semibold" style={{ color: "#2A5C32" }}>
+                  <button className="shrink-0 flex items-center gap-1 text-sm font-semibold text-[#2A5C32] hover:text-[#234e2a] transition-colors">
                     Read <ExternalLink size={13} />
                   </button>
                 </div>
