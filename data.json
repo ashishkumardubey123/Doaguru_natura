@@ -1,0 +1,12 @@
+{
+  "admins": [
+    {
+      "name": "ashish",
+      "email": "ashish@123",
+      "phone": "1234567899",
+      "role": "SuparAdmin",
+      "password": "123456789"
+    }
+  ],
+  "forms": []
+}
