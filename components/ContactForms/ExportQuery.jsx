@@ -1,12 +1,11 @@
 'use client';
 
-import { useState } from "react";
-import { 
-  ArrowRight, User, Mail, Phone, Building2, 
-  Globe, Package, MessageSquare 
-} from "lucide-react";
+import { useState, useContext } from "react";
+import { ArrowRight, User, Mail, Phone, Building2, Globe, Package, MessageSquare } from "lucide-react";
+import { FormsContext } from "@/dataContext/FormsContext";
 
 export default function ExportQuery({ setSubmitted }) {
+  const { submitForm } = useContext(FormsContext);
   const [form, setForm] = useState({
     name: "", email: "", countryCode: "+91", phone: "", company: "", country: "", products: "", message: ""
   });
@@ -18,25 +17,31 @@ export default function ExportQuery({ setSubmitted }) {
     setForm({ ...form, phone: digitsOnly });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     if (e && e.preventDefault) e.preventDefault();
-    setSubmitted(true);
+
+    const payload = {
+      ...form,
+      phone: form.phone ? `${form.countryCode} ${form.phone}` : ""
+    };
+
+    const result = await submitForm("Export Query", payload);
+    if (result.success) {
+      setSubmitted(true);
+    } else {
+      alert(result.message || "Failed to submit form");
+    }
   };
 
-  // This function mimics a native submit button's behavior
   const handleDivSubmit = (e) => {
     const formElement = e.currentTarget.closest("form");
-    
-    // Check if all required fields are filled out
     if (formElement && formElement.checkValidity()) {
       handleSubmit(e);
     } else if (formElement) {
-      // If not, trigger the browser's default warning popups
       formElement.reportValidity();
     }
   };
 
-  // Reusable input style class
   const inputBaseClasses = "w-full bg-gray-50/50 border border-gray-200 rounded-xl px-4 py-3 pl-11 text-sm text-gray-800 placeholder:text-gray-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-[#6B4226]/10 focus:border-[#6B4226] transition-all duration-300";
 
   return (
@@ -50,8 +55,7 @@ export default function ExportQuery({ setSubmitted }) {
             <User className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
             <input
               name="name" value={form.name} onChange={handleChange} required
-              className={inputBaseClasses}
-              placeholder="John Smith"
+              className={inputBaseClasses} placeholder="John Smith"
             />
           </div>
         </div>
@@ -64,8 +68,7 @@ export default function ExportQuery({ setSubmitted }) {
               <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
               <input
                 type="email" name="email" value={form.email} onChange={handleChange} required
-                className={inputBaseClasses}
-                placeholder="john@company.com"
+                className={inputBaseClasses} placeholder="john@company.com"
               />
             </div>
           </div>
@@ -74,9 +77,7 @@ export default function ExportQuery({ setSubmitted }) {
             <label className="text-sm font-semibold text-gray-700 mb-2 block">Phone Number</label>
             <div className="flex gap-2">
               <select
-                name="countryCode"
-                value={form.countryCode}
-                onChange={handleChange}
+                name="countryCode" value={form.countryCode} onChange={handleChange}
                 className="w-[110px] bg-gray-50/50 border border-gray-200 rounded-xl px-3 py-3 text-sm text-gray-700 focus:bg-white focus:outline-none focus:ring-4 focus:ring-[#6B4226]/10 focus:border-[#6B4226] transition-all duration-300 cursor-pointer"
               >
                 <option value="+91">IN (+91)</option>
@@ -91,8 +92,7 @@ export default function ExportQuery({ setSubmitted }) {
                 <input
                   type="tel" name="phone" value={form.phone} onChange={handlePhoneChange}
                   inputMode="numeric" pattern="[0-9]{10}" minLength={10} maxLength={10}
-                  className={inputBaseClasses}
-                  placeholder="9876543210"
+                  className={inputBaseClasses} placeholder="9876543210"
                 />
               </div>
             </div>
@@ -107,8 +107,7 @@ export default function ExportQuery({ setSubmitted }) {
               <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
               <input
                 name="company" value={form.company} onChange={handleChange} required
-                className={inputBaseClasses}
-                placeholder="Your Company Ltd."
+                className={inputBaseClasses} placeholder="Your Company Ltd."
               />
             </div>
           </div>
@@ -118,8 +117,7 @@ export default function ExportQuery({ setSubmitted }) {
               <Globe className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
               <input
                 name="country" value={form.country} onChange={handleChange} required
-                className={inputBaseClasses}
-                placeholder="e.g., Kenya"
+                className={inputBaseClasses} placeholder="e.g., Kenya"
               />
             </div>
           </div>
@@ -132,8 +130,7 @@ export default function ExportQuery({ setSubmitted }) {
             <Package className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
             <input
               name="products" value={form.products} onChange={handleChange} required
-              className={inputBaseClasses}
-              placeholder="e.g., Cardiology, Oncology, Specific Generic Names"
+              className={inputBaseClasses} placeholder="e.g., Cardiology, Oncology, Specific Generic Names"
             />
           </div>
         </div>
@@ -153,15 +150,8 @@ export default function ExportQuery({ setSubmitted }) {
 
         {/* Submit Button Replaced with Div */}
         <div
-          role="button"
-          tabIndex={0}
-          onClick={handleDivSubmit}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault();
-              handleDivSubmit(e);
-            }
-          }}
+          role="button" tabIndex={0} onClick={handleDivSubmit}
+          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleDivSubmit(e); } }}
           className="w-full group flex items-center justify-center gap-2 font-semibold py-4 rounded-xl transition-all duration-300 hover:shadow-xl hover:shadow-[#6B4226]/20 hover:-translate-y-0.5  cursor-pointer"
           style={{ backgroundColor: "#6B4226" }}
         >

@@ -1,9 +1,11 @@
 'use client';
 
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { ArrowRight } from "lucide-react";
+import { FormsContext } from "@/dataContext/FormsContext";
 
 export default function SupplierRegistration({ setSubmitted }) {
+  const { submitForm } = useContext(FormsContext);
   const [form, setForm] = useState({
     company: "", contactPerson: "", email: "", countryCode: "+91", phone: "", supplyCategory: "", message: ""
   });
@@ -15,20 +17,27 @@ export default function SupplierRegistration({ setSubmitted }) {
     setForm({ ...form, phone: digitsOnly });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     if (e && e.preventDefault) e.preventDefault();
-    setSubmitted(true);
+
+    const payload = {
+      ...form,
+      phone: form.phone ? `${form.countryCode} ${form.phone}` : ""
+    };
+
+    const result = await submitForm("Supplier Registration", payload);
+    if (result.success) {
+      setSubmitted(true);
+    } else {
+      alert(result.message || "Failed to submit form");
+    }
   };
 
-  // This function mimics a native submit button's behavior
   const handleDivSubmit = (e) => {
     const formElement = e.currentTarget.closest("form");
-
-    // Check if all required fields are filled out
     if (formElement && formElement.checkValidity()) {
       handleSubmit(e);
     } else if (formElement) {
-      // If not, trigger the browser's default warning popups
       formElement.reportValidity();
     }
   };
@@ -67,9 +76,7 @@ export default function SupplierRegistration({ setSubmitted }) {
           <label className="text-sm font-medium text-gray-700 mb-1.5 block">Phone Number</label>
           <div className="flex gap-2">
             <select
-              name="countryCode"
-              value={ form.countryCode }
-              onChange={ handleChange }
+              name="countryCode" value={ form.countryCode } onChange={ handleChange }
               className="w-32 border border-gray-200 rounded-xl px-3 py-3 text-sm focus:outline-none focus:border-[#7c3aed] transition-colors bg-white"
             >
               <option value="+91">IN (+91)</option>
@@ -81,10 +88,7 @@ export default function SupplierRegistration({ setSubmitted }) {
             </select>
             <input
               type="tel" name="phone" value={ form.phone } onChange={ handlePhoneChange }
-              inputMode="numeric"
-              pattern="[0-9]{10}"
-              minLength={ 10 }
-              maxLength={ 10 }
+              inputMode="numeric" pattern="[0-9]{10}" minLength={ 10 } maxLength={ 10 }
               className="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#7c3aed] transition-colors"
               placeholder="9876543210"
             />
@@ -116,18 +120,10 @@ export default function SupplierRegistration({ setSubmitted }) {
         />
       </div>
 
-      {/* Button replaced with Div */ }
       <div
-        role="button"
-        tabIndex={ 0 }
-        onClick={ handleDivSubmit }
-        onKeyDown={ (e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            handleDivSubmit(e);
-          }
-        } }
-        className="w-full flex items-center justify-center gap-2 font-semibold py-4 rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-[#7c3aed]/25 transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5   cursor-pointer"
+        role="button" tabIndex={ 0 } onClick={ handleDivSubmit }
+        onKeyDown={ (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleDivSubmit(e); } } }
+        className="w-full flex items-center justify-center gap-2 font-semibold py-4 rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-[#7c3aed]/25 hover:-translate-y-0.5  cursor-pointer"
         style={ { backgroundColor: "#7c3aed" } }
       >
         <span style={ { color: "#ffffff" } }>Register as Supplier</span>
