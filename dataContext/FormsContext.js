@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useState, useEffect, useContext } from 'react';
+import { createContext, useState, useContext, useCallback } from 'react';
 import { fetchFormsData, submitFormsData, updateFormStatus } from '../app/api/formsApi';
 import { UserContext } from './UserContext';
 
@@ -15,41 +15,38 @@ export const FormsProvider = ({ children }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const recordsPerPage = 5;
 
-  const fetchForms = async () => {
+  const fetchForms = useCallback(async () => {
     if (!user?.token) return;
     setLoading(true);
     try {
       const data = await fetchFormsData(user.token);
-      setForms(Array.isArray(data) ? data.reverse() : []); // Newest first
+      setForms(Array.isArray(data) ? data.reverse() : []);
     } catch (error) {
       console.error('Failed to fetch forms', error);
     } finally {
       setLoading(false);
     }
-  };
+  }, [user?.token]);
 
   const submitForm = async (type, data) => {
     try {
       await submitFormsData(type, data);
-      // Optionally re-fetch forms if needed, but usually not needed on client side immediately
       return { success: true };
     } catch (error) {
       return { success: false, message: error.response?.data?.message || error.message || 'Submission failed' };
     }
   };
 
-  // ✅ FIX: Added tableName parameter here
-  const updateStatus = async (id, status, tableName) => {
+  const updateStatus = useCallback(async (id, status, tableName) => {
     if (!user?.token) return { success: false, message: 'Not authenticated' };
     try {
-      // ✅ FIX: Passed tableName to the API function along with id, status, and token
       await updateFormStatus(id, status, tableName, user.token);
-      await fetchForms(); // Re-fetch to get updated data
+      await fetchForms();
       return { success: true };
     } catch (error) {
       return { success: false, message: error.response?.data?.message || error.message || 'Update failed' };
     }
-  };
+  }, [fetchForms, user?.token]);
 
   // Pagination logic
   const indexOfLastRecord = currentPage * recordsPerPage;

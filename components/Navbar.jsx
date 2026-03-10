@@ -117,6 +117,8 @@ export default function Navbar() {
     if (megaMenuData[label]) setActiveMega(label);
   };
 
+  
+
   const handleMouseLeave = () => {
     timeoutRef.current = setTimeout(() => setActiveMega(null), 150);
   };

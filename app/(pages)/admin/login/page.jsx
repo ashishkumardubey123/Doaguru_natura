@@ -19,7 +19,7 @@ export default function AdminLogin() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [showPassword, setShowPassword] = useState(false); // ✅ Password toggle state
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -43,11 +43,13 @@ export default function AdminLogin() {
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden" style={{ fontFamily: "'Inter', sans-serif" }}>
       
+      {/* Background Decorative Elements */}
       <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-green-200/40 rounded-full blur-3xl pointer-events-none"></div>
       <div className="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-emerald-200/40 rounded-full blur-3xl pointer-events-none"></div>
 
-      <div className="max-w-md w-full space-y-8 bg-white/80 backdrop-blur-xl p-10 rounded-[2rem] shadow-[0_8px_40px_rgb(0,0,0,0.08)] border border-white relative z-10">
+      <div className="max-w-md w-full space-y-8 bg-white/90 backdrop-blur-xl p-10 rounded-[2rem] shadow-[0_8px_40px_rgb(0,0,0,0.08)] border border-white/50 relative z-10">
         
+        {/* Header Section */}
         <div className="flex flex-col items-center">
           <div className="w-14 h-14 bg-gradient-to-br from-[#1a3c22] to-[#2A5C32] rounded-2xl flex items-center justify-center shadow-lg mb-4 transform -rotate-6 hover:rotate-0 transition-transform duration-300">
             <Leaf className="text-white w-7 h-7" />
@@ -60,8 +62,10 @@ export default function AdminLogin() {
           </p>
         </div>
 
+        {/* Form Section */}
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           
+          {/* Error Message */}
           {error && (
             <div className="bg-red-50/80 border border-red-100 text-red-600 p-4 rounded-xl text-sm flex items-center gap-3 animate-in fade-in slide-in-from-top-2 duration-300">
               <AlertCircle size={18} className="text-red-500 shrink-0" />
@@ -69,57 +73,74 @@ export default function AdminLogin() {
             </div>
           )}
 
-          <div className="space-y-4">
+          <div className="space-y-5">
             {/* Email Input */}
-            <div className="relative group">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <Mail className="h-5 w-5 text-slate-400 group-focus-within:text-[#2A5C32] transition-colors" />
+            <div>
+              <label htmlFor="email" className="flex justify-between items-center text-sm font-semibold text-slate-700 mb-1.5 px-1">
+                <span>Email Address <span className="text-red-500">*</span></span>
+                <span className="text-[10px] font-medium text-red-400 uppercase tracking-wider">Required</span>
+              </label>
+              <div className="relative group">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <Mail className="h-5 w-5 text-slate-400 group-focus-within:text-[#2A5C32] transition-colors" />
+                </div>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="block w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#2A5C32]/20 focus:border-[#2A5C32] focus:bg-white sm:text-sm transition-all duration-200"
+                  placeholder="admin@example.com"
+                />
               </div>
-              <input
-                name="email"
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="block w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#2A5C32]/20 focus:border-[#2A5C32] focus:bg-white sm:text-sm transition-all duration-200"
-                placeholder="Email Address"
-              />
             </div>
 
-            {/* ✅ Password Input with Toggle */}
-            <div className="relative group">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <Lock className="h-5 w-5 text-slate-400 group-focus-within:text-[#2A5C32] transition-colors" />
+            {/* Password Input */}
+            <div>
+              <label htmlFor="password" className="flex justify-between items-center text-sm font-semibold text-slate-700 mb-1.5 px-1">
+                <span>Password <span className="text-red-500">*</span></span>
+                <span className="text-[10px] font-medium text-red-400 uppercase tracking-wider">Required</span>
+              </label>
+              <div className="relative group">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <Lock className="h-5 w-5 text-slate-400 group-focus-within:text-[#2A5C32] transition-colors" />
+                </div>
+                <input
+                  id="password"
+                  name="password"
+                  type={showPassword ? 'text' : 'password'}
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="block w-full pl-11 pr-12 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#2A5C32]/20 focus:border-[#2A5C32] focus:bg-white sm:text-sm transition-all duration-200"
+                  placeholder="Enter your password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-[#2A5C32] transition-colors focus:outline-none"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
               </div>
-              <input
-                name="password"
-                type={showPassword ? 'text' : 'password'}
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="block w-full pl-11 pr-12 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#2A5C32]/20 focus:border-[#2A5C32] focus:bg-white sm:text-sm transition-all duration-200"
-                placeholder="Password"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-[#2A5C32] transition-colors"
-              >
-                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-              </button>
             </div>
           </div>
 
-          <div>
+          {/* Submit Button */}
+          <div className="pt-2">
             <button
               type="submit"
-              className="group relative w-full flex justify-center items-center gap-2 py-3.5 px-4 border border-transparent text-sm font-bold rounded-xl text-white bg-gradient-to-r from-[#1a3c22] to-[#2A5C32] hover:from-[#132c18] hover:to-[#1e4224] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2A5C32] shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5"
+              className="group relative w-full flex justify-center items-center gap-2 py-3.5 px-4 border border-transparent text-sm font-bold rounded-xl text-white bg-gradient-to-r from-[#1a3c22] to-[#2A5C32] hover:from-[#132c18] hover:to-[#1e4224] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2A5C32] shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0"
             >
               Sign In
               <LogIn size={18} className="group-hover:translate-x-1 transition-transform" />
             </button>
           </div>
           
+          {/* Footer Link */}
           <div className="text-center mt-6">
             <span className="text-sm text-slate-500">
               Don't have an account?{' '}
