@@ -19,6 +19,7 @@ const heroSlides = [
     subtext: "WHO-GMP certified facilities producing 500+ formulations across 25 dosage forms, exported to 50+ countries.",
     cta: "Explore Manufacturing",
     ctaPath: "/manufacturing",
+    ctPath: "/manufacturing",
     ctaSecondary: "View Products",
     ctaSecondaryPath: "/products",
   },
