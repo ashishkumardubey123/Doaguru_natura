@@ -23,7 +23,7 @@ const heroSlides = [
   },
   {
     id: 2,
-    image: "/media/bannar2.jpg",
+    image: "/media/banner3.jpg",
     tag: "Research & Development",
     headline: "Innovation-Driven R&D\nShaping Tomorrow's Medicines",
     subtext: "Our dedicated research centers develop life-saving formulations, with 120+ active molecules under development.",
@@ -256,14 +256,17 @@ function HeroSlider() {
                 zIndex: isCurrent ? 2 : isPrevious ? 1 : 0,
               }}
             >
-              <img
-                loading="lazy"
-                decoding="async"
-                src={s.image}
-                alt={s.tag}
-                className={`hero-slide-media w-full h-full object-cover ${imageStateClass}`}
-                style={{ "--hero-zoom-duration": `${HERO_ZOOM_MS}ms` }}
-              />
+{/* Image with overflow hidden, aligned to TOP */}
+<div className="hero-slide-media-wrapper w-full h-full relative overflow-hidden">
+  <img
+    decoding="async"
+    src={s.image}
+    alt={s.tag}
+    {/* Updated className: positioning to top instead of center */}
+    className={`hero-slide-media absolute inset-0 m-auto min-w-full min-h-full object-cover object-top w-full h-full ${imageStateClass}`}
+    style={{ "--hero-zoom-duration": `${HERO_ZOOM_MS}ms` }}
+  />
+</div>
               <div className="absolute inset-0" style={{ background: "linear-gradient(90deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 60%, transparent 100%)" }} />
             </div>
           );
@@ -405,7 +408,7 @@ export default function Home() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="rounded-2xl overflow-hidden h-48">
-                <img loading="lazy" decoding="async" src="/media/About1.jpg" className="w-full h-full object-cover" alt="Lab" />
+                <img loading="lazy" decoding="async" src="/media/About%201.jpg" className="w-full h-full object-cover" alt="Lab" />
               </div>
               <div className="rounded-2xl overflow-hidden h-48 mt-8">
                 <img loading="lazy" decoding="async" src="/media/about2.jpg" className="w-full h-full object-cover" alt="Research" />
@@ -414,7 +417,7 @@ export default function Home() {
                 <img loading="lazy" decoding="async" src="/media/about%203.jpg" className="w-full h-full object-cover" alt="Manufacturing" />
               </div>
               <div className="rounded-2xl overflow-hidden h-48">
-                <img loading="lazy" decoding="async" src="/media/about4.jpg" className="w-full h-full object-cover" alt="Quality" />
+                <img loading="lazy" decoding="async" src="/media/about%204.jpg" className="w-full h-full object-cover" alt="Quality" />
               </div>
             </div>
           </div>
@@ -612,11 +615,7 @@ export default function Home() {
       <section className="py-24 relative overflow-hidden" style={{ backgroundColor: "#1a3c22" }}>
         {/* Background Image with Overlay */}
         <div className="absolute inset-0 z-0">
-          <img loading="lazy" decoding="async"
-            src="/media/about%203.jpg"
-            className="w-full h-full object-cover opacity-30 mix-blend-overlay"
-            alt="Manufacturing Background"
-          />
+        
           <div className="absolute inset-0 bg-gradient-to-r from-[#1a3c22] via-[#1a3c22]/90 to-transparent"></div>
         </div>
 
@@ -695,6 +694,9 @@ export default function Home() {
               What Our Partners Say
             </h2>
           </div>
+          
+           
+
           <div className="grid md:grid-cols-3 gap-8">
             {[
               {
