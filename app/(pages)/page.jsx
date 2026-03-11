@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   ArrowRight, ChevronLeft, ChevronRight,
@@ -12,7 +12,7 @@ import {
 const heroSlides = [
   {
     id: 1,
-    image: "https://images.unsplash.com/photo-1757578097654-fdae0f7cf008?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1440",
+    image: "/media/banner%201.jpg",
     tag: "Manufacturing Excellence",
     headline: "World-Class Pharmaceutical\nManufacturing for Global Markets",
     subtext: "WHO-GMP certified facilities producing 500+ formulations across 25 dosage forms, exported to 50+ countries.",
@@ -23,7 +23,7 @@ const heroSlides = [
   },
   {
     id: 2,
-    image: "https://images.unsplash.com/photo-1576765608689-c0e8f69a46b2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1440",
+    image: "/media/bannar2.jpg",
     tag: "Research & Development",
     headline: "Innovation-Driven R&D\nShaping Tomorrow's Medicines",
     subtext: "Our dedicated research centers develop life-saving formulations, with 120+ active molecules under development.",
@@ -34,7 +34,7 @@ const heroSlides = [
   },
   {
     id: 3,
-    image: "https://images.unsplash.com/photo-1765206257996-9b4a5d886a2c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1440",
+    image: "/media/banner%203.jpg",
     tag: "Global Reach",
     headline: "Connecting Healthcare\nAcross 50+ Nations",
     subtext: "Robust supply chain infrastructure ensuring timely delivery of quality medicines to every corner of the globe.",
@@ -130,12 +130,17 @@ const newsItems = [
 ];
 
 const certifications = [
-  { name: "WHO-GMP", desc: "World Health Org." },
-  { name: "ISO 9001", desc: "Quality Management" },
-  { name: "USFDA", desc: "US Registration" },
-  { name: "EU GMP", desc: "European Standards" },
-  { name: "ISO 14001", desc: "Environmental" },
-  { name: "PICS GMP", desc: "Intl. Cooperation" },
+  { mark: "WHO-GMP", name: "WHO-GMP", desc: "World Health Organization GMP compliance", accent: "#2A5C32", surface: "#edf6ee" },
+  { mark: "WHO", name: "WHO", desc: "WHO-aligned quality and public health standards", accent: "#0d7aa5", surface: "#eaf8fc" },
+  { mark: "ISO", name: "ISO 9001", desc: "Quality management systems", accent: "#1e5f92", surface: "#edf5ff" },
+  { mark: "FSSAI", name: "FSSAI", desc: "Food safety and standards compliance", accent: "#c46b0e", surface: "#fff7eb" },
+  { mark: "HALAL", name: "Halal", desc: "Halal-certified production processes", accent: "#1f7c48", surface: "#eef9f2" },
+  { mark: "HACCP", name: "HACCP", desc: "Hazard analysis and critical control systems", accent: "#188443", surface: "#edf9f0" },
+  { mark: "FDA", name: "USFDA", desc: "US facility registration and inspections", accent: "#7a4a25", surface: "#faf1ea" },
+  { mark: "EU", name: "EU GMP", desc: "European manufacturing standards", accent: "#29527c", surface: "#eef4fb" },
+  { mark: "14001", name: "ISO 14001", desc: "Environmental management systems", accent: "#25734b", surface: "#edf8f1" },
+  { mark: "PICS", name: "PICS GMP", desc: "International pharma inspection cooperation", accent: "#6548a6", surface: "#f3f0ff" },
+  { mark: "GMP", name: "GMP", desc: "Good manufacturing practice certification", accent: "#4c9626", surface: "#f2faea" },
 ];
 
 const featuredProducts = [
@@ -169,66 +174,152 @@ const featuredProducts = [
   },
 ];
 
+const HERO_ZOOM_MS = 8500;
+const HERO_FADE_MS = 1600;
+
 // â”€â”€â”€ HERO SLIDER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+function CertificationCard({ cert }) {
+  return (
+    <article className="w-[240px] shrink-0 rounded-[28px] border border-white/12 bg-white/95 p-5 shadow-[0_18px_40px_-28px_rgba(0,0,0,0.55)]">
+      <div className="flex items-start gap-4">
+        <div
+          className="w-16 h-16 shrink-0 rounded-full flex items-center justify-center text-[0.62rem] font-extrabold tracking-[0.18em] uppercase text-center leading-tight px-2"
+          style={{ backgroundColor: cert.surface, color: cert.accent, border: `1px solid ${cert.accent}22` }}
+        >
+          {cert.mark}
+        </div>
+        <div className="min-w-0">
+          <div className="flex items-center gap-2 mb-2">
+            <Award size={14} style={{ color: cert.accent }} />
+            <span className="text-[11px] font-bold uppercase tracking-[0.18em]" style={{ color: cert.accent }}>Certified</span>
+          </div>
+          <h3 className="text-base font-bold text-gray-900 leading-tight" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+            {cert.name}
+          </h3>
+          <p className="mt-2 text-sm text-gray-500 leading-relaxed">{cert.desc}</p>
+        </div>
+      </div>
+    </article>
+  );
+}
+
 function HeroSlider() {
   const [current, setCurrent] = useState(0);
-  const intervalRef = useRef(null);
+  const [previous, setPrevious] = useState(null);
 
-  const goTo = (idx) => setCurrent(idx);
+  const goTo = (idx) => {
+    if (idx === current) return;
+    setPrevious(current);
+    setCurrent(idx);
+  };
   const prev = () => goTo((current - 1 + heroSlides.length) % heroSlides.length);
   const next = () => goTo((current + 1) % heroSlides.length);
 
   useEffect(() => {
-    intervalRef.current = setInterval(() => {
-      setCurrent((c) => (c + 1) % heroSlides.length);
-    }, 6000);
-    return () => clearInterval(intervalRef.current);
-  }, []);
+    const timer = setTimeout(() => {
+      setPrevious(current);
+      setCurrent((current + 1) % heroSlides.length);
+    }, HERO_ZOOM_MS);
 
-  const slide = heroSlides[current];
+    return () => clearTimeout(timer);
+  }, [current]);
+
+  useEffect(() => {
+    if (previous === null) return undefined;
+
+    const fadeTimer = setTimeout(() => {
+      setPrevious(null);
+    }, HERO_FADE_MS);
+
+    return () => clearTimeout(fadeTimer);
+  }, [previous]);
 
   return (
-    <div className="relative w-full h-[600px] overflow-hidden bg-gray-900">
-      {heroSlides.map((s, i) => (
-        <div
-          key={s.id}
-          className="absolute inset-0 transition-opacity duration-700"
-          style={{ opacity: i === current ? 1 : 0 }}
-        >
-          <img loading="lazy" decoding="async" src={s.image} alt={s.tag} className="w-full h-full object-cover" />
-          <div className="absolute inset-0" style={{ background: "linear-gradient(90deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 60%, transparent 100%)" }} />
-        </div>
-      ))}
+      <div className="relative w-full h-[600px] overflow-hidden bg-gray-900">
+        {heroSlides.map((s, i) => {
+          const isCurrent = i === current;
+          const isPrevious = i === previous;
+          const imageStateClass = isCurrent
+            ? "hero-slide-media-active"
+            : isPrevious
+              ? "hero-slide-media-exit"
+              : "hero-slide-media-idle";
+
+          return (
+            <div
+              key={s.id}
+              className="absolute inset-0 transition-opacity ease-in-out"
+              style={{
+                opacity: isCurrent ? 1 : 0,
+                transitionDuration: `${HERO_FADE_MS}ms`,
+                willChange: "opacity",
+                zIndex: isCurrent ? 2 : isPrevious ? 1 : 0,
+              }}
+            >
+              <img
+                loading="lazy"
+                decoding="async"
+                src={s.image}
+                alt={s.tag}
+                className={`hero-slide-media w-full h-full object-cover ${imageStateClass}`}
+                style={{ "--hero-zoom-duration": `${HERO_ZOOM_MS}ms` }}
+              />
+              <div className="absolute inset-0" style={{ background: "linear-gradient(90deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 60%, transparent 100%)" }} />
+            </div>
+          );
+        })}
 
       <div className="relative z-10 max-w-[1440px] mx-auto px-6 h-full flex items-center">
-        <div className="max-w-2xl text-white">
-          <span
-            className="inline-block text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-5"
-            style={{ backgroundColor: "rgba(42,92,50,0.8)", border: "1px solid rgba(255,255,255,0.2)" }}
-          >
-            {slide.tag}
-          </span>
-          <h1
-            className="mb-5 leading-tight"
-            style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 800, fontSize: "clamp(2rem, 4vw, 3.2rem)", whiteSpace: "pre-line" }}
-          >
-            {slide.headline}
-          </h1>
-          <p className="text-gray-300 text-base leading-relaxed mb-8 max-w-xl">{slide.subtext}</p>
-          <div className="flex gap-4 flex-wrap">
-            <Link
-              href={slide.ctaPath}
-              className="inline-flex items-center gap-2 font-semibold px-7 py-3.5 rounded-full transition-all duration-200 bg-[#2A5C32] text-white hover:bg-[#234e2a] hover:shadow-lg"
-            >
-              {slide.cta} <ArrowRight size={16} />
-            </Link>
-            <Link
-              href={slide.ctaSecondaryPath}
-              className="inline-flex items-center gap-2 border-2 border-white/50 text-white font-semibold px-7 py-3.5 rounded-full hover:border-white hover:bg-white/10 transition-all"
-            >
-              {slide.ctaSecondary}
-            </Link>
-          </div>
+        <div className="relative w-full max-w-2xl min-h-[320px] text-white">
+          {heroSlides.map((s, i) => {
+            const isCurrent = i === current;
+            const isPrevious = i === previous;
+            const contentStateClass = isCurrent
+              ? "hero-slide-content-active"
+              : isPrevious
+                ? "hero-slide-content-exit"
+                : "hero-slide-content-idle";
+
+            return (
+              <div
+                key={`content-${s.id}`}
+                className={`hero-slide-content absolute inset-0 flex flex-col justify-center ${contentStateClass}`}
+                style={{
+                  transitionDuration: `${HERO_FADE_MS}ms`,
+                  zIndex: isCurrent ? 2 : isPrevious ? 1 : 0,
+                  pointerEvents: isCurrent ? "auto" : "none",
+                }}
+              >
+                <span
+                  className="inline-block text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-5 w-fit"
+                  style={{ backgroundColor: "rgba(42,92,50,0.8)", border: "1px solid rgba(255,255,255,0.2)" }}
+                >
+                  {s.tag}
+                </span>
+                <h1
+                  className="mb-5 leading-tight"
+                  style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 800, fontSize: "clamp(2rem, 4vw, 3.2rem)", whiteSpace: "pre-line" }}
+                >
+                  {s.headline}
+                </h1>
+                <p className="text-gray-300 text-base leading-relaxed mb-8 max-w-xl">{s.subtext}</p>
+                <div className="flex gap-4 flex-wrap">
+                  <Link
+                    href={s.ctaPath}
+                    className="inline-flex items-center gap-2 font-semibold px-7 py-3.5 rounded-full transition-all duration-200 bg-[#2A5C32] text-white hover:bg-[#234e2a] hover:shadow-lg"
+                  >
+                    {s.cta} <ArrowRight size={16} />
+                  </Link>
+                  <Link
+                    href={s.ctaSecondaryPath}
+                    className="inline-flex items-center gap-2 border-2 border-white/50 text-white font-semibold px-7 py-3.5 rounded-full hover:border-white hover:bg-white/10 transition-all"
+                  >
+                    {s.ctaSecondary}
+                  </Link>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
 
@@ -314,16 +405,16 @@ export default function Home() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="rounded-2xl overflow-hidden h-48">
-                <img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1581056771085-3ce30d907416?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600" className="w-full h-full object-cover" alt="Lab" />
+                <img loading="lazy" decoding="async" src="/media/About%201.jpg" className="w-full h-full object-cover" alt="Lab" />
               </div>
               <div className="rounded-2xl overflow-hidden h-48 mt-8">
-                <img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1576765608689-c0e8f69a46b2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600" className="w-full h-full object-cover" alt="Research" />
+                <img loading="lazy" decoding="async" src="/media/about2.jpg" className="w-full h-full object-cover" alt="Research" />
               </div>
               <div className="rounded-2xl overflow-hidden h-48 -mt-4">
-                <img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1766297246929-3b69ca8b175c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600" className="w-full h-full object-cover" alt="Manufacturing" />
+                <img loading="lazy" decoding="async" src="/media/about%203.jpg" className="w-full h-full object-cover" alt="Manufacturing" />
               </div>
               <div className="rounded-2xl overflow-hidden h-48">
-                <img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1762439183787-54302c4dfb9f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600" className="w-full h-full object-cover" alt="Quality" />
+                <img loading="lazy" decoding="async" src="/media/about%204.jpg" className="w-full h-full object-cover" alt="Quality" />
               </div>
             </div>
           </div>
@@ -532,7 +623,6 @@ export default function Home() {
         <div className="max-w-[1440px] mx-auto px-6 relative z-10">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div className="text-white">
-              <span className="text-xs font-bold uppercase tracking-widest text-green-400">Manufacturing & Quality</span>
               <h2
                 className="mt-3 mb-5 leading-tight"
                 style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 800, fontSize: "clamp(2rem, 3.5vw, 3rem)" }}
@@ -565,6 +655,8 @@ export default function Home() {
               ))}
             </div>
           </div>
+
+        
         </div>
       </section>
 
@@ -630,7 +722,7 @@ export default function Home() {
                     <path d="M14.017 21L16.41 14.592C16.657 13.935 16.78 13.25 16.78 12.536V3H24V12.536C24 15.36 23.14 17.82 21.42 19.916C19.7 22.012 17.51 23.33 14.85 23.87L14.017 21ZM3.017 21L5.41 14.592C5.657 13.935 5.78 13.25 5.78 12.536V3H13V12.536C13 15.36 12.14 17.82 10.42 19.916C8.7 22.012 6.51 23.33 3.85 23.87L3.017 21Z" />
                   </svg>
                 </div>
-                <p className="text-gray-600 italic mb-8 relative z-10 leading-relaxed">"{testimonial.quote}"</p>
+                <p className="text-gray-600 italic mb-8 relative z-10 leading-relaxed">&ldquo;{testimonial.quote}&rdquo;</p>
                 <div className="flex items-center gap-4">
                   <img loading="lazy" decoding="async" src={testimonial.image} alt={testimonial.name} className="w-12 h-12 rounded-full object-cover" />
                   <div>
@@ -697,7 +789,7 @@ export default function Home() {
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div className="relative rounded-3xl overflow-hidden h-[400px]">
               <img loading="lazy" decoding="async"
-                src="https://images.unsplash.com/photo-1758691462126-2ee47c8bf9e7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800"
+                src="/media/OurPurpose.jpg"
                 alt="Patient care"
                 className="w-full h-full object-cover"
               />

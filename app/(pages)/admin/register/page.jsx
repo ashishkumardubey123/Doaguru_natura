@@ -116,8 +116,8 @@ export default function AdminRegister() {
               </div>
               {/* ✅ Helper Text for Name */}
               <p className="mt-1.5 ml-1 text-xs text-slate-500 flex items-center gap-1">
-                <Info size={12} className="text-[#2A5C32]" />
-                Must be unique.
+               
+         
               </p>
             </div>
 
@@ -196,8 +196,7 @@ export default function AdminRegister() {
                   className="block w-full pl-11 pr-10 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#2A5C32]/20 focus:border-[#2A5C32] focus:bg-white sm:text-sm transition-all duration-200 appearance-none cursor-pointer"
                 >
                   <option value="Admin">Admin</option>
-                  <option value="Manager">Manager</option>
-                  <option value="SuparAdmin">Super Admin</option>
+                  <option value="SuperAdmin">Super Admin</option>
                 </select>
                 <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
                   <svg className="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -240,7 +239,7 @@ export default function AdminRegister() {
           </div>
 
           {/* Submit Button */}
-          <div className="pt-2">
+          <div className="pt-2 text-white">
             <button
               type="submit"
               className="group relative w-full flex justify-center items-center gap-2 py-3.5 px-4 border border-transparent text-sm font-bold rounded-xl text-white bg-gradient-to-r from-[#1a3c22] to-[#2A5C32] hover:from-[#132c18] hover:to-[#1e4224] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2A5C32] shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0"
@@ -255,12 +254,14 @@ export default function AdminRegister() {
             <span className="text-sm text-slate-500">
               Already have an account?{' '}
             </span>
+      
             <Link 
               href="/admin/login" 
               className="text-sm font-bold text-[#2A5C32] hover:text-[#1a3c22] hover:underline transition-colors"
             >
               Sign In here
             </Link>
+
           </div>
         </form>
       </div>

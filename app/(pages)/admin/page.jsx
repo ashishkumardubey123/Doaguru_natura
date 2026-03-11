@@ -11,7 +11,6 @@ import {
   Loader2, 
   Mail, 
   Phone, 
-  FileText,
   LayoutDashboard,
   Inbox,
   CheckSquare,
@@ -30,6 +29,7 @@ export default function AdminDashboard() {
     updateStatus, 
     currentRecords, 
     currentPage, 
+    recordsPerPage,
     totalPages, 
     paginate 
   } = useContext(FormsContext);
@@ -69,6 +69,22 @@ export default function AdminDashboard() {
     return data.companyProfile || data.details || data.message || '-';
   };
 
+  const getCompanySection = (data) => {
+    return data.company || '-';
+  };
+
+  const getCountrySection = (data) => {
+    return data.country || '-';
+  };
+
+  const getProductsSection = (data) => {
+    return data.products || '-';
+  };
+
+  const getContextSection = (data) => {
+    return data.partnership || data.supplyCategory || '-';
+  };
+
   if (userLoading || formsLoading) return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 gap-5">
       <Loader2 className="w-12 h-12 text-[#2A5C32] animate-spin" />
@@ -92,9 +108,12 @@ export default function AdminDashboard() {
               <UserCircle size={14} />
               {user?.name || 'Admin'}
             </div>
-            <button onClick={handleLogout} className="text-xs font-bold hover:text-red-400 transition-colors flex items-center gap-1">
+             <div className="text-xs font-bold hover:text-red-400 hover:bg-red transition-colors flex items-center gap-1" >
+            <button onClick={handleLogout} className="text-xs font-bold hover:text-red-400 hover:bg-red transition-colors flex items-center gap-1">
               <LogOut size={14} /> LOGOUT
             </button>
+           </div>
+
           </div>
         </div>
       </header>
@@ -135,19 +154,22 @@ export default function AdminDashboard() {
                   <th className="px-4 py-2.5 border-r border-slate-300 text-[11px] font-bold text-slate-600 uppercase">Source</th>
                   <th className="px-4 py-2.5 border-r border-slate-300 text-[11px] font-bold text-slate-600 uppercase">Client Name</th>
                   <th className="px-4 py-2.5 border-r border-slate-300 text-[11px] font-bold text-slate-600 uppercase">Contact Info</th>
-                  <th className="px-4 py-2.5 border-r border-slate-300 text-[11px] font-bold text-slate-600 uppercase">Company/Context</th>
-                  <th className="px-4 py-2.5 border-r border-slate-300 text-[11px] font-bold text-slate-600 uppercase">Content</th>
+                  <th className="px-4 py-2.5 border-r border-slate-300 text-[11px] font-bold text-slate-600 uppercase">Company</th>
+                  <th className="px-4 py-2.5 border-r border-slate-300 text-[11px] font-bold text-slate-600 uppercase">Country</th>
+                  <th className="px-4 py-2.5 border-r border-slate-300 text-[11px] font-bold text-slate-600 uppercase">Products</th>
+                  <th className="px-4 py-2.5 border-r border-slate-300 text-[11px] font-bold text-slate-600 uppercase">Context</th>
+                  <th className="px-4 py-2.5 border-r border-slate-300 text-[11px] font-bold text-slate-600 uppercase">Message/Details </th>
                   <th className="px-4 py-2.5 text-[11px] font-bold text-slate-600 uppercase text-center">Action</th>
                 </tr>
               </thead>
               <tbody className="text-[13px] divide-y divide-slate-200">
                 {currentRecords.length === 0 ? (
-                  <tr><td colSpan="8" className="p-20 text-center text-slate-400 italic">No records found in database.</td></tr>
+                  <tr><td colSpan="11" className="p-20 text-center text-slate-400 italic">No records found in database.</td></tr>
                 ) : (
                   currentRecords.map((sub, idx) => (
                     <tr key={sub.id} className="hover:bg-blue-50/40 even:bg-slate-50/50 transition-colors">
                       <td className="px-4 py-3 border-r border-slate-200 text-center text-slate-400 font-mono">
-                        {(currentPage - 1) * 10 + (idx + 1)}
+                        {(currentPage - 1) * recordsPerPage + (idx + 1)}
                       </td>
                       <td className="px-4 py-3 border-r border-slate-200 whitespace-nowrap">
                         <div className="font-semibold text-slate-700">{new Date(sub.date).toLocaleDateString('en-GB')}</div>
@@ -178,8 +200,16 @@ export default function AdminDashboard() {
                         </div>
                       </td>
                       <td className="px-4 py-3 border-r border-slate-200">
-                        <div className="text-slate-700 font-medium">{sub.data.company || sub.data.country || '-'}</div>
-                        <div className="text-[11px] text-slate-400 italic">{sub.data.supplyCategory || sub.data.partnership || ''}</div>
+                        <div className="text-slate-700 font-medium">{getCompanySection(sub.data)}</div>
+                      </td>
+                      <td className="px-4 py-3 border-r border-slate-200">
+                        <div className="text-slate-700">{getCountrySection(sub.data)}</div>
+                      </td>
+                      <td className="px-4 py-3 border-r border-slate-200">
+                        <div className="text-slate-700">{getProductsSection(sub.data)}</div>
+                      </td>
+                      <td className="px-4 py-3 border-r border-slate-200">
+                        <div className="text-slate-700">{getContextSection(sub.data)}</div>
                       </td>
                       <td className="px-4 py-3 border-r border-slate-200 max-w-xs">
                         <p className="line-clamp-2 text-slate-600 leading-snug" title={getDetailSection(sub.data)}>
@@ -210,9 +240,9 @@ export default function AdminDashboard() {
 
           {/* 🎯 Excel Pagination */}
           {totalPages > 1 && (
-            <div className="bg-slate-50 px-4 py-2 border-t border-slate-300 flex items-center justify-between">
-              <span className="text-[11px] font-bold text-slate-500 uppercase">Page {currentPage} of {totalPages}</span>
-              <div className="flex gap-1">
+            <div className="bg-slate-50 px-4 py-3 border-t border-slate-300 flex flex-col items-center gap-2 lg:grid lg:grid-cols-[1fr_auto_1fr] lg:items-center">
+              <span className="text-[11px] font-bold text-slate-500 uppercase lg:justify-self-start">Page {currentPage} of {totalPages}</span>
+              <div className="flex flex-wrap justify-center gap-1 lg:justify-self-center">
                 {Array.from({ length: totalPages }, (_, i) => i + 1).map((n) => (
                   <button
                     key={n}
@@ -225,6 +255,7 @@ export default function AdminDashboard() {
                   </button>
                 ))}
               </div>
+              <div className="hidden lg:block" />
             </div>
           )}
         </div>

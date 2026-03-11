@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useState, useContext, useCallback } from 'react';
+import { createContext, useState, useContext, useCallback, useEffect } from 'react';
 import { fetchFormsData, submitFormsData, updateFormStatus } from '../app/api/formsApi';
 import { UserContext } from './UserContext';
 
@@ -13,7 +13,24 @@ export const FormsProvider = ({ children }) => {
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
-  const recordsPerPage = 5;
+  const [recordsPerPage, setRecordsPerPage] = useState(5);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(min-width: 1024px)');
+    const syncRecordsPerPage = () => {
+      setRecordsPerPage(mediaQuery.matches ? 6 : 5);
+    };
+
+    syncRecordsPerPage();
+
+    if (typeof mediaQuery.addEventListener === 'function') {
+      mediaQuery.addEventListener('change', syncRecordsPerPage);
+      return () => mediaQuery.removeEventListener('change', syncRecordsPerPage);
+    }
+
+    mediaQuery.addListener(syncRecordsPerPage);
+    return () => mediaQuery.removeListener(syncRecordsPerPage);
+  }, []);
 
   const fetchForms = useCallback(async () => {
     if (!user?.token) return;
@@ -54,6 +71,11 @@ export const FormsProvider = ({ children }) => {
   const currentRecords = forms.slice(indexOfFirstRecord, indexOfLastRecord);
   const totalPages = Math.ceil(forms.length / recordsPerPage);
 
+  useEffect(() => {
+    const lastPage = Math.max(1, totalPages || 1);
+    setCurrentPage((prevPage) => Math.min(prevPage, lastPage));
+  }, [totalPages]);
+
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
@@ -65,6 +87,7 @@ export const FormsProvider = ({ children }) => {
       updateStatus,
       currentRecords,
       currentPage,
+      recordsPerPage,
       totalPages,
       paginate
     }}>

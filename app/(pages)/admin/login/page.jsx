@@ -130,7 +130,7 @@ export default function AdminLogin() {
           </div>
 
           {/* Submit Button */}
-          <div className="pt-2">
+          <div className="pt-2 text-white">
             <button
               type="submit"
               className="group relative w-full flex justify-center items-center gap-2 py-3.5 px-4 border border-transparent text-sm font-bold rounded-xl text-white bg-gradient-to-r from-[#1a3c22] to-[#2A5C32] hover:from-[#132c18] hover:to-[#1e4224] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2A5C32] shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0"
