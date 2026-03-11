@@ -12,7 +12,7 @@ import {
 const heroSlides = [
   {
     id: 1,
-    image: "/media/banner%201.jpg",
+    image: "/media/banner1.jpg",
     tag: "Manufacturing Excellence",
     headline: "World-Class Pharmaceutical\nManufacturing for Global Markets",
     subtext: "WHO-GMP certified facilities producing 500+ formulations across 25 dosage forms, exported to 50+ countries.",
@@ -34,7 +34,7 @@ const heroSlides = [
   },
   {
     id: 3,
-    image: "/media/banner%203.jpg",
+    image: "/media/banner3.jpg",
     tag: "Global Reach",
     headline: "Connecting Healthcare\nAcross 50+ Nations",
     subtext: "Robust supply chain infrastructure ensuring timely delivery of quality medicines to every corner of the globe.",
@@ -405,7 +405,7 @@ export default function Home() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="rounded-2xl overflow-hidden h-48">
-                <img loading="lazy" decoding="async" src="/media/About%201.jpg" className="w-full h-full object-cover" alt="Lab" />
+                <img loading="lazy" decoding="async" src="/media/About1.jpg" className="w-full h-full object-cover" alt="Lab" />
               </div>
               <div className="rounded-2xl overflow-hidden h-48 mt-8">
                 <img loading="lazy" decoding="async" src="/media/about2.jpg" className="w-full h-full object-cover" alt="Research" />
@@ -414,7 +414,7 @@ export default function Home() {
                 <img loading="lazy" decoding="async" src="/media/about%203.jpg" className="w-full h-full object-cover" alt="Manufacturing" />
               </div>
               <div className="rounded-2xl overflow-hidden h-48">
-                <img loading="lazy" decoding="async" src="/media/about%204.jpg" className="w-full h-full object-cover" alt="Quality" />
+                <img loading="lazy" decoding="async" src="/media/about4.jpg" className="w-full h-full object-cover" alt="Quality" />
               </div>
             </div>
           </div>
@@ -613,7 +613,7 @@ export default function Home() {
         {/* Background Image with Overlay */}
         <div className="absolute inset-0 z-0">
           <img loading="lazy" decoding="async"
-            src="https://images.unsplash.com/photo-1581093458791-9f3c3900df4b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1440"
+            src="/media/about%203.jpg"
             className="w-full h-full object-cover opacity-30 mix-blend-overlay"
             alt="Manufacturing Background"
           />
