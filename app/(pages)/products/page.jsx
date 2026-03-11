@@ -400,9 +400,15 @@ export default function Products() {
             {sorted.length > 0 && (
               <div className="text-center mt-16 pb-8">
                 <p className="text-sm font-medium text-gray-400 mb-5">Showing {sorted.length} of 500+ products in our portfolio.</p>
-                <button className="inline-flex items-center gap-2 border-2 border-[#2A5C32] text-[#2A5C32] font-bold px-8 py-3.5 rounded-xl transition-all duration-300 hover:bg-[#2A5C32] hover:text-white hover:shadow-lg hover:shadow-[#2A5C32]/20 active:scale-95">
-                  Request Full Catalogue <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-                </button>
+              <div className="w-full flex justify-center my-8">
+  {/* Aapka exact code */}
+  <div className="group w-fit hover:text-white rounded-xl transition-shadow duration-300 hover:shadow-lg hover:shadow-[#2A5C32]/40">
+    <button className="inline-flex items-center gap-2 border-2 border-[#2A5C32] text-[#2A5C32] font-bold px-8 py-3.5 rounded-xl transition-all duration-300 hover:bg-[#2A5C32] hover:text-white">
+      Request Full Catalogue <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
+    </button>
+  </div>
+</div>
+              
               </div>
             )}
           </div>

@@ -53,14 +53,14 @@ const financialResults = [
 ];
 
 const galleryImages = [
-  { src: "https://images.unsplash.com/photo-1757578097654-fdae0f7cf008?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600", caption: "Manufacturing Unit I — Oral Solid Dosage Facility, Gujarat", cat: "Facilities" },
-  { src: "https://images.unsplash.com/photo-1576765608689-c0e8f69a46b2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600", caption: "Quality Control Laboratory — Natura Research Hub, Pune", cat: "R&D" },
-  { src: "https://images.unsplash.com/photo-1581056771085-3ce30d907416?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600", caption: "Analytical Testing — QC Release Laboratory", cat: "Quality" },
-  { src: "https://images.unsplash.com/photo-1765206257996-9b4a5d886a2c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600", caption: "Global Export Operations — Supply Chain Team", cat: "Operations" },
-  { src: "https://images.unsplash.com/photo-1766297246929-3b69ca8b175c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600", caption: "European Innovation Centre — Basel, Switzerland", cat: "R&D" },
-  { src: "https://images.unsplash.com/photo-1758691462126-2ee47c8bf9e7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600", caption: "Patient-Centric Healthcare Programmes — Community Outreach", cat: "People" },
-  { src: "https://images.unsplash.com/photo-1571645163064-77faa9676a46?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600", caption: "Annual Investor Summit 2024 — Zurich", cat: "Events" },
-  { src: "https://images.unsplash.com/photo-1762439183787-54302c4dfb9f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600", caption: "Natura Health Care Global Headquarters — Basel", cat: "Corporate" },
+  { src: "/media/Facilities.jpg", caption: "Manufacturing Unit I — Oral Solid Dosage Facility, Gujarat", cat: "Facilities" },
+  { src: "/media/bannar2.jpg", caption: "Quality Control Laboratory — Natura Research Hub, Pune", cat: "R&D" },
+  { src: "/media/Quality.jpg", caption: "Analytical Testing — QC Release Laboratory", cat: "Quality" },
+  { src: "/media/banner3.jpg", caption: "Global Export Operations — Supply Chain Team", cat: "Operations" },
+  { src: "/media/manufacturing-CentralR&DInstitute.jpg", caption: "European Innovation Centre — Basel, Switzerland", cat: "R&D" },
+  { src: "/media/OurPurpose.jpg", caption: "Patient-Centric Healthcare Programmes — Community Outreach", cat: "People" },
+  { src: "/media/Events.jpg", caption: "Annual Investor Summit 2024 — Zurich", cat: "Events" },
+  { src: "/media/hospital.jpg", caption: "Natura Health Care Global Headquarters — Basel", cat: "Corporate" },
 ];
 
 // ─── INVESTORS PAGE ────────────────────────────────────────────────────────
@@ -119,11 +119,7 @@ export default function Investors() {
       {/* Hero Section */ }
       <div className="relative bg-[#1a3c22] text-white py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0 z-0">
-          <img loading="lazy" decoding="async"
-            src="https://images.unsplash.com/photo-1571645163064-77faa9676a46?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1440"
-            className="w-full h-full object-cover opacity-20 mix-blend-overlay"
-            alt="Investors Background"
-          />
+         
           <div className="absolute inset-0 bg-gradient-to-r from-[#1a3c22] via-[#1a3c22]/90 to-[#1a3c22]/40"></div>
         </div>
 

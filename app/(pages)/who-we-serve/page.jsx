@@ -9,7 +9,6 @@ export default function WhoWeServe() {
       {/* Hero */}
       <div className="relative bg-[#0f2415] text-white py-20 overflow-hidden">
         <div className="absolute inset-0 z-0 opacity-30 mix-blend-overlay">
-          <img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1440" alt="Hospital Building" className="w-full h-full object-cover" />
         </div>
         <div className="absolute inset-0 bg-gradient-to-r from-[#0f2415] to-[#2A5C32]/80 z-0"></div>
         <div className="relative z-10 max-w-[1440px] mx-auto px-6">
@@ -30,7 +29,7 @@ export default function WhoWeServe() {
       {/* Hospitals & Pharmacies */}
       <section id="hospitals" className="py-20 bg-white scroll-mt-20">
         <div className="max-w-[1440px] mx-auto px-6">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div className="grid lg:grid-cols-2 gap-12 items-center lg:items-stretch">
             <div>
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-12 h-12 rounded-xl bg-green-100 flex items-center justify-center text-[#2A5C32]">
@@ -79,8 +78,8 @@ export default function WhoWeServe() {
                 Partner with Us <ArrowRight size={16} />
               </Link>
             </div>
-            <div className="rounded-3xl overflow-hidden shadow-xl">
-              <img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1587351021759-3e566b6af7cc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800" alt="Hospital" className="w-full h-full object-cover" />
+            <div className="relative rounded-3xl overflow-hidden shadow-xl min-h-[320px] sm:min-h-[420px] lg:min-h-0 lg:self-stretch">
+              <img loading="lazy" decoding="async" src="/media/hospital.jpg" alt="Hospital" className="absolute inset-0 w-full h-full object-cover" />
             </div>
           </div>
         </div>
@@ -91,7 +90,7 @@ export default function WhoWeServe() {
         <div className="max-w-[1440px] mx-auto px-6">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="order-2 lg:order-1 rounded-3xl overflow-hidden shadow-xl">
-              <img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1556740738-b6a63e27c4df?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800" alt="Warehouse" className="w-full h-full object-cover" />
+              <img loading="lazy" decoding="async" src="/media/Distributors.jpg" alt="Warehouse" className="w-full h-full object-cover" />
             </div>
             <div className="order-1 lg:order-2">
               <div className="flex items-center gap-3 mb-4">
@@ -196,7 +195,7 @@ export default function WhoWeServe() {
               </div>
             </div>
             <div className="rounded-3xl overflow-hidden shadow-xl">
-              <img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800" alt="Scientist" className="w-full h-full object-cover" />
+              <img loading="lazy" decoding="async" src="/media/aboutpageBanner.jpg" alt="Scientist" className="w-full h-full object-cover" />
             </div>
           </div>
         </div>

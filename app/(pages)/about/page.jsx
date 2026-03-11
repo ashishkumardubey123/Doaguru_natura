@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Award, Users, Globe2, FlaskConical, CheckCircle, Leaf } from "lucide-react";
+import { ArrowRight, Award, Users, Globe2, FlaskConical, CheckCircle, Leaf, Sparkles } from "lucide-react";
 
 const timeline = [
   { year: "1998", title: "Founded in Ahmedabad", desc: "Natura Health Care started as a small formulation unit with 50 employees and a vision to supply quality generics domestically." },
@@ -16,25 +16,25 @@ const leadership = [
     name: "Dr. Rajesh Mehta",
     role: "Chairman & Managing Director",
     bio: "25+ years in pharmaceutical industry. Former board member of Pharmexcil. Drives Natura's global vision and strategic direction.",
-    image: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=300",
+    image: "/media/abouPageDr.RajeshMehta.jpg",
   },
   {
     name: "Mrs. Priya Sharma",
     role: "Chief Executive Officer",
     bio: "MBA from INSEAD. Led Natura's international expansion across Africa and the Americas. Champion of operational excellence.",
-    image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=300",
+    image: "/media/AboutpageMrs.Priy%20Sharma.jpg",
   },
   {
     name: "Dr. Klaus Weber",
     role: "Chief Scientific Officer",
     bio: "PhD Pharmaceutical Sciences, ETH Zurich. Heads our R&D strategy with 280+ scientists under his leadership.",
-    image: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=300",
+    image: "/media/AboutPageDr.KlausWeber.jpg",
   },
   {
     name: "Mr. Arun Patel",
     role: "Chief Financial Officer",
     bio: "Chartered Accountant with 20+ years of experience in pharmaceutical finance. Led Natura's Series B and C funding rounds.",
-    image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=300",
+    image: "/media/aboutPageMr.%20Arun%20Patel.jpg",
   },
 ];
 
@@ -54,7 +54,7 @@ export default function About() {
       <div className="relative bg-[#1a3c22] text-white py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img loading="lazy" decoding="async"
-            src="https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1440"
+            src="/media/aboutpageBanner.jpg"
             className="w-full h-full object-cover opacity-30 mix-blend-overlay"
             alt="About Us Background"
           />
@@ -79,7 +79,7 @@ export default function About() {
           <div className="grid lg:grid-cols-2 gap-10 md:gap-16 items-center">
             <div className="relative rounded-3xl overflow-hidden h-[300px] sm:h-[380px] lg:h-[500px] shadow-2xl">
               <img loading="lazy" decoding="async"
-                src="https://images.unsplash.com/photo-1757578097654-fdae0f7cf008?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800"
+                src="/media/aboutPage2.jpg"
                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
                 alt="Natura manufacturing"
               />
@@ -147,7 +147,7 @@ export default function About() {
                   <div className={`bg-white rounded-2xl border-2 p-6 lg:p-8 hover:shadow-lg transition-all duration-300 group cursor-pointer`} style={{ borderColor: colors.primary }}>
                     <div className="flex items-center justify-between mb-4 gap-3">
                       <span className="text-xs font-bold text-white px-3 py-1.5 rounded-full" style={{ backgroundColor: colors.primary }}>{item.year}</span>
-                      <span className="text-2xl" style={{ color: colors.primary }}>âœ¦</span>
+                      <Sparkles size={20} style={{ color: colors.primary }} />
                     </div>
                     <div
                       className="font-bold text-xl text-gray-900 mb-3 transition-colors duration-300"
@@ -187,7 +187,7 @@ export default function About() {
                             </div>
                             <span className="text-xs font-bold text-white px-2.5 py-1 rounded-full" style={{ backgroundColor: colors.primary }}>{item.year}</span>
                           </div>
-                          <span className="text-xl" style={{ color: colors.primary }}>âœ¦</span>
+                          <Sparkles size={18} style={{ color: colors.primary }} />
                         </div>
                         <div className="font-bold text-gray-900 mb-2 text-sm" style={{ fontFamily: "'Montserrat', sans-serif", color: colors.primary }}>{item.title}</div>
                         <p className="text-xs text-gray-600 leading-relaxed">{item.desc}</p>

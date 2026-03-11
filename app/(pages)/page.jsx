@@ -7,6 +7,7 @@ import {
   Heart, Brain, Activity, Pill, Globe2, FlaskConical,
   Shield, Award, Users, TrendingUp, Calendar, ExternalLink, MapPin
 } from "lucide-react";
+import { mediaNewsArticles } from "../data/mediaNews";
 
 // â”€â”€â”€ DATA â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const heroSlides = [
@@ -102,30 +103,6 @@ const therapyAreas = [
     products: "45+ Products",
     color: "#fef8e8",
     accent: "#92600a",
-  },
-];
-
-const newsItems = [
-  {
-    date: "February 18, 2025",
-    category: "Press Release",
-    title: "Natura Health Care Receives WHO-GMP Certification for New Injectable Plant",
-    excerpt: "Our third manufacturing facility in Gujarat has received WHO-GMP certification, expanding injectable production capacity by 40%.",
-    image: "https://images.unsplash.com/photo-1581056771085-3ce30d907416?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
-  },
-  {
-    date: "January 30, 2025",
-    category: "Business News",
-    title: "Strategic Partnership Signed with Regional Distributor Across 8 African Nations",
-    excerpt: "This landmark agreement will bring affordable, quality medicines to an additional 200 million potential patients across Sub-Saharan Africa.",
-    image: "https://images.unsplash.com/photo-1571645163064-77faa9676a46?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
-  },
-  {
-    date: "January 10, 2025",
-    category: "R&D Update",
-    title: "Phase III Trials Commence for Novel Cardiovascular Formulation NHC-CV401",
-    excerpt: "Our flagship R&D program advances to Phase III clinical trials, targeting treatment-resistant hypertension patients.",
-    image: "https://images.unsplash.com/photo-1766297246929-3b69ca8b175c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
   },
 ];
 
@@ -262,7 +239,8 @@ function HeroSlider() {
     decoding="async"
     src={s.image}
     alt={s.tag}
-    {/* Updated className: positioning to top instead of center */}
+
+    //  Updated className: positioning to top instead of center 
     className={`hero-slide-media absolute inset-0 m-auto min-w-full min-h-full object-cover object-top w-full h-full ${imageStateClass}`}
     style={{ "--hero-zoom-duration": `${HERO_ZOOM_MS}ms` }}
   />
@@ -408,16 +386,16 @@ export default function Home() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="rounded-2xl overflow-hidden h-48">
-                <img loading="lazy" decoding="async" src="/media/About%201.jpg" className="w-full h-full object-cover" alt="Lab" />
+                <img loading="lazy" decoding="async" src="/media/About1.jpg" className="w-full h-full object-cover" alt="Lab" />
               </div>
               <div className="rounded-2xl overflow-hidden h-48 mt-8">
                 <img loading="lazy" decoding="async" src="/media/about2.jpg" className="w-full h-full object-cover" alt="Research" />
               </div>
               <div className="rounded-2xl overflow-hidden h-48 -mt-4">
-                <img loading="lazy" decoding="async" src="/media/about%203.jpg" className="w-full h-full object-cover" alt="Manufacturing" />
+                <img loading="lazy" decoding="async" src="/media/about3.jpg" className="w-full h-full object-cover" alt="Manufacturing" />
               </div>
               <div className="rounded-2xl overflow-hidden h-48">
-                <img loading="lazy" decoding="async" src="/media/about%204.jpg" className="w-full h-full object-cover" alt="Quality" />
+                <img loading="lazy" decoding="async" src="/media/about4.jpg" className="w-full h-full object-cover" alt="Quality" />
               </div>
             </div>
           </div>
@@ -751,15 +729,15 @@ export default function Home() {
                 Latest from Natura
               </h2>
             </div>
-            <Link href="/media" className="hidden md:flex items-center gap-1 text-sm font-semibold" style={{ color: "#2A5C32" }}>
-              All News <ArrowRight size={15} />
-            </Link>
-          </div>
-          <div className="grid md:grid-cols-3 gap-7">
-            {newsItems.map((item, i) => (
-              <article
-                key={i}
-                className="group rounded-2xl overflow-hidden border border-gray-100 hover:shadow-lg transition-all duration-300 bg-white"
+             <Link href="/media#news" className="hidden md:flex items-center gap-1 text-sm font-semibold" style={{ color: "#2A5C32" }}>
+               All News <ArrowRight size={15} />
+             </Link>
+           </div>
+           <div className="grid md:grid-cols-3 gap-7">
+             {mediaNewsArticles.map((item, i) => (
+               <article
+                 key={i}
+                 className="group rounded-2xl overflow-hidden border border-gray-100 hover:shadow-lg transition-all duration-300 bg-white"
               >
                 <div className="relative h-48 overflow-hidden">
                   <img loading="lazy" decoding="async" src={item.image} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
@@ -775,10 +753,10 @@ export default function Home() {
                     {item.title}
                   </h3>
                   <p className="text-sm text-gray-500 leading-relaxed mb-4">{item.excerpt}</p>
-                  <Link href="/media" className="flex items-center gap-1 text-sm font-semibold" style={{ color: "#2A5C32" }}>
-                    Read More <ExternalLink size={13} />
-                  </Link>
-                </div>
+                   <Link href="/media#news" className="flex items-center gap-1 text-sm font-semibold" style={{ color: "#2A5C32" }}>
+                     Read More <ExternalLink size={13} />
+                   </Link>
+                 </div>
               </article>
             ))}
           </div>

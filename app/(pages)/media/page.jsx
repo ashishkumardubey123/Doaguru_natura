@@ -1,26 +1,6 @@
 import Link from "next/link";
 import { Calendar, ArrowRight, Download, Camera, ExternalLink } from "lucide-react";
-
-const newsArticles = [
-  {
-    date: "February 18, 2025", category: "Manufacturing",
-    title: "WHO-GMP Certification Granted for New Injectable Facility",
-    excerpt: "Our Vadodara injectable facility has passed WHO-GMP inspection, expanding critical medicine production capacity by 40%.",
-    image: "https://images.unsplash.com/photo-1581056771085-3ce30d907416?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600",
-  },
-  {
-    date: "January 30, 2025", category: "Partnerships",
-    title: "8-Country Africa Distribution Deal Signed",
-    excerpt: "A landmark five-year distribution agreement will expand access to Natura's anti-infective and oncology portfolio across Sub-Saharan Africa.",
-    image: "https://images.unsplash.com/photo-1571645163064-77faa9676a46?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600",
-  },
-  {
-    date: "January 15, 2025", category: "R&D",
-    title: "Phase III Trials Begin for NHC-CV401",
-    excerpt: "Our novel cardiovascular compound NHC-CV401 has entered Phase III clinical trials targeting treatment-resistant hypertension.",
-    image: "https://images.unsplash.com/photo-1766297246929-3b69ca8b175c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600",
-  },
-];
+import { mediaNewsArticles } from "../../data/mediaNews";
 
 const pressReleases = [
   { date: "February 18, 2025", category: "Manufacturing", title: "Natura Health Care Receives WHO-GMP Certification for New Injectable Plant in Vadodara", excerpt: "The certification expands parenteral production capacity by 40%.", tag: "New" },
@@ -29,10 +9,10 @@ const pressReleases = [
 ];
 
 const galleryImages = [
-  { src: "https://images.unsplash.com/photo-1757578097654-fdae0f7cf008?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600", caption: "Oral Solids Manufacturing â€” Ahmedabad Unit I" },
-  { src: "https://images.unsplash.com/photo-1576765608689-c0e8f69a46b2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600", caption: "Central R&D Institute" },
-  { src: "https://images.unsplash.com/photo-1581056771085-3ce30d907416?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600", caption: "Injectable Production Line â€” Vadodara" },
-  { src: "https://images.unsplash.com/photo-1766297246929-3b69ca8b175c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600", caption: "QC Laboratory" },
+  { src: "/media/banner1.jpg", caption: "Oral Solids Manufacturing â€” Ahmedabad Unit I" },
+  { src: "/media/manufacturing-CentralR&DInstitute.jpg", caption: "Central R&D Institute" },
+  { src: "/media/about2.jpg", caption: "Injectable Production Line â€” Vadodara" },
+  { src: "/media/bannar2.jpg", caption: "QC Laboratory" },
 ];
 
 export default function Media() {
@@ -56,7 +36,7 @@ export default function Media() {
         <div id="news" className="scroll-mt-24 mb-20">
           <h2 className="text-2xl font-bold text-gray-900 mb-8" style={{ fontFamily: "'Montserrat', sans-serif" }}>Latest News & Articles</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-7">
-            {newsArticles.map((article, i) => (
+            {mediaNewsArticles.map((article, i) => (
               <article key={i} className="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg transition-all">
                 <div className="relative h-48 overflow-hidden">
                   <img loading="lazy" decoding="async" src={article.image} alt={article.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
