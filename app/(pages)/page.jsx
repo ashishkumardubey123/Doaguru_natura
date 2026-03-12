@@ -24,7 +24,7 @@ const heroSlides = [
   },
   {
     id: 2,
-    image: "/media/banner3.jpg",
+    image: "/media/bannar2.jpg",
     tag: "Research & Development",
     headline: "Innovation-Driven R&D\nShaping Tomorrow's Medicines",
     subtext: "Our dedicated research centers develop life-saving formulations, with 120+ active molecules under development.",
