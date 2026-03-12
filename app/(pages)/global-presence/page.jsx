@@ -334,6 +334,7 @@ export default function GlobalPresence() {
         )}
 
         {/* All Offices Table */}
+      {/* All Offices Table */}
         <div>
           <h2
             className="text-xl font-bold text-gray-900 mb-6"
@@ -341,50 +342,91 @@ export default function GlobalPresence() {
           >
             All Office Locations
           </h2>
-          <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
+
+          {/* Desktop Table View (Hidden on Mobile) */}
+          <div className="hidden md:block bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
             <div className="overflow-x-auto">
               <table className="w-full min-w-[760px] text-sm">
-              <thead>
-                <tr className="border-b border-gray-100" style={{ backgroundColor: "#f5f8f5" }}>
-                  <th className="text-left px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-400">City</th>
-                  <th className="text-left px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-400">Country</th>
-                  <th className="text-left px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-400">Region</th>
-                  <th className="text-left px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-400">Type</th>
-                  <th className="text-left px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-400">Contact</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-50">
-                {regions.flatMap((r) =>
-                  r.offices.map((o) => (
-                    <tr key={`${r.id}-${o.city}`} className="hover:bg-gray-50 transition-colors">
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-2">
-                          <MapPin size={13} style={{ color: r.activeColor }} />
-                          <span className="font-semibold text-gray-800">{o.city}</span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 text-gray-600">{o.country}</td>
-                      <td className="px-6 py-4">
-                        <span
-                          className="text-xs font-bold px-2.5 py-1 rounded-full text-white"
-                          style={{ backgroundColor: r.activeColor }}
-                        >
-                          {r.name}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-gray-500">{o.type}</td>
-                      <td className="px-6 py-4">
-                        <div className="flex flex-col gap-0.5">
-                          <span className="text-xs text-gray-500">{o.phone}</span>
-                          <span className="text-xs text-[#2A5C32]">{o.email}</span>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
+                <thead>
+                  <tr className="border-b border-gray-100" style={{ backgroundColor: "#f5f8f5" }}>
+                    <th className="text-left px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-400">City</th>
+                    <th className="text-left px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-400">Country</th>
+                    <th className="text-left px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-400">Region</th>
+                    <th className="text-left px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-400">Type</th>
+                    <th className="text-left px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-400">Contact</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-50">
+                  {regions.flatMap((r) =>
+                    r.offices.map((o) => (
+                      <tr key={`${r.id}-${o.city}`} className="hover:bg-gray-50 transition-colors">
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-2">
+                            <MapPin size={13} style={{ color: r.activeColor }} />
+                            <span className="font-semibold text-gray-800">{o.city}</span>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 text-gray-600">{o.country}</td>
+                        <td className="px-6 py-4">
+                          <span
+                            className="text-xs font-bold px-2.5 py-1 rounded-full text-white"
+                            style={{ backgroundColor: r.activeColor }}
+                          >
+                            {r.name}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 text-gray-500">{o.type}</td>
+                        <td className="px-6 py-4">
+                          <div className="flex flex-col gap-0.5">
+                            <span className="text-xs text-gray-500">{o.phone}</span>
+                            <span className="text-xs text-[#2A5C32]">{o.email}</span>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
               </table>
             </div>
+          </div>
+
+          {/* Mobile Card View (Hidden on Desktop) */}
+          <div className="md:hidden flex flex-col gap-4">
+            {regions.flatMap((r) =>
+              r.offices.map((o) => (
+                <div key={`mobile-${r.id}-${o.city}`} className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm flex flex-col gap-3">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <MapPin size={15} style={{ color: r.activeColor }} />
+                        <span className="font-bold text-gray-900 text-base">{o.city}</span>
+                      </div>
+                      <div className="text-sm text-gray-500 ml-6">{o.country}</div>
+                    </div>
+                    <span
+                      className="text-[10px] font-bold px-2 py-1 rounded-full text-white"
+                      style={{ backgroundColor: r.activeColor }}
+                    >
+                      {r.name}
+                    </span>
+                  </div>
+                  
+                  <div className="ml-6 pt-3 border-t border-gray-50">
+                    <span className="text-xs font-medium text-gray-500 mb-2 block">{o.type}</span>
+                    <div className="flex flex-col gap-1.5">
+                      <div className="flex items-center gap-2 text-sm text-gray-600">
+                        <Phone size={13} className="text-gray-400" />
+                        <span>{o.phone}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-[#2A5C32]">
+                        <Mail size={13} className="text-[#2A5C32]" />
+                        <span>{o.email}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </div>
