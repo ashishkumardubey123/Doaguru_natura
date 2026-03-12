@@ -1,17 +1,20 @@
 import axios from 'axios';
 
 const API_BASE_URL = "http://localhost:5000" || '';
+const getAuthConfig = (token) => ({
+  withCredentials: true,
+  headers: token
+    ? {
+        Authorization: `Bearer ${token}`
+      }
+    : undefined
+});
 
 // 1. GET Request: Yahan 2nd parameter config hota hai
 export const fetchFormsData = async (token) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/api/form/data`, {
-      withCredentials: true, // <--- YAHAN LAGAANA HAI
-      headers: {
-        Authorization: `Bearer ${token}` // (Agar Cookie set ho gayi hai toh iski zarurat nahi, par abhi ke liye rakh sakte hain)
-      }
-    });
-    return response.data.data || response.data;
+    const response = await axios.get(`${API_BASE_URL}/api/form/data`, getAuthConfig(token));
+    return response.data;
   } catch (error) {
     console.error('Error fetching forms:', error);
     throw error;
@@ -81,12 +84,7 @@ export const updateFormStatus = async (id, status, tableName, token) => {
       status: status,
       tableName: tableName 
     }, 
-    {
-      withCredentials: true, // <--- YAHAN LAGAANA HAI (3rd parameter)
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
+    getAuthConfig(token));
     return response.data;
   } catch (error) {
     console.error('Error updating form status:', error);

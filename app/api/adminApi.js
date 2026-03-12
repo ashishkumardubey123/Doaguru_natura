@@ -2,6 +2,15 @@ import axios from 'axios';
 
 const API_BASE_URL = "http://localhost:5000" || '';
 
+const getAuthConfig = (token) => ({
+  withCredentials: true,
+  headers: token
+    ? {
+        Authorization: `Bearer ${token}`
+      }
+    : undefined
+});
+
 export const registerAdmin = async (name, email, phone, role, password) => {
  try {
     const response = await axios.post(`${API_BASE_URL}/api/admin/register`, 
@@ -30,14 +39,34 @@ export const loginAdmin = async (email, password) => {
 
 export const logoutAdmin = async (token) => {
   try {
-    const response = await axios.post(`${API_BASE_URL}/api/admin/logout`, {}, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
+    const response = await axios.post(`${API_BASE_URL}/api/admin/logout`, {}, getAuthConfig(token));
     return response.data;
   } catch (error) {
     console.error('Error logging out admin:', error);
+    throw error;
+  }
+};
+
+export const fetchPendingAdmins = async (token) => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/api/admin/pending`, getAuthConfig(token));
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching pending admins:', error);
+    throw error;
+  }
+};
+
+export const updateAdminStatus = async (id, status, token) => {
+  try {
+    const response = await axios.put(
+      `${API_BASE_URL}/api/admin/update-status/${id}`,
+      { status },
+      getAuthConfig(token)
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error updating admin status:', error);
     throw error;
   }
 };

@@ -81,6 +81,14 @@ export default function AdminRegister() {
           </p>
         </div>
 
+        <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+          <p className="font-semibold">Approval rules</p>
+          <p className="mt-1 text-xs leading-relaxed">
+            Admin accounts are created with pending status and can access data only after Super Admin approval.
+            Super Admin account is unique and only one active Super Admin can exist.
+          </p>
+        </div>
+
         {/* Form Section */}
         <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
           
@@ -204,6 +212,12 @@ export default function AdminRegister() {
                   </svg>
                 </div>
               </div>
+              <p className="mt-1.5 ml-1 text-xs text-slate-500 flex items-center gap-1">
+                <Info size={12} className="text-[#2A5C32]" />
+                {formData.role === 'Admin'
+                  ? 'Admin access stays pending until a Super Admin approves it.'
+                  : 'Super Admin is unique. Registration will fail if one already exists.'}
+              </p>
             </div>
 
             {/* Password Input */}

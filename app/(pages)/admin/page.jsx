@@ -1,50 +1,323 @@
 'use client';
 
-import { useState, useEffect, useContext, useMemo } from 'react';
+import { useState, useEffect, useContext, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { UserContext } from '@/dataContext/UserContext';
 import { FormsContext } from '@/dataContext/FormsContext';
-import { 
-  LogOut, 
-  CheckCircle, 
-  Clock, 
-  Loader2, 
-  Mail, 
-  Phone, 
-  LayoutDashboard,
-  Inbox,
-  CheckSquare,
-  UserCircle,
-  Database,
-  ExternalLink
+import { fetchPendingAdmins as fetchPendingAdminsApi, updateAdminStatus as updateAdminStatusApi } from '@/app/api/adminApi';
+import {
+  LogOut, CheckCircle, Clock, Loader2, Mail, Phone,
+  LayoutDashboard, Inbox, CheckSquare, UserCircle,
+  Database, ExternalLink, ShieldCheck, AlertTriangle,
+  RefreshCcw, Users, Leaf
 } from 'lucide-react';
 
+/* ─────────────────────────────────────────────
+   Normalize helper (unchanged)
+───────────────────────────────────────────── */
+const normalizePendingAdmins = (payload) => {
+  const normalizeStatus = (status) =>
+    String(status || '').trim().toLowerCase() === 'live' ? 'live' : 'pending';
+
+  const normalizeAdminItem = (admin = {}) => ({
+    ...admin,
+    AdminID: admin.AdminID ?? admin.adminId ?? admin.id ?? null,
+    Name: admin.Name ?? admin.name ?? 'Unnamed Admin',
+    Email: admin.Email ?? admin.email ?? '-',
+    Phone: admin.Phone ?? admin.phone ?? '-',
+    Role: admin.Role ?? admin.role ?? 'Admin',
+    status: normalizeStatus(admin.status ?? admin.Status),
+  });
+
+  const normalizeArray = (items) =>
+    Array.isArray(items)
+      ? items
+          .map(normalizeAdminItem)
+          .filter(
+            (item) =>
+              item.AdminID !== null &&
+              String(item.Role || '').toLowerCase() !== 'superadmin'
+          )
+      : [];
+
+  const firstArray = (...candidates) => candidates.find(Array.isArray);
+
+  const pendingGroup = firstArray(
+    payload?.pendingAdmins, payload?.pending,
+    payload?.data?.pendingAdmins, payload?.data?.pending, payload?.data?.pendingList
+  );
+  const liveGroup = firstArray(
+    payload?.liveAdmins, payload?.live,
+    payload?.data?.liveAdmins, payload?.data?.live, payload?.data?.liveList
+  );
+
+  if (Array.isArray(pendingGroup) || Array.isArray(liveGroup)) {
+    return { pending: normalizeArray(pendingGroup || []), live: normalizeArray(liveGroup || []) };
+  }
+
+  const combined = normalizeArray(
+    firstArray(payload?.data, payload?.admins, payload?.data?.admins, payload)
+  );
+  return combined.reduce(
+    (acc, item) => { item.status === 'live' ? acc.live.push(item) : acc.pending.push(item); return acc; },
+    { pending: [], live: [] }
+  );
+};
+
+/* ─────────────────────────────────────────────
+   Stat card config
+───────────────────────────────────────────── */
+const statCards = [
+  { key: 'total',    label: 'Total Records',  note: 'All incoming inquiries',   icon: Inbox,       accent: '#2A5C32', bg: '#eef5ef', border: '#cfe0d1' },
+  { key: 'pending',  label: 'Pending Review', note: 'Needs admin attention',    icon: Clock,       accent: '#8a4a1c', bg: '#f8f0e6', border: '#e4ccac' },
+  { key: 'reviewed', label: 'Completed',      note: 'Reviewed submissions',     icon: CheckSquare, accent: '#1a5c38', bg: '#e8f6ec', border: '#b8ddc4' },
+];
+
+/* ─────────────────────────────────────────────
+   Tiny Avatar component
+───────────────────────────────────────────── */
+function Avatar({ name, size = 38 }) {
+  const initials = name.split(' ').map((n) => n[0]).join('').slice(0, 2).toUpperCase();
+  const hues = [152, 30, 200, 280, 340, 60];
+  const hue = hues[name.charCodeAt(0) % hues.length];
+  return (
+    <div style={{
+      width: size, height: size, borderRadius: '50%', flexShrink: 0,
+      background: `hsl(${hue},38%,80%)`, color: `hsl(${hue},50%,24%)`,
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      fontWeight: 800, fontSize: size * 0.34, fontFamily: "'Outfit', sans-serif",
+      letterSpacing: '-0.01em',
+    }}>
+      {initials}
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────
+   Admin Card
+───────────────────────────────────────────── */
+function AdminCard({ admin, index, isPending, onAction, isLoading }) {
+  const [hovered, setHovered] = useState(false);
+
+  return (
+    <article
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        background: '#fff',
+        border: `1.5px solid ${hovered ? (isPending ? '#e8c9a0' : '#a8d8b4') : (isPending ? '#f0e0cc' : '#ceebd6')}`,
+        borderRadius: 18,
+        padding: '16px 18px',
+        display: 'flex', flexDirection: 'column', gap: 14,
+        transition: 'border-color 0.2s, box-shadow 0.25s, transform 0.2s',
+        boxShadow: hovered ? '0 10px 32px rgba(0,0,0,0.09)' : '0 2px 8px rgba(0,0,0,0.04)',
+        transform: hovered ? 'translateY(-2px)' : 'none',
+      }}
+    >
+      {/* Top row */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, justifyContent: 'space-between' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 11 }}>
+          <Avatar name={admin.Name} />
+          <div>
+            <p style={{
+              fontSize: 14, fontWeight: 700, color: '#0e1f12',
+              fontFamily: "'Outfit', sans-serif", margin: 0, lineHeight: 1.3,
+            }}>
+              {admin.Name}
+            </p>
+            <span style={{
+              display: 'inline-flex', alignItems: 'center', gap: 5, marginTop: 4,
+              padding: '2px 9px', borderRadius: 99,
+              fontSize: 10, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase',
+              background: isPending ? '#fef2e4' : '#e6f7ec',
+              color: isPending ? '#8a4a1c' : '#1a6b3c',
+              border: `1px solid ${isPending ? '#f0d0a0' : '#aadfba'}`,
+            }}>
+              <span style={{
+                width: 5, height: 5, borderRadius: '50%',
+                background: isPending ? '#e07030' : '#28b858',
+                display: 'inline-block',
+              }} />
+              {admin.status || (isPending ? 'pending' : 'live')}
+            </span>
+          </div>
+        </div>
+        <span style={{
+          width: 26, height: 26, borderRadius: '50%', flexShrink: 0,
+          background: isPending ? '#fdf0e2' : '#e6f5ec',
+          color: isPending ? '#8a4a1c' : '#1a6b3c',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontSize: 10, fontWeight: 800, fontFamily: "'Outfit', sans-serif",
+        }}>
+          {index + 1}
+        </span>
+      </div>
+
+      {/* Contact */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 5, paddingLeft: 2 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 7, color: '#5a7060', fontSize: 12 }}>
+          <Mail size={12} style={{ color: '#88aa8c', flexShrink: 0 }} />
+          <span style={{ fontFamily: "'DM Mono', monospace", fontSize: 11.5 }}>{admin.Email}</span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 7, color: '#5a7060', fontSize: 12 }}>
+          <Phone size={12} style={{ color: '#88aa8c', flexShrink: 0 }} />
+          <span>{admin.Phone || '—'}</span>
+        </div>
+      </div>
+
+      {/* Action button */}
+      <button
+        onClick={() => onAction(admin.AdminID, isPending ? 'live' : 'pending')}
+        disabled={isLoading}
+        style={{
+          display: 'inline-flex', alignItems: 'center', gap: 7,
+          padding: '9px 16px', borderRadius: 99, border: 'none',
+          fontSize: 12, fontWeight: 700, fontFamily: "'Outfit', sans-serif",
+          background: isPending
+            ? 'linear-gradient(135deg, #2a6e38 0%, #1c4d28 100%)'
+            : 'linear-gradient(135deg, #7c4010 0%, #5a2e0c 100%)',
+          color: '#fff', cursor: isLoading ? 'not-allowed' : 'pointer',
+          opacity: isLoading ? 0.6 : 1,
+          transition: 'opacity 0.2s, transform 0.15s',
+          alignSelf: 'flex-start',
+          letterSpacing: '0.01em',
+        }}
+        onMouseEnter={(e) => { if (!isLoading) e.currentTarget.style.transform = 'scale(1.04)'; }}
+        onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)'; }}
+      >
+        {isLoading
+          ? <Loader2 size={13} className="animate-spin" />
+          : isPending ? <ShieldCheck size={13} /> : <Clock size={13} />
+        }
+        {isPending ? 'Make Live' : 'Move to Pending'}
+      </button>
+    </article>
+  );
+}
+
+/* ─────────────────────────────────────────────
+   Admin Status Column
+───────────────────────────────────────────── */
+function AdminColumn({ title, admins, isPending, onAction, loadingId }) {
+  return (
+    <div style={{
+      flex: 1, minWidth: 0, borderRadius: 20, overflow: 'hidden',
+      border: `1.5px solid ${isPending ? '#ead8c0' : '#b8ddc4'}`,
+      background: isPending ? '#fffbf6' : '#f6fcf8',
+      display: 'flex', flexDirection: 'column',
+    }}>
+      {/* Column header */}
+      <div style={{
+        padding: '13px 18px', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        borderBottom: `1px solid ${isPending ? '#f0e0cc' : '#ceebd6'}`,
+        background: isPending ? '#fdf5ec' : '#eef8f2',
+      }}>
+        <span style={{
+          fontSize: 11, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.16em',
+          color: isPending ? '#7c4010' : '#1a6030', fontFamily: "'Outfit', sans-serif",
+        }}>
+          {title}
+        </span>
+        <span style={{
+          padding: '3px 10px', borderRadius: 99, fontSize: 11, fontWeight: 800,
+          background: isPending ? '#f8e8d4' : '#d8f0e4',
+          color: isPending ? '#7c4010' : '#1a6030',
+          border: `1px solid ${isPending ? '#e8c8a0' : '#a8d8b4'}`,
+          fontFamily: "'Outfit', sans-serif",
+        }}>
+          {admins.length}
+        </span>
+      </div>
+
+      {/* Scrollable list */}
+      <div style={{ padding: 14, display: 'flex', flexDirection: 'column', gap: 10, overflowY: 'auto', maxHeight: 420 }}>
+        {admins.length === 0 ? (
+          <div style={{
+            border: '1.5px dashed #cddecf', borderRadius: 14,
+            padding: '36px 20px', textAlign: 'center',
+            background: '#fff', color: '#8aaa8c',
+            fontFamily: "'Outfit', sans-serif", fontSize: 13, fontWeight: 600,
+          }}>
+            {isPending ? 'No pending admins.' : 'No live admins found.'}
+          </div>
+        ) : (
+          admins.map((admin, i) => (
+            <AdminCard
+              key={`${isPending ? 'p' : 'l'}-${admin.AdminID}`}
+              admin={admin} index={i}
+              isPending={isPending}
+              onAction={onAction}
+              isLoading={loadingId === admin.AdminID}
+            />
+          ))
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────
+   Main Dashboard
+───────────────────────────────────────────── */
 export default function AdminDashboard() {
   const { user, loading: userLoading, logout } = useContext(UserContext);
   const [updatingId, setUpdatingId] = useState(null);
-  const { 
-    forms, 
-    loading: formsLoading, 
-    fetchForms, 
-    updateStatus, 
-    currentRecords, 
-    currentPage, 
-    recordsPerPage,
-    totalPages, 
-    paginate 
+  const [pendingAdmins, setPendingAdmins] = useState([]);
+  const [liveAdmins, setLiveAdmins] = useState([]);
+  const [pendingAdminsLoading, setPendingAdminsLoading] = useState(false);
+  const [pendingAdminsError, setPendingAdminsError] = useState('');
+  const [pendingAdminsNotice, setPendingAdminsNotice] = useState('');
+  const [approvingAdminId, setApprovingAdminId] = useState(null);
+
+  const {
+    forms, loading: formsLoading, accessState, fetchForms, updateStatus,
+    currentRecords, currentPage, recordsPerPage, totalPages, paginate,
   } = useContext(FormsContext);
-  
+
   const router = useRouter();
+  const isSuperAdmin = user?.role === 'SuperAdmin';
+  const isPendingAdmin = !isSuperAdmin && accessState.status === 'pending';
+  const userName  = user?.name  ?? '';
+  const userEmail = user?.email ?? '';
+  const userRole  = user?.role  ?? '';
+  const userToken = user?.token ?? null;
+
+  const loadPendingAdmins = useCallback(async (tokenOverride = userToken) => {
+    setPendingAdminsLoading(true);
+    setPendingAdminsError('');
+    try {
+      const data = await fetchPendingAdminsApi(tokenOverride);
+      const normalized = normalizePendingAdmins(data);
+      setPendingAdmins(normalized.pending);
+      setLiveAdmins(normalized.live);
+      return { success: true, data };
+    } catch (error) {
+      setPendingAdmins([]);
+      setLiveAdmins([]);
+      setPendingAdminsError(error.response?.data?.message || error.message || 'Failed to fetch pending admins');
+      return { success: false, error };
+    } finally {
+      setPendingAdminsLoading(false);
+    }
+  }, [userToken]);
 
   useEffect(() => {
-    if (!userLoading) {
-      if (!user) {
-        router.push('/admin/login');
+    let active = true;
+    const syncDashboardData = async () => {
+      if (userLoading) return;
+      if (!userToken && !userRole && !userEmail && !userName) { router.push('/admin/login'); return; }
+      await fetchForms();
+      if (!active) return;
+      if (userRole === 'SuperAdmin') {
+        await loadPendingAdmins(userToken);
       } else {
-        fetchForms();
+        setPendingAdmins([]); setLiveAdmins([]);
+        setPendingAdminsNotice(''); setPendingAdminsError('');
       }
-    }
-  }, [user, userLoading, router, fetchForms]);
+    };
+    syncDashboardData();
+    return () => { active = false; };
+  }, [userLoading, userName, userEmail, userRole, userToken, router, fetchForms, loadPendingAdmins]);
 
   const handleStatusChange = async (id, newStatus, tableName) => {
     setUpdatingId(id);
@@ -53,212 +326,593 @@ export default function AdminDashboard() {
     if (!result.success) alert(result.message || 'Failed to update status');
   };
 
-  const handleLogout = () => {
-    logout();
-    router.push('/admin/login');
+  const handleAdminApproval = async (adminId, nextStatus = 'live') => {
+    setApprovingAdminId(adminId);
+    setPendingAdminsNotice(''); setPendingAdminsError('');
+    try {
+      const result = await updateAdminStatusApi(adminId, nextStatus, userToken);
+      setPendingAdminsNotice(result.message || `Admin status updated to ${nextStatus}`);
+      await loadPendingAdmins(userToken);
+    } catch (error) {
+      setPendingAdminsError(error.response?.data?.message || error.message || 'Failed to update admin status');
+    } finally {
+      setApprovingAdminId(null);
+    }
   };
 
+  const handleLogout = () => { logout(); router.push('/admin/login'); };
+
   const stats = useMemo(() => {
-    const total = forms.length;
-    const newSubmissions = forms.filter(f => f.status === 'new').length;
-    const reviewed = forms.filter(f => f.status === 'reviewed').length;
+    const total    = forms.length;
+    const newSubmissions = forms.filter((f) => f.status === 'new').length;
+    const reviewed = forms.filter((f) => f.status === 'reviewed').length;
     return { total, newSubmissions, reviewed };
   }, [forms]);
 
-  const getDetailSection = (data) => {
-    return data.companyProfile || data.details || data.message || '-';
-  };
+  const statValues = { total: stats.total, pending: stats.newSubmissions, reviewed: stats.reviewed };
 
-  const getCompanySection = (data) => {
-    return data.company || '-';
-  };
+  const getDetailSection  = (d) => d.companyProfile || d.details || d.message || '-';
+  const getCompanySection = (d) => d.company || '-';
+  const getCountrySection = (d) => d.country || '-';
+  const getProductsSection= (d) => d.products || '-';
+  const getContextSection = (d) => d.partnership || d.supplyCategory || '-';
 
-  const getCountrySection = (data) => {
-    return data.country || '-';
-  };
-
-  const getProductsSection = (data) => {
-    return data.products || '-';
-  };
-
-  const getContextSection = (data) => {
-    return data.partnership || data.supplyCategory || '-';
-  };
-
-  if (userLoading || formsLoading) return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 gap-5">
-      <Loader2 className="w-12 h-12 text-[#2A5C32] animate-spin" />
-      <p className="text-slate-500 font-medium animate-pulse">Syncing Database...</p>
-    </div>
-  );
+  /* ── Loading screen ── */
+  if (userLoading || (formsLoading && accessState.status === 'idle')) {
+    return (
+      <div style={{
+        minHeight: '100vh', display: 'flex', flexDirection: 'column',
+        alignItems: 'center', justifyContent: 'center',
+        background: 'linear-gradient(135deg,#0d1f12 0%,#1c3822 100%)',
+        gap: 20, fontFamily: "'Outfit', sans-serif",
+      }}>
+        <style>{`@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=DM+Mono:wght@400;500&display=swap');`}</style>
+        <Loader2 style={{ width: 44, height: 44, color: '#6abf7c' }} className="animate-spin" />
+        <p style={{ color: '#a0c8a8', fontWeight: 600, fontSize: 14, letterSpacing: '0.04em' }}>
+          Syncing Natura Admin Console…
+        </p>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-[#F1F5F9] text-slate-900" style={{ fontFamily: "'Inter', sans-serif" }}>
-      
-      {/* 🟢 Compact Topbar */}
-      <header className="bg-[#1e293b] text-white sticky top-0 z-30 shadow-sm">
-        <div className="max-w-full mx-auto px-6 h-14 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <LayoutDashboard size={20} className="text-emerald-400" />
-            <span className="font-bold text-lg tracking-tight">Natura <span className="text-emerald-400">Admin</span></span>
-          </div>
+    <div style={{
+      minHeight: '100vh',
+      background: '#f7f7f5',
+      fontFamily: "'Outfit', sans-serif",
+      color: '#1a2e1e',
+    }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=DM+Mono:wght@400;500&display=swap');
+        * { box-sizing: border-box; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #c8d8ca; border-radius: 99px; }
+        .row-hover:hover { background: #f2faf4 !important; }
+        .btn-hover:hover { opacity: 0.88; transform: translateY(-1px); }
+      `}</style>
 
-          <div className="flex items-center gap-6">
-            <div className="flex items-center gap-2 text-xs font-medium bg-white/10 py-1 px-3 rounded text-slate-200 border border-white/5">
-              <UserCircle size={14} />
-              {user?.name || 'Admin'}
+
+
+      {/* ── Header ── */}
+      <header style={{
+        position: 'sticky', top: 0, zIndex: 30,
+        background: '#05330d',
+        backdropFilter: 'blur(12px)',
+        borderBottom: '1px solid rgba(52, 236, 83, 0.25)',
+        boxShadow: '0 4px 32px rgba(0,0,0,0.35)',
+      }}>
+        <div style={{
+          maxWidth: 1440, margin: '0 auto', padding: '0 24px',
+          height: 64, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16,
+        }}>
+          {/* Brand */}
+         
+
+          {/* Right controls */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: 7,
+              padding: '6px 14px', borderRadius: 99,
+              background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)',
+              color: '#d0dfd2', fontSize: 12, fontWeight: 500,
+            }}>
+              <UserCircle size={13} />
+              <span>{user?.name || 'Admin'}</span>
             </div>
-             <div className="text-xs font-bold hover:text-red-400 hover:bg-red transition-colors flex items-center gap-1" >
-            <button onClick={handleLogout} className="text-xs font-bold hover:text-red-400 hover:bg-red transition-colors flex items-center gap-1">
-              <LogOut size={14} /> LOGOUT
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: 6,
+              padding: '6px 14px', borderRadius: 99,
+              background: 'rgba(58,128,72,0.2)', border: '1px solid rgba(100,180,110,0.2)',
+              color: '#90d8a0', fontSize: 11, fontWeight: 700, letterSpacing: '0.06em',
+            }}>
+              <ShieldCheck size={12} />
+              <span>{isSuperAdmin ? 'SUPER ADMIN' : isPendingAdmin ? 'ADMIN — PENDING' : 'ADMIN — LIVE'}</span>
+            </div>
+            <button
+              onClick={handleLogout}
+              className="btn-hover"
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: 6,
+                padding: '7px 16px', borderRadius: 99, border: 'none',
+                background: 'rgba(255,255,255,0.07)',
+                border: '1px solid rgba(255,255,255,0.1)',
+                color: '#d0dfd2', fontSize: 11, fontWeight: 700, cursor: 'pointer',
+                letterSpacing: '0.06em', transition: 'opacity 0.2s, transform 0.2s',
+              }}
+            >
+              <LogOut size={13} /> LOGOUT
             </button>
-           </div>
-
           </div>
         </div>
       </header>
 
-      <main className="p-6">
-        
-        {/* 📊 Summary Row */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          {[
-            { label: 'Total Records', val: stats.total, icon: Inbox, color: 'text-blue-600', bg: 'bg-blue-50' },
-            { label: 'Pending Review', val: stats.newSubmissions, icon: Clock, color: 'text-amber-600', bg: 'bg-amber-50' },
-            { label: 'Completed', val: stats.reviewed, icon: CheckSquare, color: 'text-emerald-600', bg: 'bg-emerald-50' }
-          ].map((s, i) => (
-            <div key={i} className="bg-white p-4 rounded-lg border border-slate-200 flex items-center gap-4 shadow-sm">
-              <div className={`p-3 rounded-md ${s.bg} ${s.color}`}><s.icon size={20} /></div>
-              <div>
-                <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">{s.label}</p>
-                <p className="text-xl font-black">{s.val}</p>
+      {/* ── Main ── */}
+      <main style={{ maxWidth: 1440, margin: '0 auto', padding: '32px 24px 60px' }}>
+
+        {/* ━━━ PENDING ADMIN VIEW ━━━ */}
+        {isPendingAdmin ? (
+          <section style={{ maxWidth: 680, margin: '0 auto' }}>
+            <div style={{
+              background: '#fff', borderRadius: 28,
+              border: '1.5px solid #d4e0d6',
+              boxShadow: '0 24px 70px -30px rgba(15,36,21,0.18)',
+              overflow: 'hidden',
+            }}>
+              <div style={{
+                padding: '24px 28px',
+                borderBottom: '1px solid #e4ece4',
+                background: 'linear-gradient(135deg,#f4fbf5 0%,#f0e8da 100%)',
+                display: 'flex', alignItems: 'flex-start', gap: 14,
+              }}>
+                <div style={{
+                  width: 44, height: 44, borderRadius: 12, flexShrink: 0,
+                  background: 'linear-gradient(135deg,#c87820,#9a5614)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  boxShadow: '0 4px 14px rgba(160,100,30,0.3)',
+                }}>
+                  <Clock size={20} style={{ color: '#fff' }} />
+                </div>
+                <div>
+                  <h1 style={{ fontSize: 20, fontWeight: 800, color: '#0e1e12', margin: 0 }}>
+                    Access Pending Approval
+                  </h1>
+                  <p style={{ fontSize: 13, color: '#5a6e5c', margin: '6px 0 0', lineHeight: 1.6 }}>
+                    Your account has been created. Data access will begin once a Super Admin marks your status as live.
+                  </p>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
 
-        {/* 📋 Excel-Style Table Container */}
-        <div className="bg-white rounded-lg border border-slate-300 shadow-xl overflow-hidden">
-          <div className="px-4 py-3 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
-            <h2 className="text-sm font-bold text-slate-700 uppercase tracking-tighter flex items-center gap-2">
-              <Database size={16} /> Database Management
-            </h2>
-          </div>
+              <div style={{ padding: '24px 28px', display: 'flex', flexDirection: 'column', gap: 16 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                  <div style={{ borderRadius: 16, border: '1.5px solid #d8e8da', background: '#f6fcf7', padding: '14px 18px' }}>
+                    <p style={{ fontSize: 10, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.14em', color: '#7a9a80', margin: 0 }}>Account Role</p>
+                    <p style={{ fontSize: 15, fontWeight: 700, color: '#0e1e12', margin: '8px 0 0' }}>{user?.role || 'Admin'}</p>
+                  </div>
+                  <div style={{ borderRadius: 16, border: '1.5px solid #e8d4bc', background: '#fdf6ec', padding: '14px 18px' }}>
+                    <p style={{ fontSize: 10, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.14em', color: '#9a7050', margin: 0 }}>Current Status</p>
+                    <p style={{ fontSize: 15, fontWeight: 700, color: '#8a4010', margin: '8px 0 0' }}>Pending Approval</p>
+                  </div>
+                </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse table-auto">
-              <thead>
-                <tr className="bg-slate-100 border-b border-slate-300">
-                  <th className="px-4 py-2.5 border-r border-slate-300 text-[11px] font-bold text-slate-600 uppercase w-12 text-center">#</th>
-                  <th className="px-4 py-2.5 border-r border-slate-300 text-[11px] font-bold text-slate-600 uppercase">Timestamp</th>
-                  <th className="px-4 py-2.5 border-r border-slate-300 text-[11px] font-bold text-slate-600 uppercase">Source</th>
-                  <th className="px-4 py-2.5 border-r border-slate-300 text-[11px] font-bold text-slate-600 uppercase">Client Name</th>
-                  <th className="px-4 py-2.5 border-r border-slate-300 text-[11px] font-bold text-slate-600 uppercase">Contact Info</th>
-                  <th className="px-4 py-2.5 border-r border-slate-300 text-[11px] font-bold text-slate-600 uppercase">Company</th>
-                  <th className="px-4 py-2.5 border-r border-slate-300 text-[11px] font-bold text-slate-600 uppercase">Country</th>
-                  <th className="px-4 py-2.5 border-r border-slate-300 text-[11px] font-bold text-slate-600 uppercase">Products</th>
-                  <th className="px-4 py-2.5 border-r border-slate-300 text-[11px] font-bold text-slate-600 uppercase">Context</th>
-                  <th className="px-4 py-2.5 border-r border-slate-300 text-[11px] font-bold text-slate-600 uppercase">Message/Details </th>
-                  <th className="px-4 py-2.5 text-[11px] font-bold text-slate-600 uppercase text-center">Action</th>
-                </tr>
-              </thead>
-              <tbody className="text-[13px] divide-y divide-slate-200">
-                {currentRecords.length === 0 ? (
-                  <tr><td colSpan="11" className="p-20 text-center text-slate-400 italic">No records found in database.</td></tr>
-                ) : (
-                  currentRecords.map((sub, idx) => (
-                    <tr key={sub.id} className="hover:bg-blue-50/40 even:bg-slate-50/50 transition-colors">
-                      <td className="px-4 py-3 border-r border-slate-200 text-center text-slate-400 font-mono">
-                        {(currentPage - 1) * recordsPerPage + (idx + 1)}
-                      </td>
-                      <td className="px-4 py-3 border-r border-slate-200 whitespace-nowrap">
-                        <div className="font-semibold text-slate-700">{new Date(sub.date).toLocaleDateString('en-GB')}</div>
-                        <div className="text-[10px] text-slate-400">{new Date(sub.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
-                      </td>
-                      <td className="px-4 py-3 border-r border-slate-200">
-                        <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-indigo-50 text-indigo-600 border border-indigo-100 uppercase">
-                          {sub.type || sub.tableName}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3 border-r border-slate-200 font-bold text-slate-800">
-                        {sub.data.name || '-'}
-                      </td>
-                      <td className="px-4 py-3 border-r border-slate-200">
-                        <div className="flex flex-col gap-1">
-                          {sub.data.email && (
-                            <a href={`mailto:${sub.data.email}`} className="text-blue-600 hover:text-blue-800 flex items-center gap-1 group w-fit">
-                              <Mail size={12} /> {sub.data.email} 
-                              <ExternalLink size={10} className="opacity-0 group-hover:opacity-100" />
-                            </a>
-                          )}
-                          {sub.data.phone && (
-                            <a href={`tel:${sub.data.phone}`} className="text-emerald-700 font-semibold hover:text-emerald-900 flex items-center gap-1 group w-fit">
-                              <Phone size={12} /> {sub.data.phone}
-                              <ExternalLink size={10} className="opacity-0 group-hover:opacity-100" />
-                            </a>
-                          )}
-                        </div>
-                      </td>
-                      <td className="px-4 py-3 border-r border-slate-200">
-                        <div className="text-slate-700 font-medium">{getCompanySection(sub.data)}</div>
-                      </td>
-                      <td className="px-4 py-3 border-r border-slate-200">
-                        <div className="text-slate-700">{getCountrySection(sub.data)}</div>
-                      </td>
-                      <td className="px-4 py-3 border-r border-slate-200">
-                        <div className="text-slate-700">{getProductsSection(sub.data)}</div>
-                      </td>
-                      <td className="px-4 py-3 border-r border-slate-200">
-                        <div className="text-slate-700">{getContextSection(sub.data)}</div>
-                      </td>
-                      <td className="px-4 py-3 border-r border-slate-200 max-w-xs">
-                        <p className="line-clamp-2 text-slate-600 leading-snug" title={getDetailSection(sub.data)}>
-                          {getDetailSection(sub.data)}
-                        </p>
-                      </td>
-                      <td className="px-4 py-3 text-center">
-                        {sub.status === 'new' ? (
-                          <button 
-                            onClick={() => handleStatusChange(sub.id, 'reviewed', sub.tableName)}
-                            disabled={updatingId === sub.id}
-                            className="bg-amber-500 hover:bg-amber-600 text-white text-[10px] font-black px-3 py-1.5 rounded shadow-sm flex items-center gap-1 mx-auto transition-all disabled:opacity-50"
-                          >
-                            {updatingId === sub.id ? <Loader2 size={12} className="animate-spin" /> : 'PENDING'}
-                          </button>
-                        ) : (
-                          <span className="text-emerald-500 font-bold text-[10px] flex items-center justify-center gap-1">
-                            <CheckCircle size={14} /> REVIEWED
-                          </span>
-                        )}
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
+                <div style={{ borderRadius: 16, border: '1.5px solid #d8e8da', background: '#f6fcf7', padding: '14px 18px' }}>
+                  <p style={{ fontSize: 12, fontWeight: 700, color: '#0e1e12', margin: 0 }}>Backend Response</p>
+                  <p style={{ fontSize: 13, color: '#5a6e5c', margin: '6px 0 0', lineHeight: 1.6 }}>
+                    {accessState.message || 'Status pending — waiting for approval.'}
+                  </p>
+                </div>
 
-          {/* 🎯 Excel Pagination */}
-          {totalPages > 1 && (
-            <div className="bg-slate-50 px-4 py-3 border-t border-slate-300 flex flex-col items-center gap-2 lg:grid lg:grid-cols-[1fr_auto_1fr] lg:items-center">
-              <span className="text-[11px] font-bold text-slate-500 uppercase lg:justify-self-start">Page {currentPage} of {totalPages}</span>
-              <div className="flex flex-wrap justify-center gap-1 lg:justify-self-center">
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((n) => (
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
                   <button
-                    key={n}
-                    onClick={() => paginate(n)}
-                    className={`px-3 py-1 text-xs font-bold rounded border transition-all ${
-                      currentPage === n ? 'bg-[#1e293b] text-white border-[#1e293b]' : 'bg-white text-slate-600 border-slate-300 hover:bg-slate-100'
-                    }`}
+                    onClick={fetchForms} disabled={formsLoading}
+                    className="btn-hover"
+                    style={{
+                      display: 'inline-flex', alignItems: 'center', gap: 8,
+                      padding: '11px 22px', borderRadius: 99, border: 'none',
+                      background: 'linear-gradient(135deg,#2a6e38,#1c4d28)',
+                      color: '#fff', fontSize: 13, fontWeight: 700,
+                      cursor: formsLoading ? 'not-allowed' : 'pointer',
+                      opacity: formsLoading ? 0.65 : 1,
+                      transition: 'opacity 0.2s, transform 0.2s',
+                    }}
                   >
-                    {n}
+                    {formsLoading ? <Loader2 size={15} className="animate-spin" /> : <RefreshCcw size={15} />}
+                    Refresh Status
                   </button>
-                ))}
+                  <button
+                    onClick={handleLogout}
+                    style={{
+                      display: 'inline-flex', alignItems: 'center', gap: 8,
+                      padding: '11px 22px', borderRadius: 99,
+                      border: '1.5px solid #d0ddd2', background: '#fff',
+                      color: '#2a3e2c', fontSize: 13, fontWeight: 700, cursor: 'pointer',
+                      transition: 'background 0.2s',
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.background = '#f2faf4'}
+                    onMouseLeave={(e) => e.currentTarget.style.background = '#fff'}
+                  >
+                    <LogOut size={15} /> Sign Out
+                  </button>
+                </div>
               </div>
-              <div className="hidden lg:block" />
             </div>
-          )}
-        </div>
+          </section>
+
+        ) : (
+          <>
+            {/* ━━━ SUPER ADMIN: Admin Status Management ━━━ */}
+            {isSuperAdmin && (
+              <section style={{ marginBottom: 28 }}>
+                <div style={{
+                  background: '#fff', borderRadius: 28,
+                  border: '1.5px solid #ccdece',
+                  boxShadow: '0 18px 50px -28px rgba(15,36,21,0.14)',
+                  overflow: 'hidden',
+                }}>
+                  {/* Section header */}
+                  <div style={{
+                    padding: '18px 24px',
+                    borderBottom: '1px solid #deeade',
+                    background: 'linear-gradient(135deg,#eef7ef 0%,#f7ede0 100%)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                    flexWrap: 'wrap', gap: 12,
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                      <div style={{
+                        width: 38, height: 38, borderRadius: 10, flexShrink: 0,
+                        background: 'linear-gradient(135deg,#2a6e38,#1c4d28)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        boxShadow: '0 4px 14px rgba(42,110,56,0.3)',
+                      }}>
+                        <Users size={17} style={{ color: '#c0f0cc' }} />
+                      </div>
+                      <div>
+                        <h2 style={{ fontSize: 14, fontWeight: 800, color: '#0e1e12', margin: 0, letterSpacing: '0.01em' }}>
+                          Admin Status Management
+                        </h2>
+                        <p style={{ fontSize: 11.5, color: '#6a7e6c', margin: '3px 0 0' }}>
+                          Only Super Admin can view and change pending/live admin status.
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => loadPendingAdmins(userToken)}
+                      disabled={pendingAdminsLoading}
+                      className="btn-hover"
+                      style={{
+                        display: 'inline-flex', alignItems: 'center', gap: 7,
+                        padding: '9px 18px', borderRadius: 99,
+                        border: '1.5px solid #c4d8c6', background: '#fff',
+                        fontSize: 12.5, fontWeight: 700, color: '#1c4a28',
+                        cursor: pendingAdminsLoading ? 'not-allowed' : 'pointer',
+                        opacity: pendingAdminsLoading ? 0.65 : 1,
+                        transition: 'opacity 0.2s, transform 0.2s',
+                        boxShadow: '0 2px 6px rgba(0,0,0,0.05)',
+                      }}
+                    >
+                      {pendingAdminsLoading
+                        ? <Loader2 size={14} className="animate-spin" />
+                        : <RefreshCcw size={14} />}
+                      Refresh List
+                    </button>
+                  </div>
+
+                  <div style={{ padding: '18px 24px', display: 'flex', flexDirection: 'column', gap: 14 }}>
+                    {pendingAdminsNotice && (
+                      <div style={{
+                        padding: '11px 16px', borderRadius: 14,
+                        background: '#eaf7ee', border: '1.5px solid #b8e0c4',
+                        color: '#1a5c32', fontSize: 13, fontWeight: 600,
+                        display: 'flex', alignItems: 'center', gap: 8,
+                      }}>
+                        <CheckCircle size={15} /> {pendingAdminsNotice}
+                      </div>
+                    )}
+                    {pendingAdminsError && (
+                      <div style={{
+                        padding: '11px 16px', borderRadius: 14,
+                        background: '#fff4f4', border: '1.5px solid #f8bcbc',
+                        color: '#9b2c2c', fontSize: 13, fontWeight: 600,
+                        display: 'flex', alignItems: 'center', gap: 8,
+                      }}>
+                        <AlertTriangle size={15} style={{ flexShrink: 0 }} /> {pendingAdminsError}
+                      </div>
+                    )}
+
+                    {pendingAdminsLoading ? (
+                      <div style={{ padding: '50px 20px', textAlign: 'center', color: '#6a7e6c' }}>
+                        <Loader2 size={26} style={{ color: '#2a6e38', marginBottom: 10 }} className="animate-spin" />
+                        <p style={{ fontSize: 13, fontWeight: 600, margin: 0 }}>Loading admin lists…</p>
+                      </div>
+                    ) : (
+                      <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+                        <AdminColumn title="Pending Admins" admins={pendingAdmins} isPending={true}  onAction={handleAdminApproval} loadingId={approvingAdminId} />
+                        <AdminColumn title="Live Admins"    admins={liveAdmins}    isPending={false} onAction={handleAdminApproval} loadingId={approvingAdminId} />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </section>
+            )}
+
+            {/* ━━━ ACCESS ERROR BANNER ━━━ */}
+            {accessState.status === 'error' && (
+              <div style={{
+                marginBottom: 24, padding: '14px 20px', borderRadius: 16,
+                background: '#fff4f4', border: '1.5px solid #f8bcbc',
+                color: '#9b2c2c', fontSize: 13, fontWeight: 600,
+                display: 'flex', alignItems: 'flex-start', gap: 10,
+              }}>
+                <AlertTriangle size={17} style={{ flexShrink: 0, marginTop: 1 }} />
+                <div>
+                  <p style={{ margin: 0, fontWeight: 700 }}>Unable to load dashboard data</p>
+                  <p style={{ margin: '4px 0 0', fontWeight: 500, opacity: 0.85 }}>{accessState.message}</p>
+                </div>
+              </div>
+            )}
+
+            {/* ━━━ STAT CARDS ━━━ */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(200px,1fr))', gap: 16, marginBottom: 28 }}>
+              {statCards.map((item) => (
+                <div key={item.key} style={{
+                  background: '#fff', borderRadius: 22, padding: '20px 22px',
+                  border: `1.5px solid ${item.border}`,
+                  boxShadow: '0 8px 28px -16px rgba(15,36,21,0.12)',
+                  display: 'flex', alignItems: 'center', gap: 16,
+                  transition: 'transform 0.2s, box-shadow 0.2s',
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = '0 16px 40px -16px rgba(15,36,21,0.18)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 8px 28px -16px rgba(15,36,21,0.12)'; }}
+                >
+                  <div style={{
+                    width: 48, height: 48, borderRadius: 14, flexShrink: 0,
+                    background: item.bg, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}>
+                    <item.icon size={21} style={{ color: item.accent }} />
+                  </div>
+                  <div>
+                    <p style={{ fontSize: 10, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.16em', color: '#8a9e8c', margin: 0 }}>
+                      {item.label}
+                    </p>
+                    <p style={{ fontSize: 28, fontWeight: 900, color: '#0e1e12', margin: '4px 0 2px', lineHeight: 1 }}>
+                      {statValues[item.key]}
+                    </p>
+                    <p style={{ fontSize: 11.5, color: '#6c7b6e', margin: 0 }}>{item.note}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* ━━━ DATABASE TABLE ━━━ */}
+            <div style={{
+              background: '#fff', borderRadius: 28,
+              border: '1.5px solid #ccdece',
+              boxShadow: '0 18px 50px -28px rgba(15,36,21,0.14)',
+              overflow: 'hidden',
+            }}>
+              {/* Table header */}
+              <div style={{
+                padding: '18px 24px',
+                borderBottom: '1px solid #deeade',
+                background: 'linear-gradient(135deg,#eef7ef 0%,#f7ede0 100%)',
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                flexWrap: 'wrap', gap: 12,
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <div style={{
+                    width: 38, height: 38, borderRadius: 10,
+                    background: 'linear-gradient(135deg,#2a6e38,#1c4d28)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    boxShadow: '0 4px 14px rgba(42,110,56,0.3)',
+                  }}>
+                    <Database size={17} style={{ color: '#c0f0cc' }} />
+                  </div>
+                  <div>
+                    <h2 style={{ fontSize: 14, fontWeight: 800, color: '#0e1e12', margin: 0 }}>Database Management</h2>
+                    <p style={{ fontSize: 11.5, color: '#6a7e6c', margin: '3px 0 0' }}>
+                      Inquiry records synced with the Natura website forms.
+                    </p>
+                  </div>
+                </div>
+                <div style={{
+                  display: 'inline-flex', alignItems: 'center', gap: 7,
+                  padding: '8px 16px', borderRadius: 99,
+                  border: '1.5px solid #cce0cc', background: '#fff',
+                  fontSize: 10.5, fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase',
+                  color: '#8a4010',
+                }}>
+                  <LayoutDashboard size={13} style={{ color: '#2a6e38' }} />
+                  Live Admin Workspace
+                </div>
+              </div>
+
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+                  <thead>
+                    <tr style={{ background: '#f2f8f2', borderBottom: '1px solid #d8e8da' }}>
+                      {['#','Timestamp','Source','Client Name','Contact Info','Company','Country','Products','Context','Message / Details','Action'].map((h, i) => (
+                        <th key={h} style={{
+                          padding: '12px 16px',
+                          borderRight: i < 10 ? '1px solid #dce8de' : 'none',
+                          textAlign: i === 0 || i === 10 ? 'center' : 'left',
+                          fontSize: 10, fontWeight: 800, letterSpacing: '0.14em',
+                          textTransform: 'uppercase', color: '#6a8a6e',
+                          whiteSpace: 'nowrap',
+                        }}>
+                          {h}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {currentRecords.length === 0 ? (
+                      <tr>
+                        <td colSpan="11" style={{ padding: '60px 20px', textAlign: 'center', color: '#8a9e8c', fontStyle: 'italic', fontSize: 14 }}>
+                          No records found in database.
+                        </td>
+                      </tr>
+                    ) : (
+                      currentRecords.map((sub, idx) => (
+                        <tr key={`${sub.tableName}-${sub.id}`} className="row-hover"
+                          style={{ borderBottom: '1px solid #e2ece2', transition: 'background 0.15s', background: idx % 2 === 1 ? '#fafcfa' : '#fff' }}
+                        >
+                          {/* # */}
+                          <td style={{ padding: '12px 16px', borderRight: '1px solid #dce8de', textAlign: 'center', color: '#8aaa8e', fontFamily: "'DM Mono', monospace", fontSize: 12 }}>
+                            {(currentPage - 1) * recordsPerPage + (idx + 1)}
+                          </td>
+                          {/* Timestamp */}
+                          <td style={{ padding: '12px 16px', borderRight: '1px solid #dce8de', whiteSpace: 'nowrap' }}>
+                            <div style={{ fontWeight: 700, color: '#1e3822', fontSize: 13 }}>
+                              {new Date(sub.date).toLocaleDateString('en-GB')}
+                            </div>
+                            <div style={{ fontSize: 10.5, color: '#8aaa8e', marginTop: 2 }}>
+                              {new Date(sub.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            </div>
+                          </td>
+                          {/* Source */}
+                          <td style={{ padding: '12px 16px', borderRight: '1px solid #dce8de' }}>
+                            <span style={{
+                              padding: '3px 10px', borderRadius: 99,
+                              background: '#e8f4ea', border: '1px solid #cce0d0',
+                              fontSize: 10, fontWeight: 800, textTransform: 'uppercase',
+                              letterSpacing: '0.08em', color: '#2a6838',
+                            }}>
+                              {sub.type || sub.tableName}
+                            </span>
+                          </td>
+                          {/* Client Name */}
+                          <td style={{ padding: '12px 16px', borderRight: '1px solid #dce8de', fontWeight: 700, color: '#0e1e12' }}>
+                            {sub.data.name || '-'}
+                          </td>
+                          {/* Contact */}
+                          <td style={{ padding: '12px 16px', borderRight: '1px solid #dce8de' }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                              {sub.data.email && (
+                                <a href={`mailto:${sub.data.email}`} style={{
+                                  color: '#2a6838', textDecoration: 'none', fontSize: 12,
+                                  display: 'inline-flex', alignItems: 'center', gap: 5,
+                                }}
+                                onMouseEnter={(e) => e.currentTarget.style.textDecoration = 'underline'}
+                                onMouseLeave={(e) => e.currentTarget.style.textDecoration = 'none'}
+                                >
+                                  <Mail size={11} /> {sub.data.email}
+                                  <ExternalLink size={9} style={{ opacity: 0.5 }} />
+                                </a>
+                              )}
+                              {sub.data.phone && (
+                                <a href={`tel:${sub.data.phone}`} style={{
+                                  color: '#8a4010', textDecoration: 'none', fontSize: 12, fontWeight: 600,
+                                  display: 'inline-flex', alignItems: 'center', gap: 5,
+                                }}
+                                onMouseEnter={(e) => e.currentTarget.style.textDecoration = 'underline'}
+                                onMouseLeave={(e) => e.currentTarget.style.textDecoration = 'none'}
+                                >
+                                  <Phone size={11} /> {sub.data.phone}
+                                  <ExternalLink size={9} style={{ opacity: 0.5 }} />
+                                </a>
+                              )}
+                            </div>
+                          </td>
+                          {/* Company */}
+                          <td style={{ padding: '12px 16px', borderRight: '1px solid #dce8de', color: '#3a5040', fontWeight: 500 }}>
+                            {getCompanySection(sub.data)}
+                          </td>
+                          {/* Country */}
+                          <td style={{ padding: '12px 16px', borderRight: '1px solid #dce8de', color: '#3a5040' }}>
+                            {getCountrySection(sub.data)}
+                          </td>
+                          {/* Products */}
+                          <td style={{ padding: '12px 16px', borderRight: '1px solid #dce8de', color: '#3a5040' }}>
+                            {getProductsSection(sub.data)}
+                          </td>
+                          {/* Context */}
+                          <td style={{ padding: '12px 16px', borderRight: '1px solid #dce8de', color: '#3a5040' }}>
+                            {getContextSection(sub.data)}
+                          </td>
+                          {/* Message */}
+                          <td style={{ padding: '12px 16px', borderRight: '1px solid #dce8de', maxWidth: 260 }}>
+                            <p style={{
+                              margin: 0, overflow: 'hidden', display: '-webkit-box',
+                              WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
+                              color: '#4a6050', lineHeight: 1.5, fontSize: 12.5,
+                            }} title={getDetailSection(sub.data)}>
+                              {getDetailSection(sub.data)}
+                            </p>
+                          </td>
+                          {/* Action */}
+                          <td style={{ padding: '12px 16px', textAlign: 'center' }}>
+                            {sub.status === 'new' ? (
+                              <button
+                                onClick={() => handleStatusChange(sub.id, 'reviewed', sub.tableName)}
+                                disabled={updatingId === sub.id}
+                                className="btn-hover"
+                                style={{
+                                  display: 'inline-flex', alignItems: 'center', gap: 5,
+                                  padding: '6px 13px', borderRadius: 99, border: 'none',
+                                  background: 'linear-gradient(135deg,#8a4010,#5c2a0a)',
+                                  color: '#fff', fontSize: 10, fontWeight: 800,
+                                  cursor: updatingId === sub.id ? 'not-allowed' : 'pointer',
+                                  opacity: updatingId === sub.id ? 0.6 : 1,
+                                  transition: 'opacity 0.2s, transform 0.2s',
+                                  letterSpacing: '0.06em',
+                                }}
+                              >
+                                {updatingId === sub.id
+                                  ? <Loader2 size={11} className="animate-spin" />
+                                  : null}
+                                PENDING
+                              </button>
+                            ) : (
+                              <span style={{
+                                display: 'inline-flex', alignItems: 'center', gap: 5,
+                                color: '#1a6030', fontSize: 10, fontWeight: 800,
+                                letterSpacing: '0.06em',
+                              }}>
+                                <CheckCircle size={13} /> REVIEWED
+                              </span>
+                            )}
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div style={{
+                  background: '#f6fbf6', borderTop: '1px solid #deeade',
+                  padding: '14px 20px', display: 'flex',
+                  alignItems: 'center', justifyContent: 'space-between',
+                  flexWrap: 'wrap', gap: 10,
+                }}>
+                  <span style={{ fontSize: 11, fontWeight: 700, color: '#7a9a80', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+                    Page {currentPage} of {totalPages}
+                  </span>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((n) => (
+                      <button key={n} onClick={() => paginate(n)} style={{
+                        width: 32, height: 32, borderRadius: 8, border: 'none',
+                        cursor: 'pointer', fontSize: 12, fontWeight: 700,
+                        background: currentPage === n ? '#2a6e38' : '#fff',
+                        color: currentPage === n ? '#fff' : '#3a5040',
+                        border: `1.5px solid ${currentPage === n ? '#2a6e38' : '#cce0cc'}`,
+                        transition: 'background 0.15s, color 0.15s, border-color 0.15s',
+                      }}
+                      onMouseEnter={(e) => { if (currentPage !== n) e.currentTarget.style.background = '#eef7ef'; }}
+                      onMouseLeave={(e) => { if (currentPage !== n) e.currentTarget.style.background = '#fff'; }}
+                      >
+                        {n}
+                      </button>
+                    ))}
+                  </div>
+                  <div style={{ width: 120 }} />
+                </div>
+              )}
+            </div>
+          </>
+        )}
       </main>
     </div>
   );
