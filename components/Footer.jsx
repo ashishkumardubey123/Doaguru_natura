@@ -146,12 +146,12 @@ export default function Footer() {
         {/* Bottom Bar */ }
         <div className="border-t border-gray-800 pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-xs text-gray-500">
-            © { new Date().getFullYear() } Natura Health Care. Designed by <a href="https://doaguru.com/" target="blank"> <span className="font-semibold">DOAGuru InfoSystems</span></a>
+            © { new Date().getFullYear() }  <Link  href={"/admin"} > Natura Health Care. Designed by </Link> <a href="https://doaguru.com/" target="blank"> <span className="font-semibold">DOAGuru InfoSystems</span></a>
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             { [
               { label: "Privacy Policy", path: "/privacy-policy" },
-              { label: "Terms of Use", path: "/terms-conditions" },
+              { label: "Terms of Use", path: "/terms-conditions" }, 
               { label: "Sitemap", path: "/sitemap" },
             ].map((item) => (
               <Link
