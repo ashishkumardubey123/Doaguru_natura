@@ -403,9 +403,13 @@ export default function Products() {
               <div className="w-full flex justify-center my-8">
   {/* Aapka exact code */}
   <div className="group w-fit hover:text-white rounded-xl transition-shadow duration-300 hover:shadow-lg hover:shadow-[#2A5C32]/40">
-    <button className="inline-flex items-center gap-2 border-2 border-[#2A5C32] text-[#2A5C32] font-bold px-8 py-3.5 rounded-xl transition-all duration-300 hover:bg-[#2A5C32] hover:text-white">
-      Request Full Catalogue <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
-    </button>
+ <Link href= "/contact">
+  <button className="group inline-flex items-center gap-2 border-2 border-[#2A5C32] text-[#2A5C32] font-bold px-8 py-3.5 rounded-xl transition-all duration-300 hover:bg-[#2A5C32] hover:text-white">
+    Request Full Catalogue 
+    <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
+  </button>
+</Link>
+   
   </div>
 </div>
               
