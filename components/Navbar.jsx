@@ -223,7 +223,7 @@ export default function Navbar() {
         {/* Right Actions */ }
         <div className="hidden lg:flex items-center gap-3">
           <Link
-            href="tel:+919302300834"
+            href="tel:+919098140945"
             className="flex items-center gap-2 text-white text-sm font-semibold px-5 py-2.5 rounded-full transition-all hover:opacity-90"
             style={ { backgroundColor: "#2A5C32" } }
           >

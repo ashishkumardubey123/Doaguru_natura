@@ -101,11 +101,11 @@ export default function Footer() {
               <li className="flex gap-3 items-center">
                 <Phone size={ 15 } className="text-green-500 shrink-0" />
                 <a
-                  href="tel:+41441234567"
+                  href="tel:+919098140945"
 
                 >
 
-                  <span className="text-sm text-gray-400">+41 44 123 4567</span>
+                  <span className="text-sm text-gray-400">+91 9098140945</span>
                 </a>
               </li>
               <li className="flex gap-3 items-center">
