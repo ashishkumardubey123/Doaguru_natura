@@ -74,22 +74,6 @@ const megaMenuData = {
       ],
     }
   ],
-  "Investors & Media": [
-    {
-      title: "Investors",
-      links: [
-        { label: "Annual Reports", desc: "Financial summaries", path: "/investors#reports" },
-        { label: "Financial Results", desc: "Quarterly updates", path: "/investors#financials" },
-      ],
-    },
-    {
-      title: "Media",
-      links: [
-        { label: "Press Releases", desc: "Latest announcements", path: "/investors#press" },
-        { label: "Image Gallery", desc: "Photo library", path: "/investors#gallery" },
-      ],
-    },
-  ],
 };
 
 const navItems = [
@@ -99,7 +83,6 @@ const navItems = [
   { label: "Manufacturing", path: "/manufacturing" },
   { label: "Who We Serve", path: "/who-we-serve" },
   { label: "Global Presence", path: "/global-presence" },
-  { label: "Investors & Media", path: "/investors" },
   { label: "Contact", path: "/contact" },
 ];
 
@@ -321,7 +304,7 @@ export default function Navbar() {
                   style={ { background: "linear-gradient(135deg, #2A5C32 0%, #1a3c22 100%)" } }
                 >
                   <div className="text-[10px] font-bold uppercase tracking-widest text-green-300 mb-3">
-                    { activeMega === "Products" ? "New Launch" : activeMega === "Investors & Media" ? "Latest Report" : "Quick Info" }
+                    { activeMega === "Products" ? "New Launch" : "Quick Info" }
                   </div>
                   <div className="font-bold text-sm leading-snug mb-3" style={ { fontFamily: "'Montserrat', sans-serif" } }>
                     { activeMega === "Products"
@@ -330,9 +313,7 @@ export default function Navbar() {
                         ? "8 WHO-GMP certified facilities worldwide"
                         : activeMega === "Global Presence"
                           ? "Operations in 50+ countries across 4 regions"
-                          : activeMega === "Investors & Media"
-                            ? "FY2024 Revenue: USD 420M (+18% YoY)"
-                            : "25+ years of pharmaceutical excellence" }
+                          : "25+ years of pharmaceutical excellence" }
                   </div>
                   <Link href="/contact" className="mt-2 inline-block bg-white text-[#2A5C32] text-xs font-bold px-4 py-2 rounded-full hover:bg-green-50 transition-colors">
                     Learn More →

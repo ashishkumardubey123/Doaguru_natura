@@ -9,7 +9,6 @@ export default function Sitemap() {
         { name: "Home", url: "/" },
         { name: "About Us", url: "/about" },
         { name: "Global Presence", url: "/global-presence" },
-        { name: "Investors", url: "/investors" },
         { name: "Media", url: "/media" },
         { name: "Contact Us", url: "/contact" },
       ]

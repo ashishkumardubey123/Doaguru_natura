@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import {
   MapPin, Phone, Mail, Clock,
   CheckCircle, Handshake, Box, Globe2, MailQuestion,
@@ -67,9 +68,19 @@ const offices = [
 
 // ─── PAGE ──────────────────────────────────────────────────────────────────
 export default function Contact() {
+  const searchParams = useSearchParams();
   const [selectedType, setSelectedType] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [selectedOffice, setSelectedOffice] = useState(offices[0]);
+
+  // Auto-select form type from query param (e.g. /contact?type=general)
+  useEffect(() => {
+    const type = searchParams.get("type");
+    const validTypes = inquiryTypes.map(t => t.value);
+    if (type && validTypes.includes(type)) {
+      setSelectedType(type);
+    }
+  }, [searchParams]);
 
   const selectedTypeData = inquiryTypes.find(t => t.value === selectedType);
 

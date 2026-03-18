@@ -56,7 +56,6 @@ export default function Footer() {
                 { label: "Manufacturing", path: "/manufacturing" },
                 { label: "Who We Serve", path: "/who-we-serve" },
                 { label: "Global Presence", path: "/global-presence" },
-                { label: "Corporate Governance", path: "/investors" },
               ].map((item) => (
                 <li key={ item.label }>
                   <Link href={ item.path } className="text-sm text-gray-400 hover:text-white transition-colors flex items-center gap-1 group">
@@ -68,20 +67,19 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Investors & Media */ }
+          {/* Contact Us */ }
           <div>
-            <h4 className="text-sm font-bold uppercase tracking-widest text-green-400 mb-5">Investors & Media</h4>
+            <h4 className="text-sm font-bold uppercase tracking-widest text-green-400 mb-5">Contact Us</h4>
             <ul className="space-y-3">
               { [
-                { label: "Annual Reports", path: "/investors#reports" },
-                { label: "Press Releases", path: "/investors#press" },
-                { label: "Financial Results", path: "/investors#financials" },
-                { label: "Image Gallery", path: "/investors#gallery" },
-                { label: "Media Contact", path: "/contact" },
+                { label: "General Inquiry", path: "/contact?type=general", color: "#2A5C32" },
+                { label: "Business Partnership", path: "/contact?type=partnership", color: "#1d6fa4" },
+                { label: "Export Query", path: "/contact?type=export", color: "#6B4226" },
+                { label: "Supplier Registration", path: "/contact?type=supplier", color: "#7c3aed" },
               ].map((item) => (
                 <li key={ item.label }>
-                  <Link href={ item.path } className="text-sm text-gray-400 hover:text-white transition-colors flex items-center gap-1 group">
-                    <ArrowRight size={ 11 } className="opacity-0 group-hover:opacity-100 transition-opacity text-green-400" />
+                  <Link href={ item.path } className="text-sm text-gray-400 hover:text-white transition-colors flex items-center gap-2 group">
+                    <span className="w-1.5 h-1.5 rounded-full shrink-0" style={ { backgroundColor: item.color } } />
                     { item.label }
                   </Link>
                 </li>
@@ -91,7 +89,7 @@ export default function Footer() {
 
           {/* Contact + Newsletter */ }
           <div>
-            <h4 className="text-sm font-bold uppercase tracking-widest text-green-400 mb-5">Contact</h4>
+            <h4 className="text-sm font-bold uppercase tracking-widest text-green-400 mb-5">Connect With Us</h4>
             <ul className="space-y-4 mb-7">
               <li className="flex gap-3 items-start">
                 <MapPin size={ 15 } className="text-green-500 mt-0.5 shrink-0" />
