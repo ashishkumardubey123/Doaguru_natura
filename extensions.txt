@@ -1,0 +1,12 @@
+aaron-bond.better-comments
+adpyke.codesnap
+avetis.tokyo-night
+bradlc.vscode-tailwindcss
+dbaeumer.vscode-eslint
+esbenp.prettier-vscode
+formulahendry.auto-close-tag
+formulahendry.auto-rename-tag
+ms-vscode.live-server
+rangav.vscode-thunder-client
+pkief.material-icon-theme
+naumovs.color-highlight

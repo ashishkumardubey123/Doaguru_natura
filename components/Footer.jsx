@@ -15,15 +15,9 @@ export default function Footer() {
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 mb-14">
           {/* Brand */ }
-          <div className="lg:col-span-2 pr-0 lg:pr-8">
-            <div className="flex items-center gap-3 mb-5">
-              <div className="w-11 h-11 rounded-full flex items-center justify-center" style={ { backgroundColor: "#2A5C32" } }>
-                <Leaf size={ 20 } fill="white" className="text-white" />
-              </div>
-              <div>
-                <div className="text-xl font-bold tracking-tight" style={ { fontFamily: "'Montserrat', sans-serif" } }>Natura Health Care</div>
-                <div className="text-xs tracking-widest uppercase text-green-400">Global Pharmaceuticals</div>
-              </div>
+          <div className="lg:col-span-2 -mt-10  lg:pr-8">
+            <div className="flex items-center  gap-3 mb-">
+              <img src="./Logo/Footerlogo.png" className="w-[350px] -ml-8   " alt="logo" />
             </div>
             <p className="text-gray-400 text-sm leading-relaxed mb-6 max-w-sm">
               Committed to improving global health through the development, manufacturing, and distribution of high-quality pharmaceutical products across 50+ countries.
@@ -39,7 +33,7 @@ export default function Footer() {
                 </a>
               )) }
             </div>
-            {/* Certifications */ }
+
             <div className="flex flex-wrap gap-2">
               { ["WHO-GMP", "ISO 9001:2015", "USFDA", "EU GMP", "ISO 14001"].map((cert) => (
                 <span
@@ -146,12 +140,12 @@ export default function Footer() {
         {/* Bottom Bar */ }
         <div className="border-t border-gray-800 pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-xs text-gray-500">
-            © { new Date().getFullYear() }  <Link  href={"/admin"} > Natura Health Care. Designed by </Link> <a href="https://doaguru.com/" target="blank"> <span className="font-semibold">DOAGuru InfoSystems</span></a>
+            © { new Date().getFullYear() }  <Link href={ "/admin" } > Natura Health Care. Designed by </Link> <a href="https://doaguru.com/" target="blank"> <span className="font-semibold">DOAGuru InfoSystems</span></a>
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             { [
               { label: "Privacy Policy", path: "/privacy-policy" },
-              { label: "Terms of Use", path: "/terms-conditions" }, 
+              { label: "Terms of Use", path: "/terms-conditions" },
               { label: "Sitemap", path: "/sitemap" },
             ].map((item) => (
               <Link
