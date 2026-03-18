@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import {
@@ -68,6 +68,14 @@ const offices = [
 
 // ─── PAGE ──────────────────────────────────────────────────────────────────
 export default function Contact() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-gray-50" />}>
+      <ContactContent />
+    </Suspense>
+  );
+}
+
+function ContactContent() {
   const searchParams = useSearchParams();
   const [selectedType, setSelectedType] = useState("");
   const [submitted, setSubmitted] = useState(false);
