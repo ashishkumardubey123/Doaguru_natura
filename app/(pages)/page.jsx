@@ -161,19 +161,19 @@ function CertificationCard({ cert }) {
       <div className="flex items-start gap-3 sm:gap-4">
         <div
           className="w-14 h-14 sm:w-16 sm:h-16 shrink-0 rounded-full flex items-center justify-center text-[0.58rem] sm:text-[0.62rem] font-extrabold tracking-[0.18em] uppercase text-center leading-tight px-2"
-          style={{ backgroundColor: cert.surface, color: cert.accent, border: `1px solid ${cert.accent}22` }}
+          style={ { backgroundColor: cert.surface, color: cert.accent, border: `1px solid ${cert.accent}22` } }
         >
-          {cert.mark}
+          { cert.mark }
         </div>
         <div className="min-w-0">
           <div className="flex items-center gap-1.5 mb-1.5">
-            <Award size={13} style={{ color: cert.accent }} />
-            <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: cert.accent }}>Certified</span>
+            <Award size={ 13 } style={ { color: cert.accent } } />
+            <span className="text-[10px] font-bold uppercase tracking-[0.18em]" style={ { color: cert.accent } }>Certified</span>
           </div>
-          <h3 className="text-sm sm:text-base font-bold text-gray-900 leading-tight" style={{ fontFamily: "'Montserrat', sans-serif" }}>
-            {cert.name}
+          <h3 className="text-sm sm:text-base font-bold text-gray-900 leading-tight" style={ { fontFamily: "'Montserrat', sans-serif" } }>
+            { cert.name }
           </h3>
-          <p className="mt-1.5 text-xs sm:text-sm text-gray-500 leading-relaxed">{cert.desc}</p>
+          <p className="mt-1.5 text-xs sm:text-sm text-gray-500 leading-relaxed">{ cert.desc }</p>
         </div>
       </div>
     </article>
@@ -210,7 +210,7 @@ function HeroSlider() {
   return (
     /* Mobile: h-[480px], sm: h-[520px], md+: h-[600px] */
     <div className="relative w-full h-[480px] sm:h-[520px] md:h-[600px] overflow-hidden bg-gray-900">
-      {heroSlides.map((s, i) => {
+      { heroSlides.map((s, i) => {
         const isCurrent = i === current;
         const isPrevious = i === previous;
         const imageStateClass = isCurrent
@@ -221,39 +221,39 @@ function HeroSlider() {
 
         return (
           <div
-            key={s.id}
+            key={ s.id }
             className="absolute inset-0 transition-opacity ease-in-out"
-            style={{
+            style={ {
               opacity: isCurrent ? 1 : 0,
               transitionDuration: `${HERO_FADE_MS}ms`,
               willChange: "opacity",
               zIndex: isCurrent ? 2 : isPrevious ? 1 : 0,
-            }}
+            } }
           >
             <div className="hero-slide-media-wrapper w-full h-full relative overflow-hidden">
               <img
                 decoding="async"
-                src={s.image}
-                alt={s.tag}
-                className={`hero-slide-media absolute inset-0 m-auto min-w-full min-h-full object-cover object-top w-full h-full ${imageStateClass}`}
-                style={{ "--hero-zoom-duration": `${HERO_ZOOM_MS}ms` }}
+                src={ s.image }
+                alt={ s.tag }
+                className={ `hero-slide-media absolute inset-0 m-auto min-w-full min-h-full object-cover object-top w-full h-full ${imageStateClass}` }
+                style={ { "--hero-zoom-duration": `${HERO_ZOOM_MS}ms` } }
               />
             </div>
-            {/* Stronger overlay on mobile for text readability */}
+            {/* Stronger overlay on mobile for text readability */ }
             <div
               className="absolute inset-0"
-              style={{
+              style={ {
                 background: "linear-gradient(90deg, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.45) 60%, rgba(0,0,0,0.2) 100%)"
-              }}
+              } }
             />
           </div>
         );
-      })}
+      }) }
 
-      {/* Content */}
+      {/* Content */ }
       <div className="relative z-10 max-w-[1440px] mx-auto px-4 sm:px-6 h-full flex items-center">
         <div className="relative w-full max-w-2xl min-h-[280px] sm:min-h-[320px] text-white">
-          {heroSlides.map((s, i) => {
+          { heroSlides.map((s, i) => {
             const isCurrent = i === current;
             const isPrevious = i === previous;
             const contentStateClass = isCurrent
@@ -264,82 +264,82 @@ function HeroSlider() {
 
             return (
               <div
-                key={`content-${s.id}`}
-                className={`hero-slide-content absolute inset-0 flex flex-col justify-center ${contentStateClass}`}
-                style={{
+                key={ `content-${s.id}` }
+                className={ `hero-slide-content absolute inset-0 flex flex-col justify-center ${contentStateClass}` }
+                style={ {
                   transitionDuration: `${HERO_FADE_MS}ms`,
                   zIndex: isCurrent ? 2 : isPrevious ? 1 : 0,
                   pointerEvents: isCurrent ? "auto" : "none",
-                }}
+                } }
               >
                 <span
                   className="inline-block text-[10px] sm:text-xs font-bold uppercase tracking-widest px-3 sm:px-4 py-1.5 rounded-full mb-3 sm:mb-5 w-fit"
-                  style={{ backgroundColor: "rgba(42,92,50,0.85)", border: "1px solid rgba(255,255,255,0.2)" }}
+                  style={ { backgroundColor: "rgba(42,92,50,0.85)", border: "1px solid rgba(255,255,255,0.2)" } }
                 >
-                  {s.tag}
+                  { s.tag }
                 </span>
                 <h1
                   className="mb-3 sm:mb-5 leading-tight"
-                  style={{
+                  style={ {
                     fontFamily: "'Montserrat', sans-serif",
                     fontWeight: 800,
                     /* Smaller on mobile: starts at 1.6rem, scales up */
                     fontSize: "clamp(1.55rem, 5vw, 3.2rem)",
                     whiteSpace: "pre-line",
-                  }}
+                  } }
                 >
-                  {s.headline}
+                  { s.headline }
                 </h1>
-                {/* Hide subtext on very small screens to avoid clutter */}
+                {/* Hide subtext on very small screens to avoid clutter */ }
                 <p className="hidden sm:block text-gray-300 text-sm sm:text-base leading-relaxed mb-6 sm:mb-8 max-w-xl">
-                  {s.subtext}
+                  { s.subtext }
                 </p>
                 <div className="flex gap-2 sm:gap-4 flex-wrap">
                   <Link
-                    href={s.ctaPath}
+                    href={ s.ctaPath }
                     className="inline-flex items-center gap-2 font-semibold px-5 sm:px-7 py-3 sm:py-3.5 text-sm sm:text-base rounded-full transition-all duration-200 bg-[#2A5C32] text-white hover:bg-[#234e2a] hover:shadow-lg active:scale-95"
                   >
-                    {s.cta} <ArrowRight size={15} />
+                    { s.cta } <ArrowRight size={ 15 } />
                   </Link>
                   <Link
-                    href={s.ctaSecondaryPath}
+                    href={ s.ctaSecondaryPath }
                     className="inline-flex items-center gap-2 border-2 border-white/50 text-white font-semibold px-5 sm:px-7 py-3 sm:py-3.5 text-sm sm:text-base rounded-full hover:border-white hover:bg-white/10 transition-all active:scale-95"
                   >
-                    {s.ctaSecondary}
+                    { s.ctaSecondary }
                   </Link>
                 </div>
               </div>
             );
-          })}
+          }) }
         </div>
       </div>
 
-      {/* Controls */}
+      {/* Controls */ }
       <div className="absolute bottom-5 sm:bottom-8 left-1/2 -translate-x-1/2 z-10 flex items-center gap-3 sm:gap-4">
         <button
-          onClick={prev}
+          onClick={ prev }
           className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center text-white transition-all backdrop-blur-sm active:scale-90"
           aria-label="Previous slide"
         >
-          <ChevronLeft size={17} />
+          <ChevronLeft size={ 17 } />
         </button>
         <div className="flex gap-2">
-          {heroSlides.map((_, i) => (
+          { heroSlides.map((_, i) => (
             <button
-              key={i}
-              onClick={() => goTo(i)}
+              key={ i }
+              onClick={ () => goTo(i) }
               className="rounded-full transition-all"
-              style={{ width: i === current ? "22px" : "7px", height: "7px", backgroundColor: i === current ? "#fff" : "rgba(255,255,255,0.4)" }}
-              aria-label={`Go to slide ${i + 1}`}
+              style={ { width: i === current ? "22px" : "7px", height: "7px", backgroundColor: i === current ? "#fff" : "rgba(255,255,255,0.4)" } }
+              aria-label={ `Go to slide ${i + 1}` }
             />
-          ))}
+          )) }
         </div>
         <button
-          onClick={next}
+          onClick={ next }
           className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center text-white transition-all backdrop-blur-sm active:scale-90"
           aria-label="Next slide"
         >
-          <ChevronRight size={17} />
+          <ChevronRight size={ 17 } />
         </button>
       </div>
     </div>
@@ -352,36 +352,36 @@ export default function Home() {
     <div>
       <HeroSlider />
 
-      {/* ── Stats Strip ── */}
-      <div style={{ backgroundColor: "#2A5C32" }} className="py-5 sm:py-6">
+      {/* ── Stats Strip ── */ }
+      <div style={ { backgroundColor: "#2A5C32" } } className="py-5 sm:py-6">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6">
-          {/* 2-col on mobile → 3-col on md → 6-col on lg */}
+          {/* 2-col on mobile → 3-col on md → 6-col on lg */ }
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-x-4 gap-y-5 sm:gap-6">
-            {stats.map((s) => (
-              <div key={s.label} className="flex items-center gap-2.5 sm:gap-3 text-white">
-                <s.icon size={20} className="text-green-300 shrink-0" />
+            { stats.map((s) => (
+              <div key={ s.label } className="flex items-center gap-2.5 sm:gap-3 text-white">
+                <s.icon size={ 20 } className="text-green-300 shrink-0" />
                 <div>
-                  <div className="text-lg sm:text-xl font-bold leading-tight" style={{ fontFamily: "'Montserrat', sans-serif" }}>{s.value}</div>
-                  <div className="text-[11px] sm:text-xs text-green-300 leading-tight">{s.label}</div>
+                  <div className="text-lg sm:text-xl font-bold leading-tight" style={ { fontFamily: "'Montserrat', sans-serif" } }>{ s.value }</div>
+                  <div className="text-[11px] sm:text-xs text-green-300 leading-tight">{ s.label }</div>
                 </div>
               </div>
-            ))}
+            )) }
           </div>
         </div>
       </div>
 
-      {/* ── Company Intro ── */}
+      {/* ── Company Intro ── */ }
       <section className="py-14 sm:py-20 md:py-24 bg-white">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6">
           <div className="grid lg:grid-cols-2 gap-10 sm:gap-12 lg:gap-16 items-center">
             <div>
-              <span className="text-xs font-bold uppercase tracking-widest" style={{ color: "#6B4226" }}>About Natura</span>
+              <span className="text-xs font-bold uppercase tracking-widest" style={ { color: "#6B4226" } }>About Natura</span>
               <h2
                 className="mt-3 mb-4 sm:mb-5 text-gray-900 leading-tight"
-                style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 800, fontSize: "clamp(1.6rem, 4vw, 2.5rem)" }}
+                style={ { fontFamily: "'Montserrat', sans-serif", fontWeight: 800, fontSize: "clamp(1.6rem, 4vw, 2.5rem)" } }
               >
                 25+ Years of Pharmaceutical<br />
-                <span style={{ color: "#2A5C32" }}>Excellence & Trust</span>
+                <span style={ { color: "#2A5C32" } }>Excellence & Trust</span>
               </h2>
               <p className="text-gray-600 leading-relaxed mb-4 sm:mb-5 text-sm sm:text-base">
                 Natura Health Care is a globally recognised pharmaceutical company specialising in the development, manufacturing, and export of high-quality medicines. With 8 WHO-GMP certified facilities and a portfolio spanning 500+ formulations, we serve healthcare systems in 50+ countries.
@@ -394,7 +394,7 @@ export default function Home() {
                   href="/about"
                   className="inline-flex items-center gap-2 text-white font-semibold px-6 sm:px-7 py-3 sm:py-3.5 text-sm sm:text-base rounded-full bg-[#2A5C32] transition-all duration-200 hover:bg-[#234e2a] hover:shadow-lg active:scale-95"
                 >
-                  Our Story <ArrowRight size={15} />
+                  Our Story <ArrowRight size={ 15 } />
                 </Link>
                 <Link
                   href="/contact"
@@ -405,7 +405,7 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Image grid — simpler on mobile: 2-col equal rows, no negative margins */}
+            {/* Image grid — simpler on mobile: 2-col equal rows, no negative margins */ }
             <div className="grid grid-cols-2 gap-3 sm:gap-4 mt-2 lg:mt-0">
               <div className="rounded-xl sm:rounded-2xl overflow-hidden h-36 sm:h-44 md:h-48">
                 <img loading="lazy" decoding="async" src="/media/About1.jpg" className="w-full h-full object-cover" alt="Lab" />
@@ -424,14 +424,14 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Therapy Areas ── */}
-      <section style={{ backgroundColor: "#f7f9f8" }} className="py-14 sm:py-20 md:py-24">
+      {/* ── Therapy Areas ── */ }
+      <section style={ { backgroundColor: "#f7f9f8" } } className="py-14 sm:py-20 md:py-24">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6">
           <div className="text-center mb-10 sm:mb-14">
-            <span className="text-xs font-bold uppercase tracking-widest" style={{ color: "#6B4226" }}>Our Portfolio</span>
+            <span className="text-xs font-bold uppercase tracking-widest" style={ { color: "#6B4226" } }>Our Portfolio</span>
             <h2
               className="mt-3 text-gray-900"
-              style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 800, fontSize: "clamp(1.4rem, 3.5vw, 2.2rem)" }}
+              style={ { fontFamily: "'Montserrat', sans-serif", fontWeight: 800, fontSize: "clamp(1.4rem, 3.5vw, 2.2rem)" } }
             >
               Therapy Areas We Excel In
             </h2>
@@ -439,161 +439,161 @@ export default function Home() {
               Our diverse therapeutic portfolio ensures we can address the most critical healthcare needs across multiple disease areas worldwide.
             </p>
           </div>
-          {/* 1-col on mobile → 2-col on sm → 3-col on lg */}
+          {/* 1-col on mobile → 2-col on sm → 3-col on lg */ }
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            {therapyAreas.map((area) => (
+            { therapyAreas.map((area) => (
               <div
-                key={area.name}
+                key={ area.name }
                 className="rounded-2xl p-5 sm:p-6 border border-gray-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group bg-white"
               >
                 <div
                   className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center mb-4 sm:mb-5"
-                  style={{ backgroundColor: area.color }}
+                  style={ { backgroundColor: area.color } }
                 >
-                  <area.icon size={20} style={{ color: area.accent }} />
+                  <area.icon size={ 20 } style={ { color: area.accent } } />
                 </div>
                 <h3
                   className="font-bold text-gray-900 mb-2"
-                  style={{ fontFamily: "'Montserrat', sans-serif", fontSize: "1rem" }}
+                  style={ { fontFamily: "'Montserrat', sans-serif", fontSize: "1rem" } }
                 >
-                  {area.name}
+                  { area.name }
                 </h3>
-                <p className="text-xs sm:text-sm text-gray-500 leading-relaxed mb-4">{area.desc}</p>
+                <p className="text-xs sm:text-sm text-gray-500 leading-relaxed mb-4">{ area.desc }</p>
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold px-3 py-1 rounded-full" style={{ backgroundColor: area.color, color: area.accent }}>
-                    {area.products}
+                  <span className="text-xs font-bold px-3 py-1 rounded-full" style={ { backgroundColor: area.color, color: area.accent } }>
+                    { area.products }
                   </span>
-                  <Link href="/products" className="text-xs font-semibold flex items-center gap-1" style={{ color: area.accent }}>
-                    Browse <ArrowRight size={12} />
+                  <Link href="/products" className="text-xs font-semibold flex items-center gap-1" style={ { color: area.accent } }>
+                    Browse <ArrowRight size={ 12 } />
                   </Link>
                 </div>
               </div>
-            ))}
+            )) }
           </div>
           <div className="text-center mt-8 sm:mt-10">
             <Link
               href="/products"
               className="inline-flex items-center gap-2 font-semibold px-7 sm:px-8 py-3 sm:py-3.5 text-sm sm:text-base rounded-full border-2 border-[#2A5C32] text-[#2A5C32] hover:bg-[#2A5C32] hover:text-white transition-all duration-200 active:scale-95"
             >
-              View Full Portfolio <ArrowRight size={16} />
+              View Full Portfolio <ArrowRight size={ 16 } />
             </Link>
           </div>
         </div>
       </section>
 
-      {/* ── Featured Products ── */}
+      {/* ── Featured Products ── */ }
       <section className="py-14 sm:py-20 md:py-24 bg-white border-t border-gray-100">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6">
           <div className="flex items-end justify-between mb-8 sm:mb-12">
             <div>
-              <span className="text-xs font-bold uppercase tracking-widest" style={{ color: "#6B4226" }}>Our Products</span>
+              <span className="text-xs font-bold uppercase tracking-widest" style={ { color: "#6B4226" } }>Our Products</span>
               <h2
                 className="mt-3 text-gray-900"
-                style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 800, fontSize: "clamp(1.4rem, 3.5vw, 2.2rem)" }}
+                style={ { fontFamily: "'Montserrat', sans-serif", fontWeight: 800, fontSize: "clamp(1.4rem, 3.5vw, 2.2rem)" } }
               >
                 Featured Formulations
               </h2>
             </div>
-            <Link href="/products" className="hidden md:flex items-center gap-1 text-sm font-semibold" style={{ color: "#2A5C32" }}>
-              View All <ArrowRight size={15} />
+            <Link href="/products" className="hidden md:flex items-center gap-1 text-sm font-semibold" style={ { color: "#2A5C32" } }>
+              View All <ArrowRight size={ 15 } />
             </Link>
           </div>
-          {/* 1-col mobile → 2-col sm → 4-col lg */}
+          {/* 1-col mobile → 2-col sm → 4-col lg */ }
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-            {featuredProducts.map((product, i) => (
-              <div key={i} className="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300">
+            { featuredProducts.map((product, i) => (
+              <div key={ i } className="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300">
                 <div className="relative h-40 sm:h-48 bg-gray-50 flex items-center justify-center p-5 sm:p-6">
                   <img
                     loading="lazy"
                     decoding="async"
-                    src={product.image}
-                    alt={product.name}
+                    src={ product.image }
+                    alt={ product.name }
                     className="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500"
                   />
-                  <span className="absolute top-3 left-3 sm:top-4 sm:left-4 text-[10px] font-bold px-2.5 py-1 rounded-full text-white" style={{ backgroundColor: "#2A5C32" }}>
-                    {product.category}
+                  <span className="absolute top-3 left-3 sm:top-4 sm:left-4 text-[10px] font-bold px-2.5 py-1 rounded-full text-white" style={ { backgroundColor: "#2A5C32" } }>
+                    { product.category }
                   </span>
                 </div>
                 <div className="p-4 sm:p-5">
-                  <h3 className="font-bold text-gray-900 mb-2 leading-snug group-hover:text-[#2A5C32] transition-colors text-sm sm:text-base" style={{ fontFamily: "'Montserrat', sans-serif" }}>
-                    {product.name}
+                  <h3 className="font-bold text-gray-900 mb-2 leading-snug group-hover:text-[#2A5C32] transition-colors text-sm sm:text-base" style={ { fontFamily: "'Montserrat', sans-serif" } }>
+                    { product.name }
                   </h3>
                   <div className="flex flex-col gap-1 mb-3 sm:mb-4">
-                    <div className="text-xs text-gray-500"><span className="font-semibold text-gray-700">Dosage Form:</span> {product.dosage}</div>
-                    <div className="text-xs text-gray-500"><span className="font-semibold text-gray-700">Strength:</span> {product.strength}</div>
+                    <div className="text-xs text-gray-500"><span className="font-semibold text-gray-700">Dosage Form:</span> { product.dosage }</div>
+                    <div className="text-xs text-gray-500"><span className="font-semibold text-gray-700">Strength:</span> { product.strength }</div>
                   </div>
-                  <Link href="/products" className="flex items-center gap-1 text-sm font-semibold" style={{ color: "#2A5C32" }}>
-                    View Details <ArrowRight size={13} />
+                  <Link href="/products" className="flex items-center gap-1 text-sm font-semibold" style={ { color: "#2A5C32" } }>
+                    View Details <ArrowRight size={ 13 } />
                   </Link>
                 </div>
               </div>
-            ))}
+            )) }
           </div>
           <div className="mt-7 text-center md:hidden">
-            <Link href="/products" className="inline-flex items-center gap-1 text-sm font-semibold" style={{ color: "#2A5C32" }}>
-              View All Products <ArrowRight size={15} />
+            <Link href="/products" className="inline-flex items-center gap-1 text-sm font-semibold" style={ { color: "#2A5C32" } }>
+              View All Products <ArrowRight size={ 15 } />
             </Link>
           </div>
         </div>
       </section>
 
-      {/* ── Global Presence ── */}
+      {/* ── Global Presence ── */ }
       <section className="py-14 sm:py-20 md:py-24 bg-white">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6">
           <div className="grid lg:grid-cols-2 gap-10 sm:gap-12 lg:gap-16 items-center">
             <div>
-              <span className="text-xs font-bold uppercase tracking-widest" style={{ color: "#6B4226" }}>Worldwide Operations</span>
+              <span className="text-xs font-bold uppercase tracking-widest" style={ { color: "#6B4226" } }>Worldwide Operations</span>
               <h2
                 className="mt-3 mb-4 sm:mb-5 text-gray-900 leading-tight"
-                style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 800, fontSize: "clamp(1.7rem, 4.5vw, 3rem)" }}
+                style={ { fontFamily: "'Montserrat', sans-serif", fontWeight: 800, fontSize: "clamp(1.7rem, 4.5vw, 3rem)" } }
               >
-                A Truly Global{" "}
-                <span style={{ color: "#2A5C32" }}>Pharmaceutical Partner</span>
+                A Truly Global{ " " }
+                <span style={ { color: "#2A5C32" } }>Pharmaceutical Partner</span>
               </h2>
               <p className="text-gray-600 leading-relaxed mb-8 sm:mb-10 text-sm sm:text-base lg:text-lg">
                 With strategic regional offices, a robust distribution network, and regulatory approvals across continents, Natura Health Care delivers quality medicines where they are needed most.
               </p>
 
               <div className="space-y-3 sm:space-y-4 mb-8 sm:mb-10">
-                {[
+                { [
                   { region: "Asia-Pacific", count: "15+", desc: "India, China, Vietnam, Philippines, Indonesia, Thailand +9" },
                   { region: "Middle East & Africa", count: "20+", desc: "UAE, Saudi Arabia, Kenya, Nigeria, South Africa +15", active: true },
                   { region: "Europe", count: "8+", desc: "Germany, UK, France, Netherlands, Poland +3" },
                   { region: "Americas", count: "10+", desc: "USA, Brazil, Mexico, Colombia, Canada +5" },
                 ].map((item, i) => (
                   <div
-                    key={i}
-                    className={`flex items-center justify-between p-4 sm:p-5 rounded-2xl border transition-all ${item.active ? 'border-[#2A5C32] bg-[#f0f7f1] shadow-sm' : 'border-gray-100 bg-gray-50 hover:border-gray-200'}`}
+                    key={ i }
+                    className={ `flex items-center justify-between p-4 sm:p-5 rounded-2xl border transition-all ${item.active ? 'border-[#2A5C32] bg-[#f0f7f1] shadow-sm' : 'border-gray-100 bg-gray-50 hover:border-gray-200'}` }
                   >
                     <div className="flex items-center gap-3 sm:gap-4">
-                      <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm shrink-0 ${item.active ? 'bg-[#2A5C32] text-white' : 'bg-[#1a3c22] text-white'}`}>
-                        {item.count}
+                      <div className={ `w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm shrink-0 ${item.active ? 'bg-[#2A5C32] text-white' : 'bg-[#1a3c22] text-white'}` }>
+                        { item.count }
                       </div>
                       <div>
-                        <h4 className={`font-bold text-base sm:text-lg ${item.active ? 'text-[#2A5C32]' : 'text-gray-900'}`}>{item.region}</h4>
-                        <p className="text-[11px] sm:text-xs text-gray-500 mt-0.5 sm:mt-1 leading-snug">{item.desc}</p>
+                        <h4 className={ `font-bold text-base sm:text-lg ${item.active ? 'text-[#2A5C32]' : 'text-gray-900'}` }>{ item.region }</h4>
+                        <p className="text-[11px] sm:text-xs text-gray-500 mt-0.5 sm:mt-1 leading-snug">{ item.desc }</p>
                       </div>
                     </div>
-                    <MapPin size={18} className={`shrink-0 ml-2 ${item.active ? 'text-[#2A5C32]' : 'text-gray-300'}`} />
+                    <MapPin size={ 18 } className={ `shrink-0 ml-2 ${item.active ? 'text-[#2A5C32]' : 'text-gray-300'}` } />
                   </div>
-                ))}
+                )) }
               </div>
 
               <Link
                 href="/global-presence"
                 className="inline-flex items-center gap-2 text-white font-semibold px-7 sm:px-8 py-3.5 sm:py-4 text-sm sm:text-base rounded-full transition-all duration-200 bg-[#1a3c22] hover:bg-[#234e2a] hover:shadow-lg active:scale-95"
               >
-                Explore Global Presence <ArrowRight size={17} />
+                Explore Global Presence <ArrowRight size={ 17 } />
               </Link>
             </div>
 
-            {/* Map card — full width on mobile */}
+            {/* Map card — full width on mobile */ }
             <div className="relative rounded-3xl overflow-hidden bg-[#1a3c22] p-6 sm:p-8 lg:p-12 text-center shadow-2xl mt-2 lg:mt-0">
               <div className="text-green-400 text-xs font-bold uppercase tracking-widest mb-1.5">Global Network</div>
-              <div className="text-white text-3xl sm:text-4xl font-bold mb-6 sm:mb-10" style={{ fontFamily: "'Montserrat', sans-serif" }}>50+ Countries</div>
+              <div className="text-white text-3xl sm:text-4xl font-bold mb-6 sm:mb-10" style={ { fontFamily: "'Montserrat', sans-serif" } }>50+ Countries</div>
 
               <div className="relative aspect-[4/3] bg-[#0f2415] rounded-2xl border border-white/10 overflow-hidden mb-5 sm:mb-8 flex items-center justify-center">
-                <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '24px 24px' }} />
+                <div className="absolute inset-0 opacity-20" style={ { backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '24px 24px' } } />
                 <svg viewBox="0 0 400 200" className="w-full h-full opacity-60 drop-shadow-lg">
                   <path d="M 50 50 L 100 40 L 120 80 L 100 150 L 60 120 Z" fill="#2A5C32" />
                   <path d="M 150 30 L 220 20 L 250 60 L 200 140 L 160 100 Z" fill="#2A5C32" />
@@ -606,22 +606,22 @@ export default function Home() {
                 <div className="absolute bottom-1/3 right-1/4 w-3 h-3 bg-white rounded-full shadow-[0_0_15px_rgba(255,255,255,0.8)]" />
               </div>
 
-              {/* Wrap legends on small screens */}
+              {/* Wrap legends on small screens */ }
               <div className="flex flex-wrap justify-center gap-x-4 gap-y-2 text-xs text-green-400 font-medium px-2">
-                {["Americas", "Europe", "Middle East & Africa", "Asia-Pacific"].map((r) => (
-                  <div key={r} className="flex items-center gap-1">
+                { ["Americas", "Europe", "Middle East & Africa", "Asia-Pacific"].map((r) => (
+                  <div key={ r } className="flex items-center gap-1">
                     <div className="w-1.5 h-1.5 rounded-full bg-green-400" />
-                    {r}
+                    { r }
                   </div>
-                ))}
+                )) }
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ── Manufacturing Highlight ── */}
-      <section className="py-14 sm:py-20 md:py-24 relative overflow-hidden" style={{ backgroundColor: "#1a3c22" }}>
+      {/* ── Manufacturing Highlight ── */ }
+      <section className="py-14 sm:py-20 md:py-24 relative overflow-hidden" style={ { backgroundColor: "#1a3c22" } }>
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-gradient-to-r from-[#1a3c22] via-[#1a3c22]/90 to-transparent" />
         </div>
@@ -630,79 +630,117 @@ export default function Home() {
             <div className="text-white">
               <h2
                 className="mt-3 mb-4 sm:mb-5 leading-tight"
-                style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 800, fontSize: "clamp(1.7rem, 4.5vw, 3rem)" }}
+                style={ { fontFamily: "'Montserrat', sans-serif", fontWeight: 800, fontSize: "clamp(1.7rem, 4.5vw, 3rem)" } }
               >
-                GMP-Certified Plants Built<br />for Global Compliance
+                Globally Certified &amp; <br />Compliance-Ready
               </h2>
-              <p className="text-gray-300 leading-relaxed mb-7 sm:mb-8 max-w-lg text-sm sm:text-base lg:text-lg">
-                8 WHO-GMP certified manufacturing facilities across India and Europe. USFDA inspected. EU GMP approved. Producing 500+ formulations with zero compromise on quality.
+              <p className="text-gray-300 leading-relaxed mb-3 max-w-lg text-sm sm:text-base lg:text-lg">
+                Natura Health Care holds internationally recognised certifications for the trading and export of Herbal Nutra &amp; Food Supplements — issued by{ " " }
+                <span className="text-green-300 font-semibold">IPQ Management System</span>, accredited with{ " " }
+                <span className="text-green-300 font-semibold">UKAF CERT LIMITED</span> (UK).
+              </p>
+              <p className="text-green-400/80 text-xs sm:text-sm mb-7 sm:mb-8 max-w-lg">
+                Issued: 18 Feb 2026 &nbsp;|&nbsp; Valid until: 17 Feb 2029
+                <br />
+                Surveillance audits: Feb 2027 &amp; Feb 2028
               </p>
               <Link
-                href="/manufacturing"
+                href="/certifications"
                 className="inline-flex items-center gap-2 text-white font-semibold px-7 sm:px-8 py-3.5 sm:py-4 text-sm sm:text-base rounded-full transition-all duration-200 bg-[#2A5C32] hover:bg-[#234e2a] hover:shadow-lg active:scale-95"
               >
-                Explore Our Facilities <ArrowRight size={17} />
+                View Our Certifications <ArrowRight size={ 17 } />
               </Link>
             </div>
 
-            {/* 2-col grid on all sizes (compact on mobile) */}
+            {/* 2-col cert cards */ }
             <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:gap-6 mt-4 lg:mt-0">
-              {[
-                { icon: Shield, label: "WHO-GMP Certified", sub: "All 8 facilities" },
-                { icon: Award, label: "USFDA Inspected", sub: "3 plants registered" },
-                { icon: FlaskConical, label: "R&D Investment", sub: "8% of revenue" },
-                { icon: Activity, label: "Batch Pass Rate", sub: "99.8% first-pass" },
+              { [
+                {
+                  icon: Shield,
+                  label: "HACCP Certified",
+                  certNo: "HACCP-26021810",
+                  sub: "Hazard Analysis & Critical Control Points",
+                },
+                {
+                  icon: Award,
+                  label: "U.S. FDA Compliant",
+                  certNo: "FDA-26021809",
+                  sub: "FDA Regulatory Guideline Compliance",
+                },
+                {
+                  icon: FlaskConical,
+                  label: "HALAL Certified",
+                  certNo: "HALAL-26021811",
+                  sub: "Islamic Shariah Law — Lawful for Muslim Consumption",
+                },
+                {
+                  icon: Activity,
+                  label: "UKAF Accredited",
+                  certNo: "UKAF-CB-021",
+                  sub: "IPQ Management System, London UK",
+                },
               ].map((item) => (
-                <div key={item.label} className="bg-white/5 backdrop-blur-md rounded-2xl p-4 sm:p-6 border border-white/10 hover:bg-white/10 transition-colors">
-                  <item.icon size={22} className="text-green-400 mb-3 sm:mb-4" />
-                  <div className="text-white font-bold text-sm sm:text-lg mb-1 leading-snug" style={{ fontFamily: "'Montserrat', sans-serif" }}>{item.label}</div>
-                  <div className="text-green-300 text-xs sm:text-sm">{item.sub}</div>
+                <div
+                  key={ item.certNo }
+                  className="bg-white/5 backdrop-blur-md rounded-2xl p-4 sm:p-6 border border-white/10 hover:bg-white/10 transition-colors"
+                >
+                  <item.icon size={ 22 } className="text-green-400 mb-3 sm:mb-4" />
+                  <div
+                    className="text-white font-bold text-sm sm:text-base mb-1 leading-snug"
+                    style={ { fontFamily: "'Montserrat', sans-serif" } }
+                  >
+                    { item.label }
+                  </div>
+                  <div className="text-gray-400 text-[10px] sm:text-xs mb-2 leading-snug">{ item.sub }</div>
+                  <div className="text-green-400 text-[10px] sm:text-xs font-mono tracking-wide">
+                    { item.certNo }
+                  </div>
                 </div>
-              ))}
+              )) }
             </div>
           </div>
         </div>
       </section>
 
-      {/* ── Partners Marquee ── */}
+      {/* ── Partners Marquee ── */ }
       <section className="py-12 sm:py-16 bg-white overflow-hidden border-y border-gray-100">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 mb-6 sm:mb-8 text-center">
           <h3 className="text-xs sm:text-sm font-bold uppercase tracking-widest text-gray-500">Trusted By Global Partners & Investors</h3>
         </div>
         <div className="relative flex overflow-x-hidden">
           <div className="animate-marquee whitespace-nowrap flex items-center gap-6 sm:gap-8 py-4">
-            {["Apex Capital", "Global Health Fund", "MediVentures", "BioPharma Partners", "Nexus Healthcare", "Summit Investments", "CureCapital", "LifeScience Group"].map((partner, i) => (
-              <div key={i} className="w-40 sm:w-56 h-16 sm:h-24 bg-white rounded-xl border border-gray-100 shadow-sm flex items-center justify-center shrink-0 mx-3 sm:mx-4">
-                <span className="text-base sm:text-xl font-bold text-gray-400 text-center px-2" style={{ fontFamily: "'Montserrat', sans-serif" }}>{partner}</span>
+            { ["Apex Capital", "Global Health Fund", "MediVentures", "BioPharma Partners", "Nexus Healthcare", "Summit Investments", "CureCapital", "LifeScience Group"].map((partner, i) => (
+              <div key={ i } className="w-40 sm:w-56 h-16 sm:h-24 bg-white rounded-xl border border-gray-100 shadow-sm flex items-center justify-center shrink-0 mx-3 sm:mx-4">
+                <span className="text-base sm:text-xl font-bold text-gray-400 text-center px-2" style={ { fontFamily: "'Montserrat', sans-serif" } }>{ partner }</span>
               </div>
-            ))}
+            )) }
           </div>
           <div className="absolute top-0 animate-marquee2 whitespace-nowrap flex items-center gap-6 sm:gap-8 py-4">
-            {["Apex Capital", "Global Health Fund", "MediVentures", "BioPharma Partners", "Nexus Healthcare", "Summit Investments", "CureCapital", "LifeScience Group"].map((partner, i) => (
-              <div key={i} className="w-40 sm:w-56 h-16 sm:h-24 bg-white rounded-xl border border-gray-100 shadow-sm flex items-center justify-center shrink-0 mx-3 sm:mx-4">
-                <span className="text-base sm:text-xl font-bold text-gray-400 text-center px-2" style={{ fontFamily: "'Montserrat', sans-serif" }}>{partner}</span>
+            { ["Apex Capital", "Global Health Fund", "MediVentures", "BioPharma Partners", "Nexus Healthcare", "Summit Investments", "CureCapital", "LifeScience Group"].map((partner, i) => (
+              <div key={ i } className="w-40 sm:w-56 h-16 sm:h-24 bg-white rounded-xl border border-gray-100 shadow-sm flex items-center justify-center shrink-0 mx-3 sm:mx-4">
+                <span className="text-base sm:text-xl font-bold text-gray-400 text-center px-2" style={ { fontFamily: "'Montserrat', sans-serif" } }>{ partner }</span>
               </div>
-            ))}
+            )) }
           </div>
         </div>
       </section>
 
-      {/* ── Testimonials ── */}
+      {/* ── Testimonials ── */ }
       <section className="py-14 sm:py-20 md:py-24 bg-[#fdfbf7]">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6">
           <div className="text-center mb-10 sm:mb-16">
-            <span className="text-xs font-bold uppercase tracking-widest" style={{ color: "#6B4226" }}>Testimonials</span>
+            <span className="text-xs font-bold uppercase tracking-widest" style={ { color: "#6B4226" } }>Testimonials</span>
             <h2
               className="mt-3 text-gray-900"
-              style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 800, fontSize: "clamp(1.5rem, 3.5vw, 2.4rem)" }}
+              style={ { fontFamily: "'Montserrat', sans-serif", fontWeight: 800, fontSize: "clamp(1.5rem, 3.5vw, 2.4rem)" } }
             >
               What Our Partners Say
             </h2>
           </div>
 
-          {/* Horizontal scroll on mobile, grid on md+ */}
+          {/* Horizontal scroll on mobile, grid on md+ */ }
           <div className="flex md:grid md:grid-cols-3 gap-5 sm:gap-6 md:gap-8 overflow-x-auto md:overflow-visible pb-4 md:pb-0 snap-x snap-mandatory md:snap-none -mx-4 px-4 md:mx-0 md:px-0">
-            {[
+            { [
               {
                 quote: "Natura Health Care has been an invaluable partner in our supply chain. Their commitment to quality and timely delivery is unmatched.",
                 name: "Dr. Sarah Jenkins",
@@ -723,7 +761,7 @@ export default function Home() {
               }
             ].map((testimonial, i) => (
               <div
-                key={i}
+                key={ i }
                 className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-gray-100 relative snap-start shrink-0 w-[82vw] sm:w-[70vw] md:w-auto"
               >
                 <div className="text-[#2A5C32] opacity-20 absolute top-5 right-5 sm:top-6 sm:right-6">
@@ -731,96 +769,96 @@ export default function Home() {
                     <path d="M14.017 21L16.41 14.592C16.657 13.935 16.78 13.25 16.78 12.536V3H24V12.536C24 15.36 23.14 17.82 21.42 19.916C19.7 22.012 17.51 23.33 14.85 23.87L14.017 21ZM3.017 21L5.41 14.592C5.657 13.935 5.78 13.25 5.78 12.536V3H13V12.536C13 15.36 12.14 17.82 10.42 19.916C8.7 22.012 6.51 23.33 3.85 23.87L3.017 21Z" />
                   </svg>
                 </div>
-                <p className="text-gray-600 italic mb-6 sm:mb-8 relative z-10 leading-relaxed text-sm sm:text-base">&ldquo;{testimonial.quote}&rdquo;</p>
+                <p className="text-gray-600 italic mb-6 sm:mb-8 relative z-10 leading-relaxed text-sm sm:text-base">&ldquo;{ testimonial.quote }&rdquo;</p>
                 <div className="flex items-center gap-3 sm:gap-4">
-                  <img loading="lazy" decoding="async" src={testimonial.image} alt={testimonial.name} className="w-11 h-11 sm:w-12 sm:h-12 rounded-full object-cover shrink-0" />
+                  <img loading="lazy" decoding="async" src={ testimonial.image } alt={ testimonial.name } className="w-11 h-11 sm:w-12 sm:h-12 rounded-full object-cover shrink-0" />
                   <div>
-                    <h4 className="font-bold text-gray-900 text-sm" style={{ fontFamily: "'Montserrat', sans-serif" }}>{testimonial.name}</h4>
-                    <p className="text-xs text-gray-500">{testimonial.role}</p>
+                    <h4 className="font-bold text-gray-900 text-sm" style={ { fontFamily: "'Montserrat', sans-serif" } }>{ testimonial.name }</h4>
+                    <p className="text-xs text-gray-500">{ testimonial.role }</p>
                   </div>
                 </div>
               </div>
-            ))}
+            )) }
           </div>
         </div>
       </section>
 
-      {/* ── Latest News ── */}
+      {/* ── Latest News ── */ }
       <section className="py-14 sm:py-20 md:py-24 bg-white">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6">
           <div className="flex items-end justify-between mb-8 sm:mb-12">
             <div>
-              <span className="text-xs font-bold uppercase tracking-widest" style={{ color: "#6B4226" }}>News & Updates</span>
+              <span className="text-xs font-bold uppercase tracking-widest" style={ { color: "#6B4226" } }>News & Updates</span>
               <h2
                 className="mt-3 text-gray-900"
-                style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 800, fontSize: "clamp(1.4rem, 3.5vw, 2.2rem)" }}
+                style={ { fontFamily: "'Montserrat', sans-serif", fontWeight: 800, fontSize: "clamp(1.4rem, 3.5vw, 2.2rem)" } }
               >
                 Latest from Natura
               </h2>
             </div>
-            <Link href="/media#news" className="hidden md:flex items-center gap-1 text-sm font-semibold" style={{ color: "#2A5C32" }}>
-              All News <ArrowRight size={15} />
+            <Link href="/media#news" className="hidden md:flex items-center gap-1 text-sm font-semibold" style={ { color: "#2A5C32" } }>
+              All News <ArrowRight size={ 15 } />
             </Link>
           </div>
 
-          {/* Horizontal scroll on mobile, grid on md+ */}
+          {/* Horizontal scroll on mobile, grid on md+ */ }
           <div className="flex md:grid md:grid-cols-3 gap-5 sm:gap-6 md:gap-7 overflow-x-auto md:overflow-visible pb-4 md:pb-0 snap-x snap-mandatory md:snap-none -mx-4 px-4 md:mx-0 md:px-0">
-            {mediaNewsArticles.map((item, i) => (
+            { mediaNewsArticles.map((item, i) => (
               <article
-                key={i}
+                key={ i }
                 className="group rounded-2xl overflow-hidden border border-gray-100 hover:shadow-lg transition-all duration-300 bg-white snap-start shrink-0 w-[82vw] sm:w-[70vw] md:w-auto"
               >
                 <div className="relative h-44 sm:h-48 overflow-hidden">
-                  <img loading="lazy" decoding="async" src={item.image} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                  <span className="absolute top-3 left-3 sm:top-4 sm:left-4 text-xs font-bold px-3 py-1 rounded-full text-white" style={{ backgroundColor: "#2A5C32" }}>
-                    {item.category}
+                  <img loading="lazy" decoding="async" src={ item.image } alt={ item.title } className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <span className="absolute top-3 left-3 sm:top-4 sm:left-4 text-xs font-bold px-3 py-1 rounded-full text-white" style={ { backgroundColor: "#2A5C32" } }>
+                    { item.category }
                   </span>
                 </div>
                 <div className="p-5 sm:p-6">
                   <div className="flex items-center gap-2 text-xs text-gray-400 mb-2 sm:mb-3">
-                    <Calendar size={11} /> {item.date}
+                    <Calendar size={ 11 } /> { item.date }
                   </div>
-                  <h3 className="font-bold text-gray-900 mb-2 sm:mb-3 leading-snug group-hover:text-[#2A5C32] transition-colors text-sm sm:text-base" style={{ fontFamily: "'Montserrat', sans-serif" }}>
-                    {item.title}
+                  <h3 className="font-bold text-gray-900 mb-2 sm:mb-3 leading-snug group-hover:text-[#2A5C32] transition-colors text-sm sm:text-base" style={ { fontFamily: "'Montserrat', sans-serif" } }>
+                    { item.title }
                   </h3>
-                  <p className="text-xs sm:text-sm text-gray-500 leading-relaxed mb-3 sm:mb-4">{item.excerpt}</p>
-                  <Link href="/media#news" className="flex items-center gap-1 text-sm font-semibold" style={{ color: "#2A5C32" }}>
-                    Read More <ExternalLink size={13} />
+                  <p className="text-xs sm:text-sm text-gray-500 leading-relaxed mb-3 sm:mb-4">{ item.excerpt }</p>
+                  <Link href="/media#news" className="flex items-center gap-1 text-sm font-semibold" style={ { color: "#2A5C32" } }>
+                    Read More <ExternalLink size={ 13 } />
                   </Link>
                 </div>
               </article>
-            ))}
+            )) }
           </div>
 
           <div className="mt-6 text-center md:hidden">
-            <Link href="/media#news" className="inline-flex items-center gap-1 text-sm font-semibold" style={{ color: "#2A5C32" }}>
-              All News <ArrowRight size={15} />
+            <Link href="/media#news" className="inline-flex items-center gap-1 text-sm font-semibold" style={ { color: "#2A5C32" } }>
+              All News <ArrowRight size={ 15 } />
             </Link>
           </div>
         </div>
       </section>
 
-      {/* ── Purpose Banner ── */}
+      {/* ── Purpose Banner ── */ }
       <section className="py-14 sm:py-20 md:py-24 bg-gray-50">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6">
           <div className="grid lg:grid-cols-2 gap-10 sm:gap-12 lg:gap-16 items-center">
-            {/* Image: shorter on mobile */}
+            {/* Image: shorter on mobile */ }
             <div className="relative rounded-3xl overflow-hidden h-64 sm:h-80 md:h-[400px]">
               <img loading="lazy" decoding="async"
                 src="/media/OurPurpose.jpg"
                 alt="Patient care"
                 className="w-full h-full object-cover"
               />
-              <div className="absolute inset-0" style={{ background: "linear-gradient(0deg, rgba(42,92,50,0.5) 0%, transparent 60%)" }} />
+              <div className="absolute inset-0" style={ { background: "linear-gradient(0deg, rgba(42,92,50,0.5) 0%, transparent 60%)" } } />
             </div>
             <div>
-              <span className="text-xs font-bold uppercase tracking-widest" style={{ color: "#6B4226" }}>Our Purpose</span>
+              <span className="text-xs font-bold uppercase tracking-widest" style={ { color: "#6B4226" } }>Our Purpose</span>
               <h2
                 className="mt-3 mb-4 sm:mb-5 text-gray-900 leading-tight"
-                style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 800, fontSize: "clamp(1.6rem, 4vw, 2.4rem)" }}
+                style={ { fontFamily: "'Montserrat', sans-serif", fontWeight: 800, fontSize: "clamp(1.6rem, 4vw, 2.4rem)" } }
               >
                 &quot;Improving Lives Through<br />
-                <span style={{ color: "#2A5C32" }}>Accessible Medicine&quot;</span>
+                <span style={ { color: "#2A5C32" } }>Accessible Medicine&quot;</span>
               </h2>
               <p className="text-gray-600 leading-relaxed mb-5 sm:mb-6 text-sm sm:text-base">
                 At the heart of everything we do is the patient. We believe that high-quality, affordable medicines should be accessible to everyone, regardless of geography or economic status.
@@ -833,7 +871,7 @@ export default function Home() {
                   href="/contact"
                   className="inline-flex items-center gap-2 text-white font-semibold px-6 sm:px-7 py-3 sm:py-3.5 text-sm sm:text-base rounded-full bg-[#2A5C32] transition-all duration-200 hover:bg-[#234e2a] hover:shadow-lg active:scale-95"
                 >
-                  Partner With Us <ArrowRight size={15} />
+                  Partner With Us <ArrowRight size={ 15 } />
                 </Link>
                 <Link
                   href="/products"
@@ -847,12 +885,12 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── CTA Banner ── */}
-      <section className="py-12 sm:py-14 md:py-16" style={{ background: "linear-gradient(135deg, #2A5C32 0%, #1a3c22 100%)" }}>
+      {/* ── CTA Banner ── */ }
+      <section className="py-12 sm:py-14 md:py-16" style={ { background: "linear-gradient(135deg, #2A5C32 0%, #1a3c22 100%)" } }>
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 text-center text-white">
           <h2
             className="mb-3 sm:mb-4"
-            style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 800, fontSize: "clamp(1.35rem, 4vw, 2.2rem)" }}
+            style={ { fontFamily: "'Montserrat', sans-serif", fontWeight: 800, fontSize: "clamp(1.35rem, 4vw, 2.2rem)" } }
           >
             Ready to Establish a Supply Partnership?
           </h2>
@@ -864,7 +902,7 @@ export default function Home() {
               href="/contact"
               className="inline-flex items-center gap-2 bg-white text-[#2A5C32] font-bold px-7 sm:px-8 py-3 sm:py-3.5 text-sm sm:text-base rounded-full transition-all duration-200 hover:bg-[#f0f7f1] hover:shadow-lg active:scale-95"
             >
-              Start a Conversation <ArrowRight size={15} />
+              Start a Conversation <ArrowRight size={ 15 } />
             </Link>
             <Link
               href="/products"
