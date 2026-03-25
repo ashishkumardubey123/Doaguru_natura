@@ -2,8 +2,8 @@
 
 import { useState, useEffect, useContext, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { UserContext } from '@/dataContext/UserContext';
-import { FormsContext } from '@/dataContext/FormsContext';
+import { UserContext } from '@/Context/UserContext';
+import { FormsContext } from '@/Context/FormsContext';
 import { fetchPendingAdmins as fetchPendingAdminsApi, updateAdminStatus as updateAdminStatusApi } from '@/app/api/adminApi';
 import {
   LogOut, CheckCircle, Clock, Loader2, Mail, Phone,

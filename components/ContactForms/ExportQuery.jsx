@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useContext } from "react";
-import { ArrowRight, User, Mail, Phone, Building2, Globe, Package, MessageSquare, AlertCircle } from "lucide-react";
-import { FormsContext } from "@/dataContext/FormsContext";
+import { ArrowRight, User, Mail, Phone, Building2, Globe, MessageSquare, AlertCircle } from "lucide-react";
+import { FormsContext } from "@/Context/FormsContext";
+import { therapyFilters, dosageFilters } from "@/utils/utils";
 
 const isValidEmail = (val) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(val.trim());
 const isValidPhone = (val) => val.length === 0 || val.length === 10;
@@ -14,11 +15,39 @@ const ErrorMsg = ({ msg }) => msg ? (
   </p>
 ) : null;
 
+// Declared outside to avoid "component created during render" lint error
+function CategoryChip({ label, selected, onToggle, color = "#6B4226", hoverBg = "orange" }) {
+  return (
+    <div
+      onClick={() => onToggle(label)}
+      className={`flex items-center gap-2 cursor-pointer rounded-xl border px-3 py-2.5 text-xs font-medium transition-all duration-200 select-none
+        ${selected
+          ? `border-[${color}] bg-orange-50 shadow-sm`
+          : `border-gray-200 bg-white text-gray-600 hover:border-[${color}]/50 hover:bg-orange-50/40`}`}
+      style={selected ? { borderColor: color, color } : {}}
+    >
+      <span
+        className="w-3.5 h-3.5 rounded-sm border flex items-center justify-center shrink-0 transition-all duration-200"
+        style={selected ? { borderColor: color, backgroundColor: color } : { borderColor: "#D1D5DB", backgroundColor: "white" }}
+      >
+        {selected && (
+          <svg viewBox="0 0 10 8" className="w-2.5 fill-white">
+            <path d="M1 4L4 7L9 1" stroke="white" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+          </svg>
+        )}
+      </span>
+      {label}
+    </div>
+  );
+}
+
 export default function ExportQuery({ setSubmitted }) {
   const { submitForm } = useContext(FormsContext);
   const [form, setForm] = useState({
-    name: "", email: "", countryCode: "+91", phone: "", company: "", country: "", products: "", message: ""
+    name: "", email: "", countryCode: "+91", phone: "", company: "", country: "", message: "",
   });
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [otherText, setOtherText] = useState("");
   const [touched, setTouched] = useState({});
   const [submitAttempted, setSubmitAttempted] = useState(false);
 
@@ -28,6 +57,12 @@ export default function ExportQuery({ setSubmitted }) {
   const handlePhoneChange = (e) => {
     const digitsOnly = e.target.value.replace(/\D/g, "").slice(0, 10);
     setForm({ ...form, phone: digitsOnly });
+  };
+
+  const toggleCategory = (label) => {
+    setSelectedCategories((prev) =>
+      prev.includes(label) ? prev.filter((c) => c !== label) : [...prev, label]
+    );
   };
 
   const show = (field) => touched[field] || submitAttempted;
@@ -44,8 +79,17 @@ export default function ExportQuery({ setSubmitted }) {
     if (e && e.preventDefault) e.preventDefault();
     setSubmitAttempted(true);
     if ((form.email && !isValidEmail(form.email)) || !isValidPhone(form.phone)) return;
+    if (selectedCategories.length === 0) return;
 
-    const payload = { ...form, phone: form.phone ? `${form.countryCode} ${form.phone}` : "" };
+    const allCategories = [...selectedCategories];
+    if (selectedCategories.includes("Other") && otherText.trim()) {
+      allCategories.splice(allCategories.indexOf("Other"), 1, `Other: ${otherText.trim()}`);
+    }
+    const payload = {
+      ...form,
+      phone: form.phone ? `${form.countryCode} ${form.phone}` : "",
+      products: allCategories.join(", "),
+    };
     const result = await submitForm("Export Query", payload);
     if (result.success) setSubmitted(true);
     else alert(result.message || "Failed to submit form");
@@ -135,14 +179,57 @@ export default function ExportQuery({ setSubmitted }) {
           </div>
         </div>
 
-        {/* Products */}
-        <div>
-          <label className="text-sm font-semibold text-gray-700 mb-2 block">Products of Interest *</label>
-          <div className="relative">
-            <Package className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={18} />
-            <input name="products" value={form.products} onChange={handleChange} required
-              className={inputCls(false)} placeholder="e.g., Cardiology, Oncology, Specific Generic Names" />
+        {/* ── Products of Interest ── */}
+        <div className="rounded-2xl border border-gray-100 bg-gray-50/60 p-4 sm:p-5">
+          <div className="flex items-start justify-between mb-1">
+            <label className="text-sm font-semibold text-gray-700">Products of Interest *</label>
+            {selectedCategories.length > 0 && (
+              <span className="text-[11px] font-semibold bg-[#6B4226] text-white px-2.5 py-0.5 rounded-full">
+                {selectedCategories.length} selected
+              </span>
+            )}
           </div>
+          <p className="text-xs text-gray-400 mb-4">Select the product categories you are interested in. You can choose multiple.</p>
+
+          {/* Wellness Area */}
+          <p className="text-[11px] font-bold uppercase tracking-widest text-[#6B4226]/80 mb-2">Wellness Area</p>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 mb-4">
+            {therapyFilters.map((f) => (
+              <CategoryChip key={f.id} label={f.label} selected={selectedCategories.includes(f.label)} onToggle={toggleCategory} />
+            ))}
+          </div>
+
+          {/* Product Form */}
+          <p className="text-[11px] font-bold uppercase tracking-widest text-[#6B4226]/80 mb-2">Product Form</p>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 mb-4">
+            {dosageFilters.map((f) => (
+              <CategoryChip key={f.id} label={f.label} selected={selectedCategories.includes(f.label)} onToggle={toggleCategory} />
+            ))}
+          </div>
+
+          {/* Other */}
+          <p className="text-[11px] font-bold uppercase tracking-widest text-[#6B4226]/80 mb-2">Other</p>
+          <div className="flex flex-col gap-2">
+            <div className="w-fit">
+              <CategoryChip label="Other" selected={selectedCategories.includes("Other")} onToggle={toggleCategory} />
+            </div>
+            {selectedCategories.includes("Other") && (
+              <input
+                type="text"
+                value={otherText}
+                onChange={(e) => setOtherText(e.target.value)}
+                placeholder="Please specify your category..."
+                className="w-full border border-[#6B4226]/40 rounded-xl px-4 py-2.5 text-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-4 focus:ring-[#6B4226]/10 focus:border-[#6B4226] bg-white transition-all duration-200 animate-in fade-in slide-in-from-top-1"
+              />
+            )}
+          </div>
+
+          {submitAttempted && selectedCategories.length === 0 && (
+            <p className="flex items-center gap-1.5 mt-3 text-xs text-red-500 animate-in fade-in slide-in-from-top-1 duration-200">
+              <AlertCircle size={13} className="shrink-0" />
+              Please select at least one product category
+            </p>
+          )}
         </div>
 
         {/* Additional Details */}

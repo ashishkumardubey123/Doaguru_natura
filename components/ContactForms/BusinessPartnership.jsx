@@ -2,7 +2,7 @@
 
 import { useState, useContext } from "react";
 import { ArrowRight, AlertCircle } from "lucide-react";
-import { FormsContext } from "@/dataContext/FormsContext";
+import { FormsContext } from "@/Context/FormsContext";
 
 const isValidEmail = (val) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(val.trim());
 const isValidPhone = (val) => val.length === 0 || val.length === 10;

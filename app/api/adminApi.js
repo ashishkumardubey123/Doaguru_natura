@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_BASE_URL = "https://jaipurdentalhospital.dentalguru.software"
+// const API_BASE_URL = "https://jaipurdentalhospital.dentalguru.software"
+const API_BASE_URL = "http://localhost:5000"
 
 const getAuthConfig = (token) => ({
   withCredentials: true,

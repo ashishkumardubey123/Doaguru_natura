@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useContext } from 'react';
 import { useRouter } from 'next/navigation';
-import { UserContext } from '@/dataContext/UserContext';
+import { UserContext } from '@/Context/UserContext';
 import Link from 'next/link';
 import { 
   User, 

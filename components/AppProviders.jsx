@@ -1,7 +1,7 @@
 'use client';
 
-import { UserProvider } from '@/dataContext/UserContext';
-import { FormsProvider } from '@/dataContext/FormsContext';
+import { UserProvider } from '@/Context/UserContext';
+import { FormsProvider } from '@/Context/FormsContext';
 
 export default function AppProviders({ children }) {
   return (

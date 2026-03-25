@@ -1,22 +1,27 @@
-import axios from 'axios';
+import axios from "axios";
 
-const API_BASE_URL = "https://jaipurdentalhospital.dentalguru.software"
+// const API_BASE_URL = "https://jaipurdentalhospital.dentalguru.software"
+const API_BASE_URL = "http://localhost:5000";
+
 const getAuthConfig = (token) => ({
   withCredentials: true,
   headers: token
     ? {
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${token}`,
       }
-    : undefined
+    : undefined,
 });
 
 // 1. GET Request: Yahan 2nd parameter config hota hai
 export const fetchFormsData = async (token) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/api/form/data`, getAuthConfig(token));
+    const response = await axios.get(
+      `${API_BASE_URL}/api/form/data`,
+      getAuthConfig(token),
+    );
     return response.data;
   } catch (error) {
-    console.error('Error fetching forms:', error);
+    console.error("Error fetching forms:", error);
     throw error;
   }
 };
@@ -24,7 +29,7 @@ export const fetchFormsData = async (token) => {
 // 2. POST Request: Yahan 3rd parameter config hota hai (Data ke baad)
 export const submitFormsData = async (type, data) => {
   try {
-    const endpoint = type.replace(/\s+/g, '');
+    const endpoint = type.replace(/\s+/g, "");
 
     let formattedData = {};
 
@@ -33,7 +38,7 @@ export const submitFormsData = async (type, data) => {
         Name: data.name,
         Email: data.email,
         Phone: data.phone,
-        Message: data.message
+        Message: data.message,
       };
     } else if (type === "Export Query") {
       formattedData = {
@@ -43,7 +48,7 @@ export const submitFormsData = async (type, data) => {
         Company: data.company,
         Country: data.country,
         Products: data.products,
-        Details: data.message
+        Details: data.message,
       };
     } else if (type === "Business Partnership") {
       formattedData = {
@@ -52,7 +57,7 @@ export const submitFormsData = async (type, data) => {
         Phone: data.phone,
         Company: data.company,
         Partnership: data.partnershipType,
-        Details: data.message
+        Details: data.message,
       };
     } else if (type === "Supplier Registration") {
       formattedData = {
@@ -61,17 +66,18 @@ export const submitFormsData = async (type, data) => {
         Email: data.email,
         Phone: data.phone,
         SupplyCategory: data.supplyCategory,
-        CompanyProfile: data.message
+        CompanyProfile: data.message,
       };
     }
 
-    const response = await axios.post(`${API_BASE_URL}/api/form/${endpoint}`, 
-      formattedData, 
-      { withCredentials: true }
+    const response = await axios.post(
+      `${API_BASE_URL}/api/form/${endpoint}`,
+      formattedData,
+      { withCredentials: true },
     );
     return response.data;
   } catch (error) {
-    console.error('Error submitting form:', error);
+    console.error("Error submitting form:", error);
     throw error;
   }
 };
@@ -79,15 +85,17 @@ export const submitFormsData = async (type, data) => {
 // 3. PATCH Request: Yahan bhi 3rd parameter config hota hai (Data ke baad)
 export const updateFormStatus = async (id, status, tableName, token) => {
   try {
-    const response = await axios.patch(`${API_BASE_URL}/api/form/update-status/${id}`, 
-    { 
-      status: status,
-      tableName: tableName 
-    }, 
-    getAuthConfig(token));
+    const response = await axios.patch(
+      `${API_BASE_URL}/api/form/update-status/${id}`,
+      {
+        status: status,
+        tableName: tableName,
+      },
+      getAuthConfig(token),
+    );
     return response.data;
   } catch (error) {
-    console.error('Error updating form status:', error);
+    console.error("Error updating form status:", error);
     throw error;
   }
 };

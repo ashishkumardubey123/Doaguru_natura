@@ -8,6 +8,7 @@ import {
   Shield, Award, Users, TrendingUp, Calendar, ExternalLink, MapPin
 } from "lucide-react";
 import { mediaNewsArticles } from "../data/mediaNews";
+import { allProducts, therapyFilters, dosageFilters, therapyColorMap } from "@/utils/utils";
 
 // ─── DATA ────────────────────────────────────────────────────────────────────
 const heroSlides = [
@@ -55,56 +56,21 @@ const stats = [
   { value: "120+", label: "R&D Molecules", icon: TrendingUp },
 ];
 
-const therapyAreas = [
-  {
-    icon: Heart,
-    name: "Cardiology",
-    desc: "Comprehensive cardiovascular portfolio including ACE inhibitors, beta-blockers, statins & anti-arrhythmics.",
-    products: "80+ Products",
-    color: "#e8f5e9",
-    accent: "#2A5C32",
-  },
-  {
-    icon: Brain,
-    name: "Neurology & CNS",
-    desc: "Epilepsy, Parkinson's, depression & anxiety management formulations developed with precision.",
-    products: "65+ Products",
-    color: "#f3e8ff",
-    accent: "#7c3aed",
-  },
-  {
-    icon: Activity,
-    name: "Oncology",
-    desc: "Targeted and supportive oncology therapies spanning oral chemo to injectables.",
-    products: "40+ Products",
-    color: "#fff3e8",
-    accent: "#c2440c",
-  },
-  {
-    icon: Pill,
-    name: "Diabetes & Metabolism",
-    desc: "Oral hypoglycaemics, insulin sensitizers & metabolic syndrome management solutions.",
-    products: "55+ Products",
-    color: "#e8f4ff",
-    accent: "#1d6fa4",
-  },
-  {
-    icon: Shield,
-    name: "Anti-Infectives",
-    desc: "Broad-spectrum antibiotics, antivirals & antifungals to combat emerging pathogens.",
-    products: "70+ Products",
-    color: "#e8fff0",
-    accent: "#0f7a3c",
-  },
-  {
-    icon: FlaskConical,
-    name: "Gastroenterology",
-    desc: "GI therapies including PPIs, antacids, bowel management & hepatology products.",
-    products: "45+ Products",
-    color: "#fef8e8",
-    accent: "#92600a",
-  },
-];
+// Descriptions for each therapy area (keyed by therapyFilters id)
+const therapyDescriptions = {
+  immunity:       "Spirulina, Shilajit, Ashwagandha and multi-herb formulations to strengthen immunity, energy and cellular health.",
+  digestion:      "Ayurvedic syrups, granules and asavas for improved digestion, acidity, piles, constipation and gut wellness.",
+  "joint-care":   "Herbal oils, vatis and gels for joint mobility, arthritis relief, muscle pain and anti-inflammatory support.",
+  respiratory:    "Tulsi-based extracts, syrups and churnas for cough, cold, chest congestion and respiratory allergy relief.",
+  "womens-health": "Ashoka, Shatavari and Lodhra formulations for hormonal balance, menstrual health and reproductive wellness.",
+  "hair-skin":    "Neem, Sariva and Bhringraj-based oils and syrups for healthy skin, hair growth and blood purification.",
+  cardiac:        "Herbal cardiac tonics with Arjuna, Ginger and Garlic blend for heart health, BP and breathlessness.",
+  diabetic:       "Karela, Gurmar, Neem and Methi combinations for natural blood sugar management and pancreatic support.",
+  liver:          "Hepato-protective tonics with Guduchi, Punarnava and Himsara for liver health, jaundice and detox.",
+  "bone-health":  "Calcium and herbal tonic combining Ashwagandha, Shatavari and Shilajit for bone density and joint flexibility.",
+  "oral-care":    "Traditional herbal manjan and oral care blends for strong teeth, healthy gums and fresh breath.",
+  mental:         "Brahmi, Shankhpushpi and Ashwagandha formulations for memory, focus, stress and mental clarity.",
+};
 
 const certifications = [
   { mark: "WHO-GMP", name: "WHO-GMP", desc: "World Health Organization GMP compliance", accent: "#2A5C32", surface: "#edf6ee" },
@@ -120,36 +86,7 @@ const certifications = [
   { mark: "GMP", name: "GMP", desc: "Good manufacturing practice certification", accent: "#4c9626", surface: "#f2faea" },
 ];
 
-const featuredProducts = [
-  {
-    name: "Amlodipine Besylate Tablets USP",
-    category: "Cardiology",
-    dosage: "Tablets",
-    strength: "5mg, 10mg",
-    image: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
-  },
-  {
-    name: "Amoxicillin & Clavulanate Potassium",
-    category: "Anti-Infectives",
-    dosage: "Tablets",
-    strength: "500mg/125mg, 875mg/125mg",
-    image: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
-  },
-  {
-    name: "Pantoprazole Sodium Delayed-Release",
-    category: "Gastroenterology",
-    dosage: "Tablets",
-    strength: "20mg, 40mg",
-    image: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
-  },
-  {
-    name: "Metformin Hydrochloride ER",
-    category: "Diabetes & Metabolism",
-    dosage: "Tablets",
-    strength: "500mg, 750mg, 1000mg",
-    image: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
-  },
-];
+
 
 const HERO_ZOOM_MS = 8500;
 const HERO_FADE_MS = 1600;
@@ -439,36 +376,48 @@ export default function Home() {
               Our diverse therapeutic portfolio ensures we can address the most critical healthcare needs across multiple disease areas worldwide.
             </p>
           </div>
-          {/* 1-col on mobile → 2-col on sm → 3-col on lg */ }
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            { therapyAreas.map((area) => (
-              <div
-                key={ area.name }
-                className="rounded-2xl p-5 sm:p-6 border border-gray-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group bg-white"
-              >
+          {/* 2-col on mobile → 3-col on sm → 4-col on lg */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
+            { therapyFilters.map((f) => {
+              const colors = therapyColorMap[f.id] ?? { bg: "#f0f7f1", text: "#2A5C32", dot: "#4caf50" };
+              const count = allProducts.filter((p) => p.therapy === f.id).length;
+              const desc = therapyDescriptions[f.id] ?? "";
+              return (
                 <div
-                  className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center mb-4 sm:mb-5"
-                  style={ { backgroundColor: area.color } }
+                  key={ f.id }
+                  className="rounded-2xl p-4 sm:p-5 border border-gray-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group bg-white"
                 >
-                  <area.icon size={ 20 } style={ { color: area.accent } } />
+                  <div
+                    className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center mb-3 sm:mb-4 transition-colors duration-300"
+                    style={ { backgroundColor: colors.bg } }
+                  >
+                    <f.icon size={ 18 } style={ { color: colors.text } } className="group-hover:scale-110 transition-transform" />
+                  </div>
+                  <h3
+                    className="font-bold text-gray-900 mb-1.5 leading-snug"
+                    style={ { fontFamily: "'Montserrat', sans-serif", fontSize: "0.9rem" } }
+                  >
+                    { f.label }
+                  </h3>
+                  <p className="text-xs text-gray-500 leading-relaxed mb-4 line-clamp-3">{ desc }</p>
+                  <div className="flex items-center justify-between">
+                    <span
+                      className="text-[11px] font-bold px-2.5 py-1 rounded-full"
+                      style={ { backgroundColor: colors.bg, color: colors.text } }
+                    >
+                      { count } Products
+                    </span>
+                    <Link
+                      href={ `/products#${f.id}` }
+                      className="text-[11px] font-semibold flex items-center gap-1"
+                      style={ { color: colors.text } }
+                    >
+                      Browse <ArrowRight size={ 11 } />
+                    </Link>
+                  </div>
                 </div>
-                <h3
-                  className="font-bold text-gray-900 mb-2"
-                  style={ { fontFamily: "'Montserrat', sans-serif", fontSize: "1rem" } }
-                >
-                  { area.name }
-                </h3>
-                <p className="text-xs sm:text-sm text-gray-500 leading-relaxed mb-4">{ area.desc }</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold px-3 py-1 rounded-full" style={ { backgroundColor: area.color, color: area.accent } }>
-                    { area.products }
-                  </span>
-                  <Link href="/products" className="text-xs font-semibold flex items-center gap-1" style={ { color: area.accent } }>
-                    Browse <ArrowRight size={ 12 } />
-                  </Link>
-                </div>
-              </div>
-            )) }
+              );
+            }) }
           </div>
           <div className="text-center mt-8 sm:mt-10">
             <Link
@@ -498,36 +447,62 @@ export default function Home() {
               View All <ArrowRight size={ 15 } />
             </Link>
           </div>
-          {/* 1-col mobile → 2-col sm → 4-col lg */ }
+          {/* 1-col mobile → 2-col sm → 4-col lg */}
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-            { featuredProducts.map((product, i) => (
-              <div key={ i } className="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300">
-                <div className="relative h-40 sm:h-48 bg-gray-50 flex items-center justify-center p-5 sm:p-6">
-                  <img
-                    loading="lazy"
-                    decoding="async"
-                    src={ product.image }
-                    alt={ product.name }
-                    className="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <span className="absolute top-3 left-3 sm:top-4 sm:left-4 text-[10px] font-bold px-2.5 py-1 rounded-full text-white" style={ { backgroundColor: "#2A5C32" } }>
-                    { product.category }
-                  </span>
-                </div>
-                <div className="p-4 sm:p-5">
-                  <h3 className="font-bold text-gray-900 mb-2 leading-snug group-hover:text-[#2A5C32] transition-colors text-sm sm:text-base" style={ { fontFamily: "'Montserrat', sans-serif" } }>
-                    { product.name }
-                  </h3>
-                  <div className="flex flex-col gap-1 mb-3 sm:mb-4">
-                    <div className="text-xs text-gray-500"><span className="font-semibold text-gray-700">Dosage Form:</span> { product.dosage }</div>
-                    <div className="text-xs text-gray-500"><span className="font-semibold text-gray-700">Strength:</span> { product.strength }</div>
+            { allProducts.filter((p) => p.image).slice(0, 4).map((product) => {
+              const colors = therapyColorMap[product.therapy] ?? { bg: "#f0f7f1", text: "#2A5C32", dot: "#4caf50" };
+              const TherapyIcon = therapyFilters.find((f) => f.id === product.therapy)?.icon;
+              const dosageLabel = dosageFilters.find((f) => f.id === product.dosageForm)?.label ?? product.dosageForm;
+              return (
+                <div key={ product.id } className="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 flex flex-col">
+                  {/* Image OR icon area */}
+                  { product.image ? (
+                    <div className="relative h-36 sm:h-40 overflow-hidden shrink-0">
+                      <img
+                        loading="lazy"
+                        src={ product.image }
+                        alt={ product.name }
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+                      { product.tag && (
+                        <span className="absolute top-3 left-3 text-[10px] font-bold px-2.5 py-1 rounded-full text-white shadow-sm" style={{ backgroundColor: product.tagColor ?? "#2A5C32" }}>
+                          { product.tag }
+                        </span>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="h-36 sm:h-40 flex items-center justify-center relative" style={{ backgroundColor: colors.bg }}>
+                      <div className="w-16 h-16 rounded-2xl flex items-center justify-center shadow-md" style={{ backgroundColor: colors.text + "18" }}>
+                        { TherapyIcon && <TherapyIcon size={ 32 } style={{ color: colors.text }} /> }
+                      </div>
+                      { product.tag && (
+                        <span className="absolute top-3 left-3 text-[10px] font-bold px-2.5 py-1 rounded-full text-white" style={{ backgroundColor: product.tagColor ?? "#2A5C32" }}>
+                          { product.tag }
+                        </span>
+                      )}
+                      <span className="absolute top-3 right-3 text-[10px] font-semibold px-2.5 py-1 rounded-full" style={{ backgroundColor: colors.text + "18", color: colors.text }}>
+                        { dosageLabel.split("&")[0].trim() }
+                      </span>
+                    </div>
+                  ) }
+                  {/* Content */}
+                  <div className="p-4 sm:p-5 flex flex-col flex-1">
+                    <h3 className="font-bold text-gray-900 mb-1 leading-snug group-hover:text-[#2A5C32] transition-colors text-sm sm:text-base" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+                      { product.name }
+                    </h3>
+                    <div className="text-[11px] text-gray-400 mb-2">{ product.genericName }</div>
+                    <p className="text-xs text-gray-500 leading-relaxed mb-3 flex-1 line-clamp-2">{ product.description }</p>
+                    <div className="flex items-center justify-between mt-auto pt-3 border-t border-gray-100">
+                      <span className="text-[11px] font-medium text-gray-500">Pack: <span className="font-semibold text-gray-700">{ product.packaging }</span></span>
+                      <Link href="/products" className="flex items-center gap-1 text-xs font-semibold" style={{ color: colors.text }}>
+                        Details <ArrowRight size={ 12 } />
+                      </Link>
+                    </div>
                   </div>
-                  <Link href="/products" className="flex items-center gap-1 text-sm font-semibold" style={ { color: "#2A5C32" } }>
-                    View Details <ArrowRight size={ 13 } />
-                  </Link>
                 </div>
-              </div>
-            )) }
+              );
+            }) }
           </div>
           <div className="mt-7 text-center md:hidden">
             <Link href="/products" className="inline-flex items-center gap-1 text-sm font-semibold" style={ { color: "#2A5C32" } }>
