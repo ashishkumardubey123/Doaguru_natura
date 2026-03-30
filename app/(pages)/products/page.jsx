@@ -43,8 +43,8 @@ function BrochureButton({ iconOnly = false }) {
   );
 }
 
-// ─── PRODUCT CARD (GRID) ──────────────────────────────────────────────────────
-function ProductCardGrid({ product }) {
+// ─── PRODUCT CARD (for GRID view) ──────────────────────────────────────────────────────
+function ProductCardGrid({ product, onShowImage }) {
   const colors = therapyColorMap[product.therapy] ?? { bg: "#f0f7f1", text: "#2A5C32", dot: "#4caf50" };
   const TherapyIcon = therapyFilters.find((f) => f.id === product.therapy)?.icon;
 
@@ -140,6 +140,7 @@ function ProductCardGrid({ product }) {
         {/* Action Buttons */}
         <div className="flex gap-2.5 mt-auto pt-4 border-t border-gray-100">
           <button
+            onClick={() => onShowImage(product)}
             className="flex-1 flex items-center justify-center gap-1.5 text-xs font-semibold py-2.5 rounded-xl border-2 border-transparent hover:border-[#2A5C32]/10 bg-[#f0f7f1] hover:bg-[#e4efe5] active:scale-95 transition-all duration-200"
             style={ { color: "#2A5C32" } }
           >
@@ -153,8 +154,8 @@ function ProductCardGrid({ product }) {
 }
 
 
-// ─── PRODUCT CARD (LIST) ──────────────────────────────────────────────────────
-function ProductCardList({ product }) {
+// ─── PRODUCT CARD (For LIST View) ──────────────────────────────────────────────────────
+function ProductCardList({ product, onShowImage }) {
   const colors = therapyColorMap[product.therapy] ?? { bg: "#f0f7f1", text: "#2A5C32", dot: "#4caf50" };
   const TherapyIcon = therapyFilters.find((f) => f.id === product.therapy)?.icon;
 
@@ -212,7 +213,7 @@ function ProductCardList({ product }) {
 
       {/* Actions */ }
       <div className="flex items-center gap-2 shrink-0 ml-2">
-        <button className="p-2.5 rounded-xl bg-[#f0f7f1] hover:bg-[#e4efe5] active:scale-95 transition-all" style={ { color: "#2A5C32" } }>
+        <button onClick={() => onShowImage(product)} className="p-2.5 rounded-xl bg-[#f0f7f1] hover:bg-[#e4efe5] active:scale-95 transition-all" style={ { color: "#2A5C32" } }>
           <Eye size={ 16 } />
         </button>
         <BrochureButton iconOnly />
@@ -367,6 +368,7 @@ export default function Products() {
   const [sortBy, setSortBy] = useState("name");
   const [viewMode, setViewMode] = useState("grid");   // "grid" | "list"
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
+  const [selectedProductImage, setSelectedProductImage] = useState(null);
 
   const searchRef = useRef(null);
 
@@ -704,11 +706,11 @@ export default function Products() {
               </div>
             ) : viewMode === "grid" ? (
               <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-5">
-                { sorted.map((p) => <ProductCardGrid key={ p.id } product={ p } />) }
+                { sorted.map((p) => <ProductCardGrid key={ p.id } product={ p } onShowImage={setSelectedProductImage} />) }
               </div>
             ) : (
               <div className="flex flex-col gap-3">
-                { sorted.map((p) => <ProductCardList key={ p.id } product={ p } />) }
+                { sorted.map((p) => <ProductCardList key={ p.id } product={ p } onShowImage={setSelectedProductImage} />) }
               </div>
             ) }
 
@@ -731,6 +733,47 @@ export default function Products() {
           </div>
         </div>
       </div>
+
+      {/* ── IMAGE MODAL ──────────────────────────────────────────── */}
+      {selectedProductImage && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
+          onClick={() => setSelectedProductImage(null)}
+        >
+          <div 
+            className="relative max-w-3xl w-full flex flex-col items-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button 
+              onClick={() => setSelectedProductImage(null)}
+              className="absolute -top-12 right-0 md:-right-12 p-2 bg-white/10 hover:bg-white/20 text-white rounded-full transition-all"
+            >
+              <X size={24} />
+            </button>
+            
+            {selectedProductImage.image ? (
+              <img 
+                src={selectedProductImage.image} 
+                alt={selectedProductImage.name}
+                className="w-full max-h-[80vh] object-contain rounded-2xl shadow-2xl"
+              />
+            ) : (
+              <div className="w-full h-64 md:h-96 bg-white rounded-2xl flex flex-col items-center justify-center text-gray-400">
+                <Package size={64} className="mb-4 opacity-50" />
+                <p className="text-lg font-medium">No image available</p>
+              </div>
+            )}
+            
+            <div className="mt-4 text-center">
+              <h3 className="text-2xl font-bold text-white mb-1" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+                {selectedProductImage.name}
+              </h3>
+              <p className="text-green-200/80">{selectedProductImage.genericName}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

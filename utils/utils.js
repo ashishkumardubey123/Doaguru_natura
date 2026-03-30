@@ -2089,4 +2089,103 @@ export const allProducts = [
     description:
       "Herbal oil formulated for sciatica nerve pain relief.",
   },
+
+  // ── VEDSAAN HEALTH SCIENCE PRODUCTS ──────────────────────────────
+
+  {
+    id: 189,
+    name: "Vediabet",
+    genericName: "Herbal Immunity & Wellness Tablet",
+    therapy: "immunity",
+    dosageForm: "vati",
+    packaging: "30 Tab / 60 Tab",
+    tag: "Immunity",
+    tagColor: "#2e7d32",
+    image: "/product/Vediabet.jpeg",
+    description:
+      "Vedsaan Health Science herbal tablet to boost immunity and overall wellness. Non-GMO, Pure Herbs formula.",
+  },
+  {
+    id: 190,
+    name: "Vedastate-K",
+    genericName: "Prostate & Kidney Stone Tablet",
+    therapy: "digestion",
+    dosageForm: "vati",
+    packaging: "30 Tab",
+    image: "/product/Vedastate-K.jpeg",
+    description:
+      "Vedsaan Health Science herbal tablet for prostate health and kidney stone management. Non-GMO, Pure Herbs.",
+  },
+  {
+    id: 191,
+    name: "Vedakalt Fort",
+    genericName: "Joint Pain Relief Tablet",
+    therapy: "joint-care",
+    dosageForm: "vati",
+    packaging: "30 Tab",
+    tag: "Joint Care",
+    tagColor: "#1565c0",
+    image: "/product/Vedakalt-Fort.jpeg",
+    description:
+      "Vedsaan Health Science herbal tablet to help relieve joint pain and improve mobility. Non-GMO, Pure Herbs.",
+  },
+  {
+    id: 192,
+    name: "Vedaconsti",
+    genericName: "Chronic Constipation Relief Tablet",
+    therapy: "digestion",
+    dosageForm: "vati",
+    packaging: "30 Tab",
+    image: "/product/Vedaconsti.jpeg",
+    description:
+      "Vedsaan Health Science herbal tablet for relief from chronic constipation and improved bowel movement. Non-GMO.",
+  },
+  {
+    id: 193,
+    name: "Vedastress-T",
+    genericName: "Anti-Stress & Memory Enhancement Tablet",
+    therapy: "mental",
+    dosageForm: "vati",
+    packaging: "30 Tab",
+    image: "/product/Vedastress-T.jpeg",
+    description:
+      "Vedsaan Health Science herbal tablet for stress relief and memory enhancement. Non-GMO, Pure Herbs.",
+  },
+  {
+    id: 194,
+    name: "Vedapiles",
+    genericName: "Piles Relief Tablet",
+    therapy: "digestion",
+    dosageForm: "vati",
+    packaging: "30 Tab",
+    image: "/product/Vedapiles.jpeg",
+    description:
+      "Vedsaan Health Science herbal tablet for piles (haemorrhoids) relief. Non-GMO, Pure Herbs formula.",
+  },
+  {
+    id: 195,
+    name: "Vediabet (Blood Sugar)",
+    genericName: "Herbal Blood Sugar Control Tablet",
+    therapy: "diabetic",
+    dosageForm: "vati",
+    packaging: "30 Tab / 60 Tab",
+    tag: "Sugar Control",
+    tagColor: "#33691e",
+    image: "/product/Vediabet-BloodSugar.jpeg",
+    description:
+      "Vedsaan Health Science herbal tablet to manage blood sugar levels effectively. Non-GMO, Pure Herbs formula.",
+  },
+  {
+    id: 196,
+    name: "Vediabet (Premium)",
+    genericName: "Herbal Diabetic Care Tablet",
+    therapy: "diabetic",
+    dosageForm: "vati",
+    packaging: "30 Tab / 60 Tab",
+    tag: "Premium",
+    tagColor: "#1565c0",
+    image: "/product/Vediabet-Blue.jpeg",
+    description:
+      "Vedsaan Health Science premium herbal tablet for comprehensive diabetic care. Non-GMO, Pure Herbs formula.",
+  },
 ];
