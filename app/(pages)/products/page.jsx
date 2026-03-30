@@ -528,35 +528,48 @@ export default function Products() {
             ) }
           </div>
 
-          {/* view toggle */ }
-          <div className="hidden sm:flex items-center bg-white rounded-2xl border-2 border-gray-200 p-1 gap-1 shadow-sm">
+         <div className="hidden sm:flex items-center bg-white rounded-2xl border-2 border-gray-200 p-1 gap-1 shadow-sm">
+            
+            {/* Grid View Toggle */}
+            <div className={ `rounded-xl transition-all overflow-hidden ${viewMode === "grid" ? "bg-[#2A5C32] text-white shadow-sm" : "text-gray-400 hover:text-gray-700 hover:bg-gray-50"}` }>
+              <button
+                onClick={ () => setViewMode("grid") }
+                className="w-full h-full p-2.5 flex items-center justify-center bg-transparent outline-none"
+              >
+                <LayoutGrid size={ 16 } />
+              </button>
+            </div>
+
+            {/* List View Toggle */}
+
+            
+            <div className={ `rounded-xl transition-all overflow-hidden ${viewMode === "list" ? "bg-[#2A5C32] text-white shadow-sm" : "text-gray-400 hover:text-gray-700 hover:bg-gray-50"}` }>
+              <button
+                onClick={ () => setViewMode("list") }
+                className="w-full h-full p-2.5 flex items-center justify-center bg-transparent outline-none"
+              >
+                <List size={ 16 } />
+              </button>
+            </div>
+            
+          </div>
+
+          {/* mobile filter toggle */}
+          <div className="md:hidden bg-white border-2 border-gray-200 text-gray-700 rounded-2xl font-semibold shadow-sm active:scale-95 transition-all relative">
             <button
-              onClick={ () => setViewMode("grid") }
-              className={ `p-2.5 rounded-xl transition-all ${viewMode === "grid" ? "bg-[#2A5C32] text-white shadow-sm" : "text-gray-400 hover:text-gray-700 hover:bg-gray-50"}` }
+              onClick={ () => setIsMobileFiltersOpen(true) }
+              className="w-full h-full flex items-center justify-center gap-2 px-5 py-3.5 bg-transparent outline-none"
             >
-              <LayoutGrid size={ 16 } />
-            </button>
-            <button
-              onClick={ () => setViewMode("list") }
-              className={ `p-2.5 rounded-xl transition-all ${viewMode === "list" ? "bg-[#2A5C32] text-white shadow-sm" : "text-gray-400 hover:text-gray-700 hover:bg-gray-50"}` }
-            >
-              <List size={ 16 } />
+              <SlidersHorizontal size={ 17 } className="text-[#2A5C32]" />
+              Filters
+              { activeFilterCount > 0 && (
+                <span className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-[#2A5C32] text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                  { activeFilterCount }
+                </span>
+              ) }
             </button>
           </div>
 
-          {/* mobile filter toggle */ }
-          <button
-            onClick={ () => setIsMobileFiltersOpen(true) }
-            className="md:hidden flex items-center justify-center gap-2 px-5 py-3.5 bg-white border-2 border-gray-200 text-gray-700 rounded-2xl font-semibold shadow-sm active:scale-95 transition-all relative"
-          >
-            <SlidersHorizontal size={ 17 } className="text-[#2A5C32]" />
-            Filters
-            { activeFilterCount > 0 && (
-              <span className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-[#2A5C32] text-white text-[10px] font-bold rounded-full flex items-center justify-center">
-                { activeFilterCount }
-              </span>
-            ) }
-          </button>
         </div>
 
         <div className="flex gap-7 relative">
