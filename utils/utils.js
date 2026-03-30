@@ -148,7 +148,7 @@ export const allProducts = [
     id: 7,
     name: "Dant Aushdhi",
     genericName: "Herbal Tooth Powder",
-    therapy: "oral-care", // ✅ FIXED – was incorrectly "hair-skin"
+    therapy: "oral-care",
     dosageForm: "churna",
     packaging: "40 gm",
     description:
@@ -726,5 +726,1367 @@ export const allProducts = [
     packaging: "60 Cap",
     description:
       "Turmeric extract (3% Curcuminoids) for immune defence, anti-inflammatory action and antioxidant protection.",
+  },
+
+  // ── PRODUCTS FROM PDF BROCHURE (CHANDRAYAN HERBAL PRODUCT LIST CHURN) ──────
+
+  // Churna / Powder
+  {
+    id: 58,
+    name: "Moringa Powder",
+    genericName: "Moringa Oleifera Leaf Powder",
+    therapy: "immunity",
+    dosageForm: "churna",
+    packaging: "100 gm",
+    description:
+      "Nutrient-dense Moringa powder for overall nutrition, immunity strengthening and general wellness.",
+  },
+  {
+    id: 59,
+    name: "Gudmar Churna",
+    genericName: "Gymnema Sylvestre Powder",
+    therapy: "diabetic",
+    dosageForm: "churna",
+    packaging: "50 gm / 100 gm / 1 kg",
+    description:
+      "Beneficial for diabetes management, blood sugar control, improving digestion and managing hunger-related issues.",
+  },
+  {
+    id: 60,
+    name: "Safeed Moosli Churna",
+    genericName: "Chlorophytum Borivilianum Powder",
+    therapy: "immunity",
+    dosageForm: "churna",
+    packaging: "50 gm / 100 gm",
+    description:
+      "Vata-balancing, strengthening churna for energy improvement and relief from general body weakness.",
+  },
+  {
+    id: 61,
+    name: "Karela Churna",
+    genericName: "Momordica Charantia Powder",
+    therapy: "diabetic",
+    dosageForm: "churna",
+    packaging: "50 gm / 100 gm / 1 kg",
+    description:
+      "Beneficial for diabetes management, improving digestion and boosting immunity.",
+  },
+  {
+    id: 62,
+    name: "Trikatu Churna",
+    genericName: "Tri-Spice Herbal Blend",
+    therapy: "digestion",
+    dosageForm: "churna",
+    packaging: "50 gm / 100 gm / 1 kg",
+    description:
+      "Improves digestion, relieves Vata disorders and reduces Kapha-related issues.",
+  },
+  {
+    id: 63,
+    name: "Mulethi Churna",
+    genericName: "Glycyrrhiza Glabra Powder",
+    therapy: "respiratory",
+    dosageForm: "churna",
+    packaging: "50 gm / 100 gm / 1 kg",
+    description:
+      "Beneficial for throat inflammation, cough relief and improving respiratory health.",
+  },
+  {
+    id: 64,
+    name: "Arjun Churna",
+    genericName: "Terminalia Arjuna Bark Powder",
+    therapy: "cardiac",
+    dosageForm: "churna",
+    packaging: "50 gm / 100 gm / 1 kg",
+    description:
+      "Supports heart health, respiratory wellness, blood pressure regulation and overall cardiac care.",
+  },
+  {
+    id: 65,
+    name: "Shitopaladi Churna",
+    genericName: "Sugar & Herb Respiratory Blend",
+    therapy: "respiratory",
+    dosageForm: "churna",
+    packaging: "50 gm / 100 gm / 1 kg",
+    description:
+      "Beneficial for cough, cold, Kapha disorders and respiratory problems.",
+  },
+  {
+    id: 66,
+    name: "Shatavari Churna",
+    genericName: "Asparagus Racemosus Powder",
+    therapy: "womens-health",
+    dosageForm: "churna",
+    packaging: "50 gm / 100 gm / 1 kg",
+    description:
+      "Supports women's health, reproductive wellness and hormonal balance.",
+  },
+  {
+    id: 67,
+    name: "Mahasudarshan Churna",
+    genericName: "Multi-Herb Fever & Immunity Blend",
+    therapy: "immunity",
+    dosageForm: "churna",
+    packaging: "50 gm / 100 gm / 1 kg",
+    description:
+      "Highly effective for fever management, infections and boosting immunity.",
+  },
+  {
+    id: 68,
+    name: "Baheda Churna",
+    genericName: "Terminalia Bellirica Powder",
+    therapy: "digestion",
+    dosageForm: "churna",
+    packaging: "50 gm / 100 gm / 1 kg",
+    description:
+      "Improves digestion, reduces Kapha and strengthens immunity.",
+  },
+  {
+    id: 69,
+    name: "Kaunch Churna",
+    genericName: "Mucuna Pruriens Powder",
+    therapy: "immunity",
+    dosageForm: "churna",
+    packaging: "50 gm / 100 gm / 1 kg",
+    description:
+      "Strengthening and nourishing churna for muscle building, vitality and mental wellness.",
+  },
+  {
+    id: 70,
+    name: "Dashang Laip",
+    genericName: "Ten-Herb Paste Powder",
+    therapy: "hair-skin",
+    dosageForm: "churna",
+    packaging: "50 gm / 100 gm / 1 kg",
+    description:
+      "Beneficial for skin diseases, inflammation and various skin-related problems.",
+  },
+  {
+    id: 71,
+    name: "Panch Nimb Churna",
+    genericName: "Five Neem Parts Blend",
+    therapy: "digestion",
+    dosageForm: "churna",
+    packaging: "50 gm / 100 gm / 1 kg",
+    description:
+      "Aids digestion, body detoxification and blood purification.",
+  },
+  {
+    id: 72,
+    name: "Bhuamla Churna",
+    genericName: "Phyllanthus Niruri Powder",
+    therapy: "liver",
+    dosageForm: "churna",
+    packaging: "50 gm / 100 gm / 1 kg",
+    description:
+      "Improves digestive strength, supports liver health and reduces inflammation.",
+  },
+  {
+    id: 73,
+    name: "Nagarmotha Churna",
+    genericName: "Cyperus Rotundus Powder",
+    therapy: "digestion",
+    dosageForm: "churna",
+    packaging: "50 gm / 100 gm / 1 kg",
+    description:
+      "Improves digestion, acts as an appetite stimulant and reduces body toxicity.",
+  },
+  {
+    id: 74,
+    name: "Triphala Churna",
+    genericName: "Three-Fruit Herbal Blend",
+    therapy: "digestion",
+    dosageForm: "churna",
+    packaging: "50 gm / 100 gm / 1 kg",
+    description:
+      "Improves digestion, relieves constipation and eliminates body toxins.",
+  },
+  {
+    id: 75,
+    name: "Nagkesar Churna",
+    genericName: "Mesua Ferrea Powder",
+    therapy: "digestion",
+    dosageForm: "churna",
+    packaging: "50 gm / 100 gm / 1 kg",
+    description:
+      "Beneficial for urinary disorders, inflammation and blood pressure management.",
+  },
+  {
+    id: 76,
+    name: "Chopchini Churna",
+    genericName: "Smilax China Powder",
+    therapy: "digestion",
+    dosageForm: "churna",
+    packaging: "50 gm / 100 gm / 1 kg",
+    description:
+      "Improves digestion, relieves constipation and general body weakness.",
+  },
+  {
+    id: 77,
+    name: "Bakuchi Churna",
+    genericName: "Psoralea Corylifolia Powder",
+    therapy: "hair-skin",
+    dosageForm: "churna",
+    packaging: "50 gm / 100 gm / 1 kg",
+    description:
+      "Beneficial for skin diseases, itching and improving skin complexion.",
+  },
+  {
+    id: 78,
+    name: "Avipatikar Churna",
+    genericName: "Multi-Herb Digestive Blend",
+    therapy: "digestion",
+    dosageForm: "churna",
+    packaging: "50 gm / 100 gm / 1 kg",
+    description:
+      "Effective for acidity, indigestion and digestive disorders.",
+  },
+  {
+    id: 79,
+    name: "Sanay Patti Churna",
+    genericName: "Cassia Angustifolia Powder",
+    therapy: "joint-care",
+    dosageForm: "churna",
+    packaging: "50 gm / 100 gm / 1 kg",
+    description:
+      "Beneficial for nerve-related disorders, joint pain and bone weakness.",
+  },
+  {
+    id: 80,
+    name: "Chirayta Churna",
+    genericName: "Swertia Chirata Powder",
+    therapy: "respiratory",
+    dosageForm: "churna",
+    packaging: "50 gm / 100 gm / 1 kg",
+    description:
+      "Reduces Kapha, improves digestion and overall health.",
+  },
+  {
+    id: 81,
+    name: "Tulsi Powder",
+    genericName: "Ocimum Sanctum Leaf Powder",
+    therapy: "immunity",
+    dosageForm: "churna",
+    packaging: "50 gm / 100 gm / 1 kg",
+    tag: "Immunity",
+    tagColor: "#2A5C32",
+    description:
+      "Boosts immunity, relieves cold, cough and stress.",
+  },
+  {
+    id: 82,
+    name: "Panchaskar Churna",
+    genericName: "Five-Herb Digestive Blend",
+    therapy: "digestion",
+    dosageForm: "churna",
+    packaging: "50 gm / 100 gm / 1 kg",
+    description:
+      "Improves digestion, relieves constipation and eliminates body toxins.",
+  },
+  {
+    id: 83,
+    name: "Shivashar Pachan Churna",
+    genericName: "Digestive & Antacid Churna",
+    therapy: "digestion",
+    dosageForm: "churna",
+    packaging: "50 gm / 100 gm / 1 kg",
+    description:
+      "Effective for improving digestion, relieving gas and acidity.",
+  },
+  {
+    id: 84,
+    name: "Hingavastak Churna",
+    genericName: "Asafoetida & Herb Blend",
+    therapy: "digestion",
+    dosageForm: "churna",
+    packaging: "50 gm / 100 gm / 1 kg",
+    description:
+      "Effective for digestion, gas and stomach pain relief.",
+  },
+  {
+    id: 85,
+    name: "Talisadi Churna",
+    genericName: "Talispatra & Herb Blend",
+    therapy: "respiratory",
+    dosageForm: "churna",
+    packaging: "50 gm / 100 gm / 1 kg",
+    description:
+      "Beneficial for cough, Kapha and respiratory problems.",
+  },
+  {
+    id: 86,
+    name: "Harad Churna",
+    genericName: "Terminalia Chebula Powder",
+    therapy: "digestion",
+    dosageForm: "churna",
+    packaging: "50 gm / 100 gm / 1 kg",
+    description:
+      "Improves digestion, relieves constipation and purifies blood.",
+  },
+  {
+    id: 87,
+    name: "Punarnava Churna",
+    genericName: "Boerhavia Diffusa Powder",
+    therapy: "liver",
+    dosageForm: "churna",
+    packaging: "50 gm / 100 gm / 1 kg",
+    description:
+      "Beneficial for kidney health, reducing inflammation and body detoxification.",
+  },
+  {
+    id: 88,
+    name: "Swadisht Virechan Churna",
+    genericName: "Tasty Purgative Herbal Blend",
+    therapy: "digestion",
+    dosageForm: "churna",
+    packaging: "50 gm / 100 gm / 1 kg",
+    description:
+      "Improves digestion, relieves constipation and eliminates body toxins.",
+  },
+  {
+    id: 89,
+    name: "Bhaskar Lavang Churna",
+    genericName: "Clove & Herb Digestive Blend",
+    therapy: "digestion",
+    dosageForm: "churna",
+    packaging: "50 gm / 100 gm / 1 kg",
+    description:
+      "Effective for digestion, indigestion and acidity relief.",
+  },
+  {
+    id: 90,
+    name: "Ajmodadi Churna",
+    genericName: "Apium Graveolens Herb Blend",
+    therapy: "digestion",
+    dosageForm: "churna",
+    packaging: "50 gm / 100 gm / 1 kg",
+    description:
+      "Beneficial for digestive disorders, gas and indigestion.",
+  },
+  {
+    id: 91,
+    name: "Panchcol Churna",
+    genericName: "Five Root Digestive Blend",
+    therapy: "digestion",
+    dosageForm: "churna",
+    packaging: "50 gm / 100 gm / 1 kg",
+    description:
+      "Improves digestion, relieves gas and constipation.",
+  },
+  {
+    id: 92,
+    name: "Neem Churna",
+    genericName: "Azadirachta Indica Powder",
+    therapy: "hair-skin",
+    dosageForm: "churna",
+    packaging: "100 gm / 1 kg",
+    description:
+      "Beneficial for skin diseases, blood purification and immunity boosting.",
+  },
+  {
+    id: 93,
+    name: "Pushyanug Churna",
+    genericName: "Classical Gynaecological Blend",
+    therapy: "womens-health",
+    dosageForm: "churna",
+    packaging: "100 gm / 1 kg",
+    description:
+      "Classical Ayurvedic formulation for menorrhagia, menstrual disorders and abnormal uterine bleeding.",
+  },
+  {
+    id: 94,
+    name: "Saraswat Churna",
+    genericName: "Memory & Nerve Tonic Blend",
+    therapy: "mental",
+    dosageForm: "churna",
+    packaging: "100 gm / 1 kg",
+    description:
+      "Beneficial for psychiatric disorders, epilepsy and mental weakness.",
+  },
+  {
+    id: 95,
+    name: "Shiwakshaar Paachan Churna",
+    genericName: "Alkaline Digestive Blend",
+    therapy: "digestion",
+    dosageForm: "churna",
+    packaging: "50 gm / 1 kg",
+    description:
+      "Effective for constipation, bloating, hiccups and vomiting.",
+  },
+  {
+    id: 96,
+    name: "Shrinagyadi Churna",
+    genericName: "Respiratory Herbal Blend",
+    therapy: "respiratory",
+    dosageForm: "churna",
+    packaging: "50 gm / 1 kg",
+    description:
+      "Beneficial for asthma, Kapha cough, hiccups and other respiratory disorders.",
+  },
+  {
+    id: 97,
+    name: "Veeryashodhan Churna",
+    genericName: "Male Reproductive Health Blend",
+    therapy: "immunity",
+    dosageForm: "churna",
+    packaging: "100 gm / 1 kg",
+    description:
+      "Beneficial for semen disorders, spermatorrhoea and dhatu dosha.",
+  },
+  {
+    id: 98,
+    name: "Walshwanar Churna",
+    genericName: "Digestive & Rheumatic Blend",
+    therapy: "joint-care",
+    dosageForm: "churna",
+    packaging: "100 gm / 1 kg",
+    description:
+      "Effective for rheumatoid arthritis, Shool-Mulvridhi and duodenal ulcers.",
+  },
+  {
+    id: 99,
+    name: "Anwala Churna",
+    genericName: "Amla Powder",
+    therapy: "immunity",
+    dosageForm: "churna",
+    packaging: "100 gm / 200 gm / 500 gm / 1 ltr",
+    description:
+      "Beneficial for acidity, blood disorders and diabetes management.",
+  },
+  {
+    id: 100,
+    name: "Ajmoda Churna",
+    genericName: "Carom & Herb Digestive Blend",
+    therapy: "digestion",
+    dosageForm: "churna",
+    packaging: "100 gm / 1 kg",
+    description:
+      "Effective for rheumatoid arthritis, stomach pain and vomiting.",
+  },
+  {
+    id: 101,
+    name: "Kamdeal Churna",
+    genericName: "Male Vitality Herbal Blend",
+    therapy: "immunity",
+    dosageForm: "churna",
+    packaging: "100 gm / 1 kg",
+    description:
+      "Beneficial for sexual disorders, premature ejaculation and nocturnal emission.",
+  },
+  {
+    id: 102,
+    name: "Krimighn Churna",
+    genericName: "Anti-Parasitic Herbal Blend",
+    therapy: "digestion",
+    dosageForm: "churna",
+    packaging: "100 gm / 1 kg",
+    description:
+      "Effective for intestinal worms, liver and spleen disorders.",
+  },
+  {
+    id: 103,
+    name: "Madhumeh Daman Churna",
+    genericName: "Blood Sugar Control Blend",
+    therapy: "diabetic",
+    dosageForm: "churna",
+    packaging: "100 gm / 1 kg",
+    description:
+      "Effective for controlling blood and urine sugar levels.",
+  },
+  {
+    id: 104,
+    name: "Moosli Churna",
+    genericName: "Musli Aphrodisiac Rasayana",
+    therapy: "immunity",
+    dosageForm: "churna",
+    packaging: "100 gm / 1 kg",
+    description:
+      "A potent and effective Vajikarana Rasayana for vitality and strength.",
+  },
+  {
+    id: 105,
+    name: "Narayan Churna",
+    genericName: "Vata & Digestive Disorder Blend",
+    therapy: "digestion",
+    dosageForm: "churna",
+    packaging: "100 gm / 1 kg",
+    description:
+      "Beneficial for male diseases, indigestion and stomach disorders.",
+  },
+  {
+    id: 106,
+    name: "Nimbadi Churna",
+    genericName: "Neem-Based Vata & Skin Blend",
+    therapy: "hair-skin",
+    dosageForm: "churna",
+    packaging: "100 gm / 1 kg",
+    description:
+      "Effective for Vata disorders and skin diseases.",
+  },
+  {
+    id: 107,
+    name: "Panchsakar Churna",
+    genericName: "Five-Herb Laxative Blend",
+    therapy: "digestion",
+    dosageForm: "churna",
+    packaging: "100 gm / 1 kg",
+    description:
+      "Beneficial for constipation, mudhagni, headaches and stomach pain.",
+  },
+  {
+    id: 108,
+    name: "Panchkol Churna",
+    genericName: "Five Root Carminative Blend",
+    therapy: "digestion",
+    dosageForm: "churna",
+    packaging: "100 gm / 1 kg",
+    description:
+      "Effective for flatulence, gulma, colic and other stomach diseases.",
+  },
+  {
+    id: 109,
+    name: "Panchnimba Churna",
+    genericName: "Five Neem-Based Skin Blend",
+    therapy: "hair-skin",
+    dosageForm: "churna",
+    packaging: "100 gm / 1 kg",
+    description:
+      "Beneficial for skin itching, eczema and skin disorders.",
+  },
+  {
+    id: 110,
+    name: "Pleehantak Churna",
+    genericName: "Spleen & Liver Detox Blend",
+    therapy: "liver",
+    dosageForm: "churna",
+    packaging: "100 gm / 1 kg",
+    description:
+      "Beneficial for spleen enlargement, growth disorders, swelling and liver diseases.",
+  },
+  {
+    id: 111,
+    name: "Avipaltikar Churna",
+    genericName: "Antacid & Digestive Blend",
+    therapy: "digestion",
+    dosageForm: "churna",
+    packaging: "50 gm / 100 gm / 1 kg",
+    description:
+      "Beneficial for acidity, indigestion, constipation and loss of appetite.",
+  },
+  {
+    id: 112,
+    name: "Ashtangalawan Churna",
+    genericName: "Eight-Salt Digestive Blend",
+    therapy: "digestion",
+    dosageForm: "churna",
+    packaging: "100 gm / 1 kg",
+    description:
+      "Beneficial for Vata disorders, digestive weakness and debility.",
+  },
+
+  // ── JUICES FROM PDF ───────────────────────────────────────────────
+
+  {
+    id: 113,
+    name: "Amla Juice",
+    genericName: "Amalaki Fresh Juice",
+    therapy: "immunity",
+    dosageForm: "juice",
+    packaging: "500 ml / 1 ltr",
+    description:
+      "Rich in Vitamin C for improving digestion, strengthening immunity and overall wellness.",
+  },
+  {
+    id: 114,
+    name: "Aloevera Juice",
+    genericName: "Aloe Barbadensis Fresh Juice",
+    therapy: "immunity",
+    dosageForm: "juice",
+    packaging: "500 ml / 1 ltr",
+    description:
+      "Beneficial for digestion, skin health, overall immunity and general wellness.",
+  },
+  {
+    id: 115,
+    name: "Jamun Neem Karela Juice",
+    genericName: "Tri-Herb Diabetic Juice",
+    therapy: "diabetic",
+    dosageForm: "juice",
+    packaging: "500 ml / 1 ltr",
+    description:
+      "Effective for diabetes management, blood purification and immunity enhancement.",
+  },
+  {
+    id: 116,
+    name: "Giloy Juice",
+    genericName: "Tinospora Cordifolia Juice",
+    therapy: "immunity",
+    dosageForm: "juice",
+    packaging: "500 ml / 1 ltr",
+    description:
+      "Boosts immunity, treats fever and manages infections effectively.",
+  },
+  {
+    id: 117,
+    name: "Wheat Grass Juice",
+    genericName: "Triticum Aestivum Fresh Juice",
+    therapy: "immunity",
+    dosageForm: "juice",
+    packaging: "500 ml / 1 ltr",
+    tag: "Detox",
+    tagColor: "#2A5C32",
+    description:
+      "Beneficial for detoxification, immunity boosting and antioxidant protection.",
+  },
+  {
+    id: 118,
+    name: "Apple Cider Vinegar",
+    genericName: "Fermented Apple Vinegar",
+    therapy: "digestion",
+    dosageForm: "juice",
+    packaging: "500 ml / 1 ltr",
+    description:
+      "Aids digestion, supports weight loss and helps with blood sugar management.",
+  },
+  {
+    id: 119,
+    name: "Neem Juice",
+    genericName: "Azadirachta Indica Fresh Juice",
+    therapy: "hair-skin",
+    dosageForm: "juice",
+    packaging: "500 ml / 1 ltr",
+    description:
+      "Beneficial for skin diseases, blood purification and immunity boosting.",
+  },
+
+  // ── VATI / TABLETS FROM PDF ───────────────────────────────────────
+
+  {
+    id: 120,
+    name: "Lahsunadi Vati",
+    genericName: "Garlic-Based Compound Tablet",
+    therapy: "cardiac",
+    dosageForm: "vati",
+    packaging: "40 / 80 / 100 Tab",
+    description:
+      "Beneficial for blood pressure, digestion and heart health.",
+  },
+  {
+    id: 121,
+    name: "Prabhakar Vati",
+    genericName: "Digestive & Carminative Vati",
+    therapy: "digestion",
+    dosageForm: "vati",
+    packaging: "40 / 80 / 100 Tab",
+    description:
+      "Improves digestion, relieves gas and indigestion.",
+  },
+
+  // ── OTHER FORMS FROM PDF ──────────────────────────────────────────
+
+  {
+    id: 122,
+    name: "King Balm",
+    genericName: "Herbal Pain Balm",
+    therapy: "joint-care",
+    dosageForm: "oil",
+    packaging: "12 gm",
+    description:
+      "Fast-acting herbal balm for pain and inflammation relief.",
+  },
+  {
+    id: 123,
+    name: "Mona Malt",
+    genericName: "Herbal Energy Malt",
+    therapy: "immunity",
+    dosageForm: "avaleh",
+    packaging: "400 gm",
+    description:
+      "Herbal malt for energy enhancement and strength building.",
+  },
+  {
+    id: 124,
+    name: "Arshocon Syrup",
+    genericName: "Piles & Digestive Syrup",
+    therapy: "digestion",
+    dosageForm: "syrup",
+    packaging: "200 ml / 450 ml",
+    description:
+      "Effective Ayurvedic syrup for piles and digestive disorders. Also available in Sugar-Free variant.",
+  },
+  {
+    id: 125,
+    name: "Ones More Capsule",
+    genericName: "Energy & Vitality Capsule",
+    therapy: "immunity",
+    dosageForm: "capsule",
+    packaging: "30 Cap / 60 Cap",
+    tag: "Vitality",
+    tagColor: "#2A5C32",
+    description:
+      "Capsule formulation for energy, vitality and complete health improvement.",
+  },
+  {
+    id: 126,
+    name: "Ashwagandha Capsule",
+    genericName: "Withania Somnifera Capsule",
+    therapy: "immunity",
+    dosageForm: "capsule",
+    packaging: "30 Cap / 60 Cap",
+    description:
+      "Helps reduce stress and anxiety for improved mental and physical wellness.",
+  },
+  {
+    id: 127,
+    name: "Arthocon Capsule",
+    genericName: "Joint & Muscle Relief Capsule",
+    therapy: "joint-care",
+    dosageForm: "capsule",
+    packaging: "30 Cap / 60 Cap",
+    description:
+      "Provides relief from joint and muscle pain.",
+  },
+  {
+    id: 128,
+    name: "Madhukalp Capsule",
+    genericName: "Energy & Strength Capsule",
+    therapy: "immunity",
+    dosageForm: "capsule",
+    packaging: "30 Cap / 60 Cap",
+    description:
+      "Beneficial for general body weakness and energy enhancement.",
+  },
+
+  // ── OILS FROM PDF ─────────────────────────────────────────────────
+
+  {
+    id: 129,
+    name: "Kumkumadi Oil",
+    genericName: "Saffron-Based Skin Oil",
+    therapy: "hair-skin",
+    dosageForm: "oil",
+    packaging: "10 / 30 / 50 / 500 ml",
+    tag: "Skin Care",
+    tagColor: "#6a1b9a",
+    description:
+      "Improves skin complexion and treats skin problems.",
+  },
+  {
+    id: 130,
+    name: "Anu Oil",
+    genericName: "Nasal & Head Oil",
+    therapy: "respiratory",
+    dosageForm: "oil",
+    packaging: "15 / 30 / 50 ml / 1 ltr",
+    description:
+      "Beneficial for sinusitis and head pain relief.",
+  },
+  {
+    id: 131,
+    name: "Kasisadi Oil",
+    genericName: "Ferrous Sulphate Herbal Oil",
+    therapy: "joint-care",
+    dosageForm: "oil",
+    packaging: "15 / 30 / 50 ml / 1 ltr",
+    description:
+      "Helps with Vata disorders, pain and swelling.",
+  },
+  {
+    id: 132,
+    name: "Mahamarichyaadi Oil",
+    genericName: "Black Pepper Herbal Oil",
+    therapy: "joint-care",
+    dosageForm: "oil",
+    packaging: "100 / 500 ml / 1 ltr",
+    description:
+      "Effective for pain, swelling and muscle relief.",
+  },
+  {
+    id: 133,
+    name: "Mahamash Oil",
+    genericName: "Black Gram Herbal Oil",
+    therapy: "joint-care",
+    dosageForm: "oil",
+    packaging: "100 / 500 ml / 1 / 5 ltr",
+    description:
+      "Relieves joint and muscle pain.",
+  },
+  {
+    id: 134,
+    name: "Bakuchi Oil",
+    genericName: "Psoralea Corylifolia Oil",
+    therapy: "hair-skin",
+    dosageForm: "oil",
+    packaging: "100 / 500 ml / 1 / 5 ltr",
+    description:
+      "Beneficial for skin disorders and pain reduction.",
+  },
+  {
+    id: 135,
+    name: "Neem Oil",
+    genericName: "Azadirachta Indica Oil",
+    therapy: "hair-skin",
+    dosageForm: "oil",
+    packaging: "100 / 500 ml / 1 / 5 ltr",
+    description:
+      "Effective for skin infections, swelling and pain.",
+  },
+  {
+    id: 136,
+    name: "Brahmi Oil",
+    genericName: "Bacopa Monnieri Hair & Mind Oil",
+    therapy: "mental",
+    dosageForm: "oil",
+    packaging: "100 / 500 ml / 1 / 5 ltr",
+    description:
+      "Reduces mental fatigue, stress and anxiety.",
+  },
+  {
+    id: 137,
+    name: "Frand Oil",
+    genericName: "Herbal Skin & Pain Relief Oil",
+    therapy: "hair-skin",
+    dosageForm: "oil",
+    packaging: "100 / 500 ml / 1 / 5 ltr",
+    description:
+      "Helpful for pain, swelling and skin problems.",
+  },
+  {
+    id: 138,
+    name: "Til Oil",
+    genericName: "Sesame Seed Herbal Oil",
+    therapy: "joint-care",
+    dosageForm: "oil",
+    packaging: "100 / 500 ml / 1 / 5 ltr",
+    description:
+      "Relieves body pain and swelling.",
+  },
+  {
+    id: 139,
+    name: "Arthocon Oil",
+    genericName: "Joint & Muscle Herbal Oil",
+    therapy: "joint-care",
+    dosageForm: "oil",
+    packaging: "100 / 500 ml / 1 / 5 ltr",
+    description:
+      "Relieves joint and muscle pain.",
+  },
+  {
+    id: 140,
+    name: "Kesh Prabal Oil",
+    genericName: "Herbal Hair Growth Oil",
+    therapy: "hair-skin",
+    dosageForm: "oil",
+    packaging: "100 ml / 1 ltr",
+    description:
+      "Beneficial for hair health, hair weakness and hair fall.",
+  },
+  {
+    id: 141,
+    name: "Panchagun Oil",
+    genericName: "Five-Property Herbal Oil",
+    therapy: "joint-care",
+    dosageForm: "oil",
+    packaging: "100 / 500 ml / 1 / 5 ltr",
+    description:
+      "Effective for all types of pain and swelling.",
+  },
+
+  // ── PRODUCTS FROM EXCEL UNIQUE PRODUCT LIST (05-08-24) ───────────
+
+  // Syrups
+  {
+    id: 142,
+    name: "Femiactive Syrup",
+    genericName: "Women's Gynaecological Tonic",
+    therapy: "womens-health",
+    dosageForm: "syrup",
+    packaging: "450 ml",
+    tag: "Women's Care",
+    tagColor: "#880e4f",
+    description:
+      "Herbal gynaecological tonic for hormonal balance, menstrual regulation and women's vitality.",
+  },
+  {
+    id: 143,
+    name: "Fevro Act Syrup",
+    genericName: "Herbal Fever & Cold Syrup",
+    therapy: "immunity",
+    dosageForm: "syrup",
+    packaging: "200 ml",
+    description:
+      "Ayurvedic syrup for fever management and cold relief.",
+  },
+  {
+    id: 144,
+    name: "Tulsi Amrit Cough Syrup",
+    genericName: "Tulsi-Based Cough Syrup",
+    therapy: "respiratory",
+    dosageForm: "syrup",
+    packaging: "100 ml",
+    description:
+      "Herbal cough syrup with Tulsi for relief from cough, cold and throat irritation.",
+  },
+  {
+    id: 145,
+    name: "Kafhaari Herbal Syrup",
+    genericName: "Kapha-Relieving Herbal Syrup",
+    therapy: "respiratory",
+    dosageForm: "syrup",
+    packaging: "100 ml",
+    description:
+      "Ayurvedic syrup for Kapha reduction, cough relief and respiratory wellness.",
+  },
+
+  // Kadhas
+  {
+    id: 146,
+    name: "Hridayarakshak Kadha",
+    genericName: "Cardiac Herbal Kadha",
+    therapy: "cardiac",
+    dosageForm: "syrup",
+    packaging: "500 ml",
+    tag: "Heart Care",
+    tagColor: "#b71c1c",
+    description:
+      "Herbal Kadha for cardiac support, immunity and chest blockage relief.",
+  },
+  {
+    id: 147,
+    name: "Madhumar Kadha",
+    genericName: "Diabetes Management Kadha",
+    therapy: "diabetic",
+    dosageForm: "syrup",
+    packaging: "200 ml",
+    tag: "Sugar Control",
+    tagColor: "#33691e",
+    description:
+      "Herbal Kadha for diabetes management and blood sugar control.",
+  },
+
+  // Granules
+  {
+    id: 148,
+    name: "Brain Booster Granules",
+    genericName: "Herbal Brain & Memory Granules",
+    therapy: "mental",
+    dosageForm: "churna",
+    packaging: "250 gm",
+    description:
+      "Herbal granules for brain health, memory enhancement and mental clarity.",
+  },
+  {
+    id: 149,
+    name: "Madhuhaari Granules",
+    genericName: "Diabetic Support Granules",
+    therapy: "diabetic",
+    dosageForm: "churna",
+    packaging: "100 gm",
+    description:
+      "Herbal granules for blood sugar management and diabetes support.",
+  },
+  {
+    id: 150,
+    name: "Laxative Granules",
+    genericName: "Herbal Laxative Granules",
+    therapy: "digestion",
+    dosageForm: "churna",
+    packaging: "100 gm",
+    description:
+      "Ayurvedic granules for gentle laxative action and constipation relief.",
+  },
+  {
+    id: 151,
+    name: "Piles Granules",
+    genericName: "Herbal Piles Granules",
+    therapy: "digestion",
+    dosageForm: "churna",
+    packaging: "100 gm",
+    description:
+      "Herbal granule blend for piles management and related digestive issues.",
+  },
+  {
+    id: 152,
+    name: "Kabj Ja Granules",
+    genericName: "Constipation Relief Granules",
+    therapy: "digestion",
+    dosageForm: "churna",
+    packaging: "100 gm",
+    description:
+      "Effective herbal granules for constipation relief and bowel regularity.",
+  },
+
+  // Cream & Gels
+  {
+    id: 153,
+    name: "Purodil Anti Acne Gel",
+    genericName: "Herbal Anti-Acne Gel",
+    therapy: "hair-skin",
+    dosageForm: "oil",
+    packaging: "20 gm",
+    description:
+      "Herbal gel formulation for acne treatment and skin care.",
+  },
+  {
+    id: 154,
+    name: "Sidoact Gel",
+    genericName: "Herbal Pain Relief Gel",
+    therapy: "joint-care",
+    dosageForm: "oil",
+    packaging: "30 gm",
+    description:
+      "Topical herbal gel for pain relief and joint care.",
+  },
+  {
+    id: 155,
+    name: "Herbal Foot Care Cream",
+    genericName: "Herbal Foot Care Cream",
+    therapy: "hair-skin",
+    dosageForm: "oil",
+    packaging: "25 gm",
+    description:
+      "Herbal cream for foot care, cracked heels and skin nourishment.",
+  },
+  {
+    id: 156,
+    name: "Piloact Gel",
+    genericName: "Herbal Piles Care Gel",
+    therapy: "digestion",
+    dosageForm: "oil",
+    packaging: "30 gm",
+    description:
+      "Topical herbal gel for external piles care and relief.",
+  },
+
+  // Powders
+  {
+    id: 157,
+    name: "Protin Powder Strong",
+    genericName: "Herbal Protein Booster Powder",
+    therapy: "immunity",
+    dosageForm: "churna",
+    packaging: "250 gm",
+    description:
+      "Herbal protein powder for energy, strength and overall body boosting.",
+  },
+  {
+    id: 158,
+    name: "Tea Fresh (Slim Tea)",
+    genericName: "Herbal Slimming Tea",
+    therapy: "immunity",
+    dosageForm: "churna",
+    packaging: "50 gm",
+    description:
+      "Herbal slim tea blend for weight management and detoxification.",
+  },
+
+  // Tablets
+  {
+    id: 159,
+    name: "Lucroact Tab",
+    genericName: "Leucorrhoea Relief Tablet",
+    therapy: "womens-health",
+    dosageForm: "vati",
+    packaging: "60 Tab",
+    description:
+      "Herbal tablet for white discharge (leucorrhoea) management.",
+  },
+  {
+    id: 160,
+    name: "Sidoact Tab",
+    genericName: "Pain Relief Tablet",
+    therapy: "joint-care",
+    dosageForm: "vati",
+    packaging: "30 Tab",
+    description:
+      "Herbal tablet for pain relief and inflammation.",
+  },
+  {
+    id: 161,
+    name: "G.B. Stone Tab",
+    genericName: "Gallbladder Stone Relief Tablet",
+    therapy: "liver",
+    dosageForm: "vati",
+    packaging: "60 Tab",
+    description:
+      "Herbal tablet to help remove and dissolve gallbladder stones.",
+  },
+  {
+    id: 162,
+    name: "SRO Ren Tab",
+    genericName: "Kidney Function Support Tablet",
+    therapy: "digestion",
+    dosageForm: "vati",
+    packaging: "60 Tab",
+    description:
+      "Herbal tablet for elevated serum creatinine and kidney function support.",
+  },
+  {
+    id: 163,
+    name: "Sropar Tab",
+    genericName: "Paralysis Relief Tablet",
+    therapy: "mental",
+    dosageForm: "vati",
+    packaging: "60 Tab",
+    description:
+      "Herbal tablet beneficial for all types of paralysis.",
+  },
+  {
+    id: 164,
+    name: "Kidney Stone Tab",
+    genericName: "Kidney & Ureteric Stone Tablet",
+    therapy: "digestion",
+    dosageForm: "vati",
+    packaging: "60 Tab",
+    description:
+      "Herbal tablet for kidney stone and ureteric stone management.",
+  },
+  {
+    id: 165,
+    name: "Cantum Plus Tab",
+    genericName: "Anti-Cancer Support Tablet",
+    therapy: "immunity",
+    dosageForm: "vati",
+    packaging: "60 Tab",
+    description:
+      "Herbal tablet formulated for all types of cancer support.",
+  },
+  {
+    id: 166,
+    name: "Sroasth Tab",
+    genericName: "Fever & Cough Relief Tablet",
+    therapy: "respiratory",
+    dosageForm: "vati",
+    packaging: "60 Tab",
+    description:
+      "Herbal tablet for all types of fever and cough.",
+  },
+  {
+    id: 167,
+    name: "Srolet Tab",
+    genericName: "Platelet Booster Tablet",
+    therapy: "immunity",
+    dosageForm: "vati",
+    packaging: "60 Tab",
+    description:
+      "Herbal tablet for low platelet count management.",
+  },
+  {
+    id: 168,
+    name: "Sro Slip Tab",
+    genericName: "Sleep & Insomnia Tablet",
+    therapy: "mental",
+    dosageForm: "vati",
+    packaging: "60 Tab",
+    description:
+      "Herbal tablet for insomnia and sleep disorders.",
+  },
+  {
+    id: 169,
+    name: "Srotum Tab",
+    genericName: "Tumour Support Tablet",
+    therapy: "immunity",
+    dosageForm: "vati",
+    packaging: "60 Tab",
+    description:
+      "Herbal tablet for erosive or non-cancerous tumour support.",
+  },
+  {
+    id: 170,
+    name: "Srofem Tab",
+    genericName: "Uterine Health Tablet",
+    therapy: "womens-health",
+    dosageForm: "vati",
+    packaging: "60 Tab",
+    description:
+      "Herbal tablet for leucorrhoea and bulky uterus management.",
+  },
+  {
+    id: 171,
+    name: "Dard Chhu Tab",
+    genericName: "Joint Pain & Stiffness Tablet",
+    therapy: "joint-care",
+    dosageForm: "vati",
+    packaging: "60 Tab",
+    description:
+      "Herbal tablet to reduce pain and stiffness of joints.",
+  },
+  {
+    id: 172,
+    name: "Medomukti Tab",
+    genericName: "Fat Release Weight Management Tablet",
+    therapy: "immunity",
+    dosageForm: "vati",
+    packaging: "120 Tab",
+    description:
+      "Herbal tablet for fat release and weight management.",
+  },
+  {
+    id: 173,
+    name: "Calciact Tab",
+    genericName: "Calcium & Bone Support Tablet",
+    therapy: "bone-health",
+    dosageForm: "vati",
+    packaging: "30 Tab",
+    description:
+      "Herbal calcium tablet for bone strength and skeletal health.",
+  },
+
+  // Capsules
+  {
+    id: 174,
+    name: "Aciatica Capsule",
+    genericName: "Sciatica Relief Capsule",
+    therapy: "joint-care",
+    dosageForm: "capsule",
+    packaging: "60 Cap",
+    description:
+      "Herbal capsule for sciatica nerve pain relief.",
+  },
+  {
+    id: 175,
+    name: "Arjun Cap",
+    genericName: "Terminalia Arjuna Heart Capsule",
+    therapy: "cardiac",
+    dosageForm: "capsule",
+    packaging: "60 Cap",
+    description:
+      "Herbal capsule for heart health and cardiac-related conditions.",
+  },
+  {
+    id: 176,
+    name: "Apruactive Cap",
+    genericName: "Active Body Herbal Capsule",
+    therapy: "immunity",
+    dosageForm: "capsule",
+    packaging: "30 Cap",
+    description:
+      "Herbal capsule for active body and overall vitality.",
+  },
+  {
+    id: 177,
+    name: "Giloya Cap",
+    genericName: "Tinospora Cordifolia Capsule",
+    therapy: "immunity",
+    dosageForm: "capsule",
+    packaging: "60 Cap",
+    description:
+      "Herbal capsule for anti-inflammatory action and immunity boosting.",
+  },
+  {
+    id: 178,
+    name: "Stress Win Cap",
+    genericName: "Stress Relief Herbal Capsule",
+    therapy: "mental",
+    dosageForm: "capsule",
+    packaging: "10 Cap",
+    description:
+      "Herbal capsule for stress relief and mental wellness.",
+  },
+  {
+    id: 179,
+    name: "Multivitamins Goal Vit Cap",
+    genericName: "Multivitamin Herbal Capsule",
+    therapy: "immunity",
+    dosageForm: "capsule",
+    packaging: "1x10 Cap",
+    description:
+      "Herbal multivitamin capsule for active body and complete daily nutrition.",
+  },
+
+  // Churnas
+  {
+    id: 180,
+    name: "Udar Rechak Churna",
+    genericName: "Digestive & Antacid Churna",
+    therapy: "digestion",
+    dosageForm: "churna",
+    packaging: "100 gm",
+    description:
+      "Herbal churna for acidity and constipation relief.",
+  },
+
+  // Liquids / Juices
+  {
+    id: 181,
+    name: "Giloya Ras",
+    genericName: "Tinospora Cordifolia Liquid",
+    therapy: "immunity",
+    dosageForm: "juice",
+    packaging: "500 ml",
+    description:
+      "Herbal Giloy liquid for immunity power and overall health.",
+  },
+  {
+    id: 182,
+    name: "Fat Reduce Swaras",
+    genericName: "Herbal Fat Reduce Juice",
+    therapy: "immunity",
+    dosageForm: "juice",
+    packaging: "500 ml",
+    description:
+      "Herbal juice blend for fat reduction and weight management.",
+  },
+  {
+    id: 183,
+    name: "Aloevera Juice (Litchi / Pineapple)",
+    genericName: "Flavoured Aloe Vera Juice",
+    therapy: "immunity",
+    dosageForm: "juice",
+    packaging: "500 ml",
+    description:
+      "Aloe Vera juice available in Litchi and Pineapple flavours for digestion and immunity.",
+  },
+  {
+    id: 184,
+    name: "Cardio Act Liquid",
+    genericName: "Cardiac Herbal Liquid",
+    therapy: "cardiac",
+    dosageForm: "juice",
+    packaging: "500 ml",
+    description:
+      "Herbal liquid for heart immunity and blockage management.",
+  },
+
+  // Oils
+  {
+    id: 185,
+    name: "Malkangni Oil",
+    genericName: "Celastrus Paniculatus Oil",
+    therapy: "mental",
+    dosageForm: "oil",
+    packaging: "100 ml",
+    description:
+      "Herbal oil for mental debility and concentration improvement.",
+  },
+  {
+    id: 186,
+    name: "Kalunji Oil",
+    genericName: "Nigella Sativa Oil",
+    therapy: "immunity",
+    dosageForm: "oil",
+    packaging: "100 ml",
+    description:
+      "Herbal oil for allergy and headache relief.",
+  },
+  {
+    id: 187,
+    name: "Mahanarayan Oil",
+    genericName: "Mahanarayan Herbal Oil",
+    therapy: "joint-care",
+    dosageForm: "oil",
+    packaging: "100 ml",
+    description:
+      "Classical Ayurvedic oil for Vata disorders and arthritis.",
+  },
+  {
+    id: 188,
+    name: "Aciatica Oil",
+    genericName: "Sciatica Relief Herbal Oil",
+    therapy: "joint-care",
+    dosageForm: "oil",
+    packaging: "100 ml",
+    description:
+      "Herbal oil formulated for sciatica nerve pain relief.",
   },
 ];
