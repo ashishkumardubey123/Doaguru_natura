@@ -16,25 +16,25 @@ const leadership = [
     name: "Dr. Rajesh Mehta",
     role: "Chairman & Managing Director",
     bio: "25+ years in pharmaceutical industry. Former board member of Pharmexcil. Drives Natura's global vision and strategic direction.",
-    image: "/media/abouPageDr.RajeshMehta.jpg",
+    image: "/media/abouPageDr.RajeshMehta.webp",
   },
   {
     name: "Mrs. Priya Sharma",
     role: "Chief Executive Officer",
     bio: "MBA from INSEAD. Led Natura's international expansion across Africa and the Americas. Champion of operational excellence.",
-    image: "/media/AboutpageMrs.Priy%20Sharma.jpg",
+    image: "/media/AboutpageMrs.Priy%20Sharma.webp",
   },
   {
     name: "Dr. Klaus Weber",
     role: "Chief Scientific Officer",
     bio: "PhD Pharmaceutical Sciences, ETH Zurich. Heads our R&D strategy with 280+ scientists under his leadership.",
-    image: "/media/AboutPageDr.KlausWeber.jpg",
+    image: "/media/AboutPageDr.KlausWeber.webp",
   },
   {
     name: "Mr. Arun Patel",
     role: "Chief Financial Officer",
     bio: "Chartered Accountant with 20+ years of experience in pharmaceutical finance. Led Natura's Series B and C funding rounds.",
-    image: "/media/aboutPageMr.%20Arun%20Patel.jpg",
+    image: "/media/aboutPageMr.%20Arun%20Patel.webp",
   },
 ];
 
@@ -54,7 +54,7 @@ export default function About() {
       <div className="relative bg-[#1a3c22] text-white py-16 md:py-24 overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img loading="lazy" decoding="async"
-            src="/media/aboutpageBanner.jpg"
+            src="/media/aboutpageBanner.webp"
             className="w-full h-full object-cover opacity-30 mix-blend-overlay"
             alt="About Us Background"
           />
@@ -79,7 +79,7 @@ export default function About() {
           <div className="grid lg:grid-cols-2 gap-10 md:gap-16 items-center">
             <div className="relative rounded-3xl overflow-hidden h-[300px] sm:h-[380px] lg:h-[500px] shadow-2xl">
               <img loading="lazy" decoding="async"
-                src="/media/aboutPage2.jpg"
+                src="/media/aboutPage2.webp"
                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
                 alt="Natura manufacturing"
               />

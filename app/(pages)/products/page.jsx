@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import InfiniteScroll from "react-infinite-scroll-component";
 import {
   Search, ChevronDown, X, Package,
   Eye, Download, Tag, ArrowRight, SlidersHorizontal,
@@ -11,9 +12,9 @@ import {
 import {
   therapyFilters,
   dosageFilters,
-  allProducts,
   therapyColorMap,
 } from "@/utils/utils";
+import { useProductContext } from "@/Context/ProductContext";
 
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
 function getTherapyLabel(id) {
@@ -25,11 +26,13 @@ function getDosageLabel(id) {
 }
 
 // ─── BROCHURE BUTTON ─────────────────────────────────────────────────────────
-function BrochureButton({ iconOnly = false }) {
+function BrochureButton({ iconOnly = false, fileUrl }) {
   return (
     <a
-      href="/product/products.pdf"
-      download="Natura_Product_Catalogue.pdf"
+      href={fileUrl}
+      download
+      target="_blank"
+      rel="noopener noreferrer"
       onClick={ (e) => e.stopPropagation() }
       className={
         iconOnly
@@ -43,6 +46,7 @@ function BrochureButton({ iconOnly = false }) {
   );
 }
 
+ 
 // ─── PRODUCT CARD (for GRID view) ──────────────────────────────────────────────────────
 function ProductCardGrid({ product, onShowImage }) {
   const colors = therapyColorMap[product.therapy] ?? { bg: "#f0f7f1", text: "#2A5C32", dot: "#4caf50" };
@@ -146,7 +150,7 @@ function ProductCardGrid({ product, onShowImage }) {
           >
             <Eye size={ 13 } /> Details
           </button>
-          <BrochureButton />
+          <BrochureButton fileUrl={product.brochure} />
         </div>
       </div>
     </div>
@@ -216,7 +220,7 @@ function ProductCardList({ product, onShowImage }) {
         <button onClick={() => onShowImage(product)} className="p-2.5 rounded-xl bg-[#f0f7f1] hover:bg-[#e4efe5] active:scale-95 transition-all" style={ { color: "#2A5C32" } }>
           <Eye size={ 16 } />
         </button>
-        <BrochureButton iconOnly />
+        <BrochureButton iconOnly fileUrl={product.brochure} />
         <ChevronRight size={ 16 } className="text-gray-300 group-hover:text-[#2A5C32] group-hover:translate-x-0.5 transition-all" />
       </div>
     </div>
@@ -332,7 +336,7 @@ function FilterContent({ selectedTherapy, selectedDosage, toggleFilter, clearAll
       </div>
 
       {/* Download CTA */ }
-      <div
+      {/* <div
         className="rounded-2xl p-5 text-white shadow-lg relative overflow-hidden"
         style={ { background: "linear-gradient(135deg, #2A5C32 0%, #0f2415 100%)" } }
       >
@@ -353,13 +357,14 @@ function FilterContent({ selectedTherapy, selectedDosage, toggleFilter, clearAll
         >
           <Download size={ 14 } /> Download PDF
         </a>
-      </div>
+      </div> */}
     </>
   );
 }
 
 // ─── PAGE ─────────────────────────────────────────────────────────────────────
 export default function Products() {
+  const { productsData: allProducts, loading } = useProductContext();
   const [selectedTherapy, setSelectedTherapy] = useState([]);
   const [selectedDosage, setSelectedDosage] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -369,6 +374,13 @@ export default function Products() {
   const [viewMode, setViewMode] = useState("grid");   // "grid" | "list"
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
   const [selectedProductImage, setSelectedProductImage] = useState(null);
+  
+  // Infinite Scroll State - mapped to filter combinations
+  const ITEMS_PER_PAGE = 12;
+  const resetKey = `${selectedTherapy.join()}-${selectedDosage.join()}-${searchQuery}-${sortBy}`;
+  const [visibleCountMap, setVisibleCountMap] = useState({});
+
+  const visibleCount = visibleCountMap[resetKey] ?? ITEMS_PER_PAGE;
 
   const searchRef = useRef(null);
 
@@ -408,6 +420,14 @@ export default function Products() {
     return () => window.removeEventListener("keydown", handler);
   }, []);
 
+
+  const fetchMoreProducts = () => {
+    setVisibleCountMap((prev) => ({
+      ...prev,
+      [resetKey]: (prev[resetKey] ?? ITEMS_PER_PAGE) + ITEMS_PER_PAGE,
+    }));
+  };
+
   const toggleFilter = (id, type) => {
     if (type === "therapy") {
       setSelectedTherapy((p) => p.includes(id) ? p.filter((x) => x !== id) : [...p, id]);
@@ -427,7 +447,7 @@ export default function Products() {
 
   const normalizedQuery = searchQuery.toLowerCase().replace(/\s+/g, "");
 
-  const filtered = allProducts.filter((p) => {
+  const filtered = (allProducts || []).filter((p) => {
     const matchTherapy = selectedTherapy.length === 0 || selectedTherapy.includes(p.therapy);
     const matchDosage = selectedDosage.length === 0 || selectedDosage.includes(p.dosageForm);
     const matchSearch = normalizedQuery === "" ||
@@ -503,249 +523,275 @@ export default function Products() {
       </div>
 
       {/* ── MAIN CONTENT ──────────────────────────────────────────── */ }
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 py-10 md:py-14">
+      {/* ── STICKY SEARCH BAR ──────────────────────────────────────── */}
+<div className="sticky top-[108px] z-30 bg-[#f7f9f7] border-b border-gray-200 shadow-sm">
+  <div className="max-w-[1440px] mx-auto px-4 sm:px-6 py-3">
+    <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
+      
+      {/* search */}
+      <div className="relative flex-1 max-w-xl group">
+        <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#2A5C32] transition-colors pointer-events-none" />
+        <input
+          ref={searchRef}
+          type="text"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder='Search products, herbs… (press "/" to focus)'
+          className="w-full pl-11 pr-10 py-3.5 border-2 border-gray-200 rounded-2xl text-sm focus:outline-none focus:border-[#2A5C32] focus:ring-4 focus:ring-[#2A5C32]/10 transition-all bg-white shadow-sm placeholder:text-gray-400"
+        />
+        {searchQuery && (
+          <button
+            onClick={() => setSearchQuery("")}
+            className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors"
+          >
+            <X size={13} />
+          </button>
+        )}
+      </div>
 
-        {/* Search + controls row */ }
-        <div className="flex flex-col sm:flex-row gap-3 mb-8 items-stretch sm:items-center">
-          {/* search */ }
-          <div className="relative flex-1 max-w-xl group">
-            <Search size={ 16 } className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#2A5C32] transition-colors pointer-events-none" />
-            <input
-              ref={ searchRef }
-              type="text"
-              value={ searchQuery }
-              onChange={ (e) => setSearchQuery(e.target.value) }
-              placeholder='Search products, herbs… (press "/" to focus)'
-              className="w-full pl-11 pr-10 py-3.5 border-2 border-gray-200 rounded-2xl text-sm focus:outline-none focus:border-[#2A5C32] focus:ring-4 focus:ring-[#2A5C32]/10 transition-all bg-white shadow-sm placeholder:text-gray-400"
-            />
-            { searchQuery && (
-              <button
-                onClick={ () => setSearchQuery("") }
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors"
-              >
-                <X size={ 13 } />
-              </button>
-            ) }
-          </div>
-
-         <div className="hidden sm:flex items-center bg-white rounded-2xl border-2 border-gray-200 p-1 gap-1 shadow-sm">
-            
-            {/* Grid View Toggle */}
-            <div className={ `rounded-xl transition-all overflow-hidden ${viewMode === "grid" ? "bg-[#2A5C32] text-white shadow-sm" : "text-gray-400 hover:text-gray-700 hover:bg-gray-50"}` }>
-              <button
-                onClick={ () => setViewMode("grid") }
-                className="w-full h-full p-2.5 flex items-center justify-center bg-transparent outline-none"
-              >
-                <LayoutGrid size={ 16 } />
-              </button>
-            </div>
-
-            {/* List View Toggle */}
-
-            
-            <div className={ `rounded-xl transition-all overflow-hidden ${viewMode === "list" ? "bg-[#2A5C32] text-white shadow-sm" : "text-gray-400 hover:text-gray-700 hover:bg-gray-50"}` }>
-              <button
-                onClick={ () => setViewMode("list") }
-                className="w-full h-full p-2.5 flex items-center justify-center bg-transparent outline-none"
-              >
-                <List size={ 16 } />
-              </button>
-            </div>
-            
-          </div>
-
-          {/* mobile filter toggle */}
-          <div className="md:hidden bg-white border-2 border-gray-200 text-gray-700 rounded-2xl font-semibold shadow-sm active:scale-95 transition-all relative">
-            <button
-              onClick={ () => setIsMobileFiltersOpen(true) }
-              className="w-full h-full flex items-center justify-center gap-2 px-5 py-3.5 bg-transparent outline-none"
-            >
-              <SlidersHorizontal size={ 17 } className="text-[#2A5C32]" />
-              Filters
-              { activeFilterCount > 0 && (
-                <span className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-[#2A5C32] text-white text-[10px] font-bold rounded-full flex items-center justify-center">
-                  { activeFilterCount }
-                </span>
-              ) }
-            </button>
-          </div>
-
+      {/* Grid / List toggle */}
+      <div className="hidden sm:flex items-center bg-white rounded-2xl border-2 border-gray-200 p-1 gap-1 shadow-sm">
+        <div className={`rounded-xl transition-all overflow-hidden ${viewMode === "grid" ? "bg-[#2A5C32] text-white shadow-sm" : "text-gray-400 hover:text-gray-700 hover:bg-gray-50"}`}>
+          <button
+            onClick={() => setViewMode("grid")}
+            className="w-full h-full p-2.5 flex items-center justify-center bg-transparent outline-none"
+          >
+            <LayoutGrid size={16} />
+          </button>
         </div>
-
-        <div className="flex gap-7 relative">
-
-          {/* ── MOBILE BOTTOM-SHEET OVERLAY ── */ }
-          { isMobileFiltersOpen && (
-            <>
-              <div
-                className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 md:hidden"
-                onClick={ () => setIsMobileFiltersOpen(false) }
-              />
-              <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-[#f7f9f7] rounded-t-3xl shadow-2xl overflow-hidden"
-                style={ { maxHeight: "82vh" } }
-              >
-                {/* drag handle */ }
-                <div className="flex justify-center pt-3 pb-1">
-                  <div className="w-10 h-1 bg-gray-300 rounded-full" />
-                </div>
-                <div className="flex items-center justify-between px-5 py-3 border-b border-gray-100">
-                  <h2 className="font-bold text-lg text-gray-900" style={ { fontFamily: "'Montserrat', sans-serif" } }>
-                    Filters
-                    { activeFilterCount > 0 && (
-                      <span className="ml-2 text-xs bg-[#2A5C32] text-white px-2 py-0.5 rounded-full">{ activeFilterCount }</span>
-                    ) }
-                  </h2>
-                  <button
-                    onClick={ () => setIsMobileFiltersOpen(false) }
-                    className="p-2 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-full transition-colors"
-                  >
-                    <X size={ 16 } />
-                  </button>
-                </div>
-                <div className="overflow-y-auto p-5" style={ { maxHeight: "calc(82vh - 80px)" } }>
-                  <FilterContent { ...sidebarProps } />
-                </div>
-                <div className="p-4 border-t border-gray-100 bg-white">
-                  <button
-                    onClick={ () => setIsMobileFiltersOpen(false) }
-                    className="w-full bg-[#2A5C32] text-white font-bold py-3.5 rounded-2xl hover:bg-[#1a3c22] active:scale-95 transition-all"
-                  >
-                    Show { sorted.length } Results
-                  </button>
-                </div>
-              </div>
-            </>
-          ) }
-
-          {/* ── DESKTOP SIDEBAR ──────────────────────────────────── */}
-          <aside className="hidden md:flex flex-col w-64 shrink-0">
-            <div
-              className="sticky top-0 overflow-y-auto space-y-0
-                [&::-webkit-scrollbar]:w-1.5
-                [&::-webkit-scrollbar-track]:bg-transparent
-                [&::-webkit-scrollbar-thumb]:rounded-full
-                [&::-webkit-scrollbar-thumb]:bg-gray-300
-                hover:[&::-webkit-scrollbar-thumb]:bg-[#2A5C32]/40"
-              style={{ maxHeight: "100vh", paddingBottom: "2rem" }}
-            >
-              <FilterContent { ...sidebarProps } />
-            </div>
-          </aside>
-
-          {/* ── PRODUCTS GRID ─────────────────────────────────────── */ }
-          <div className="flex-1 min-w-0">
-
-            {/* Toolbar */ }
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-5 gap-3 bg-white px-5 py-3.5 rounded-2xl border border-gray-100 shadow-sm">
-              <div className="text-sm text-gray-500">
-                <span className="font-bold text-gray-900 text-lg">{ sorted.length }</span>
-                <span className="ml-1">products{ hasFilters ? " found" : " in catalogue" }</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <span className="text-sm text-gray-400 hidden sm:block">Sort:</span>
-                <select
-                  value={ sortBy }
-                  onChange={ (e) => setSortBy(e.target.value) }
-                  className="text-sm font-medium border-2 border-gray-100 rounded-xl px-4 py-2 text-gray-800 focus:outline-none focus:border-[#2A5C32] focus:ring-2 focus:ring-[#2A5C32]/10 bg-gray-50 hover:bg-gray-100 transition-all cursor-pointer"
-                >
-                  <option value="name">Name (A–Z)</option>
-                  <option value="therapy">Wellness Area</option>
-                  <option value="dosage">Product Form</option>
-                </select>
-              </div>
-            </div>
-
-            {/* Active filter chips */ }
-            { hasFilters && (
-              <div className="flex items-center gap-2 flex-wrap mb-5">
-                <span className="text-xs font-semibold text-gray-400">Active:</span>
-                { selectedTherapy.map((id) => {
-                  const f = therapyFilters.find((x) => x.id === id);
-                  const cl = therapyColorMap[id] ?? { bg: "#f0f7f1", text: "#2A5C32" };
-                  return f ? (
-                    <span
-                      key={ id }
-                      className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg font-semibold border shadow-sm"
-                      style={ { backgroundColor: cl.bg, color: cl.text, borderColor: cl.dot + "40" } }
-                    >
-                      { f.label }
-                      <button onClick={ () => toggleFilter(id, "therapy") } className="rounded-full p-0.5 hover:bg-black/10 transition-colors">
-                        <X size={ 11 } />
-                      </button>
-                    </span>
-                  ) : null;
-                }) }
-                { selectedDosage.map((id) => {
-                  const f = dosageFilters.find((x) => x.id === id);
-                  return f ? (
-                    <span key={ id } className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-blue-50 border border-blue-200 text-blue-700 font-semibold shadow-sm">
-                      { f.label }
-                      <button onClick={ () => toggleFilter(id, "dosage") } className="rounded-full p-0.5 hover:bg-blue-200 transition-colors">
-                        <X size={ 11 } />
-                      </button>
-                    </span>
-                  ) : null;
-                }) }
-                { searchQuery && (
-                  <span className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-gray-100 border border-gray-200 text-gray-600 font-semibold shadow-sm">
-                    "{ searchQuery }"
-                    <button onClick={ () => setSearchQuery("") } className="rounded-full p-0.5 hover:bg-gray-300 transition-colors">
-                      <X size={ 11 } />
-                    </button>
-                  </span>
-                ) }
-                <button onClick={ clearAll } className="text-xs text-red-500 hover:text-red-700 font-semibold transition-colors underline underline-offset-2">
-                  Clear all
-                </button>
-              </div>
-            ) }
-
-            {/* No results */ }
-            { sorted.length === 0 ? (
-              <div className="text-center py-24 bg-white rounded-3xl border border-gray-100 shadow-sm">
-                <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <Sparkles size={ 30 } className="text-gray-300" />
-                </div>
-                <div className="text-xl font-bold text-gray-800 mb-2" style={ { fontFamily: "'Montserrat', sans-serif" } }>
-                  No products found
-                </div>
-                <p className="text-gray-400 mb-6 text-sm">Try adjusting your filters or search query.</p>
-                <button
-                  onClick={ clearAll }
-                  className="px-6 py-2.5 bg-[#f0f7f1] text-[#2A5C32] font-semibold rounded-xl hover:bg-[#e4efe5] active:scale-95 transition-all text-sm"
-                >
-                  Clear All Filters
-                </button>
-              </div>
-            ) : viewMode === "grid" ? (
-              <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-5">
-                { sorted.map((p) => <ProductCardGrid key={ p.id } product={ p } onShowImage={setSelectedProductImage} />) }
-              </div>
-            ) : (
-              <div className="flex flex-col gap-3">
-                { sorted.map((p) => <ProductCardList key={ p.id } product={ p } onShowImage={setSelectedProductImage} />) }
-              </div>
-            ) }
-
-            {/* Footer CTA */ }
-            { sorted.length > 0 && (
-              <div className="text-center mt-14 pb-6">
-                <p className="text-sm text-gray-400 mb-6">
-                  Showing <span className="font-semibold text-gray-600">{ sorted.length }</span> of 300+ products in our portfolio.
-                </p>
-                <Link href="/contact">
-
-                  <div className="inline-flex items-center gap-2 border-2 border-[#2A5C32] text-[#2A5C32] font-bold px-8 py-3.5 rounded-2xl transition-all duration-300 hover:bg-[#2A5C32] hover:text-white hover:shadow-lg hover:shadow-[#2A5C32]/25 group cursor-pointer">
-                    Request Full Catalogue
-                    <ArrowRight size={ 16 } className="transition-transform group-hover:translate-x-1" />
-                  </div>
-
-                </Link>
-              </div>
-            ) }
-          </div>
+        <div className={`rounded-xl transition-all overflow-hidden ${viewMode === "list" ? "bg-[#2A5C32] text-white shadow-sm" : "text-gray-400 hover:text-gray-700 hover:bg-gray-50"}`}>
+          <button
+            onClick={() => setViewMode("list")}
+            className="w-full h-full p-2.5 flex items-center justify-center bg-transparent outline-none"
+          >
+            <List size={16} />
+          </button>
         </div>
       </div>
+
+      {/* mobile filter toggle */}
+      <div className="md:hidden bg-white border-2 border-gray-200 text-gray-700 rounded-2xl font-semibold shadow-sm active:scale-95 transition-all relative">
+        <button
+          onClick={() => setIsMobileFiltersOpen(true)}
+          className="w-full h-full flex items-center justify-center gap-2 px-5 py-3.5 bg-transparent outline-none"
+        >
+          <SlidersHorizontal size={17} className="text-[#2A5C32]" />
+          Filters
+          {activeFilterCount > 0 && (
+            <span className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-[#2A5C32] text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+              {activeFilterCount}
+            </span>
+          )}
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{/* ── MAIN CONTENT ──────────────────────────────────────────── */}
+<div className="max-w-[1440px] mx-auto px-4 sm:px-6 py-10 md:py-14">
+  <div className="flex gap-7 relative">
+
+    {/* ── MOBILE BOTTOM-SHEET OVERLAY ── */}
+    {isMobileFiltersOpen && (
+      <>
+        <div
+          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 md:hidden"
+          onClick={() => setIsMobileFiltersOpen(false)}
+        />
+        <div
+          className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-[#f7f9f7] rounded-t-3xl shadow-2xl overflow-hidden"
+          style={{ maxHeight: "82vh" }}
+        >
+          <div className="flex justify-center pt-3 pb-1">
+            <div className="w-10 h-1 bg-gray-300 rounded-full" />
+          </div>
+          <div className="flex items-center justify-between px-5 py-3 border-b border-gray-100">
+            <h2 className="font-bold text-lg text-gray-900" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+              Filters
+              {activeFilterCount > 0 && (
+                <span className="ml-2 text-xs bg-[#2A5C32] text-white px-2 py-0.5 rounded-full">{activeFilterCount}</span>
+              )}
+            </h2>
+            <button
+              onClick={() => setIsMobileFiltersOpen(false)}
+              className="p-2 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-full transition-colors"
+            >
+              <X size={16} />
+            </button>
+          </div>
+          <div className="overflow-y-auto p-5" style={{ maxHeight: "calc(82vh - 80px)" }}>
+            <FilterContent {...sidebarProps} />
+          </div>
+          <div className="p-4 border-t border-gray-100 bg-white">
+            <button
+              onClick={() => setIsMobileFiltersOpen(false)}
+              className="w-full bg-[#2A5C32] text-white font-bold py-3.5 rounded-2xl hover:bg-[#1a3c22] active:scale-95 transition-all"
+            >
+              Show {sorted.length} Results
+            </button>
+          </div>
+        </div>
+      </>
+    )}
+
+    {/* ── DESKTOP SIDEBAR ──────────────────────────────────── */}
+    <aside className="hidden md:flex flex-col w-64 shrink-0">
+      <div
+       className="sticky top-[173px] overflow-y-auto space-y-0
+          [&::-webkit-scrollbar]:w-1.5
+          [&::-webkit-scrollbar-track]:bg-transparent
+          [&::-webkit-scrollbar-thumb]:rounded-full
+          [&::-webkit-scrollbar-thumb]:bg-gray-300
+          hover:[&::-webkit-scrollbar-thumb]:bg-[#2A5C32]/40"
+       style={{ maxHeight: "calc(100vh - 173px)", paddingBottom: "2rem" }}
+      >
+        <FilterContent {...sidebarProps} />
+      </div>
+    </aside>
+
+    {/* ── PRODUCTS GRID ─────────────────────────────────────── */}
+    <div className="flex-1 min-w-0">
+
+      {/* Toolbar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-5 gap-3 bg-white px-5 py-3.5 rounded-2xl border border-gray-100 shadow-sm">
+        <div className="text-sm text-gray-500">
+          <span className="font-bold text-gray-900 text-lg">{sorted.length}</span>
+          <span className="ml-1">products{hasFilters ? " found" : " in catalogue"}</span>
+        </div>
+        <div className="flex items-center gap-3">
+          <span className="text-sm text-gray-400 hidden sm:block">Sort:</span>
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            className="text-sm font-medium border-2 border-gray-100 rounded-xl px-4 py-2 text-gray-800 focus:outline-none focus:border-[#2A5C32] focus:ring-2 focus:ring-[#2A5C32]/10 bg-gray-50 hover:bg-gray-100 transition-all cursor-pointer"
+          >
+            <option value="name">Name (A–Z)</option>
+            <option value="therapy">Wellness Area</option>
+            <option value="dosage">Product Form</option>
+          </select>
+        </div>
+      </div>
+
+      {/* Active filter chips */}
+      {hasFilters && (
+        <div className="flex items-center gap-2 flex-wrap mb-5">
+          <span className="text-xs font-semibold text-gray-400">Active:</span>
+          {selectedTherapy.map((id) => {
+            const f = therapyFilters.find((x) => x.id === id);
+            const cl = therapyColorMap[id] ?? { bg: "#f0f7f1", text: "#2A5C32" };
+            return f ? (
+              <span
+                key={id}
+                className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg font-semibold border shadow-sm"
+                style={{ backgroundColor: cl.bg, color: cl.text, borderColor: cl.dot + "40" }}
+              >
+                {f.label}
+                <button onClick={() => toggleFilter(id, "therapy")} className="rounded-full p-0.5 hover:bg-black/10 transition-colors">
+                  <X size={11} />
+                </button>
+              </span>
+            ) : null;
+          })}
+          {selectedDosage.map((id) => {
+            const f = dosageFilters.find((x) => x.id === id);
+            return f ? (
+              <span key={id} className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-blue-50 border border-blue-200 text-blue-700 font-semibold shadow-sm">
+                {f.label}
+                <button onClick={() => toggleFilter(id, "dosage")} className="rounded-full p-0.5 hover:bg-blue-200 transition-colors">
+                  <X size={11} />
+                </button>
+              </span>
+            ) : null;
+          })}
+          {searchQuery && (
+            <span className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-gray-100 border border-gray-200 text-gray-600 font-semibold shadow-sm">
+              &quot;{searchQuery}&quot;
+              <button onClick={() => setSearchQuery("")} className="rounded-full p-0.5 hover:bg-gray-300 transition-colors">
+                <X size={11} />
+              </button>
+            </span>
+          )}
+          <button onClick={clearAll} className="text-xs text-red-500 hover:text-red-700 font-semibold transition-colors underline underline-offset-2">
+            Clear all
+          </button>
+        </div>
+      )}
+
+      {/* No results or Loading */}
+      {loading ? (
+        <div className="text-center py-24 bg-white rounded-3xl border border-gray-100 shadow-sm flex flex-col items-center justify-center">
+          <div className="w-12 h-12 border-4 border-[#2A5C32]/20 border-t-[#2A5C32] rounded-full animate-spin mb-4" />
+          <p className="text-gray-500 font-medium">Loading products from backend...</p>
+        </div>
+      ) : sorted.length === 0 ? (
+        <div className="text-center py-24 bg-white rounded-3xl border border-gray-100 shadow-sm">
+          <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6">
+            <Sparkles size={30} className="text-gray-300" />
+          </div>
+          <div className="text-xl font-bold text-gray-800 mb-2" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+            No products found
+          </div>
+          <p className="text-gray-400 mb-6 text-sm">Try adjusting your filters or search query.</p>
+          <button
+            onClick={clearAll}
+            className="px-6 py-2.5 bg-[#f0f7f1] text-[#2A5C32] font-semibold rounded-xl hover:bg-[#e4efe5] active:scale-95 transition-all text-sm"
+          >
+            Clear All Filters
+          </button>
+        </div>
+      ) : (
+        <InfiniteScroll
+          dataLength={visibleCount}
+          next={fetchMoreProducts}
+          hasMore={visibleCount < sorted.length}
+          loader={
+            <div className="col-span-full flex justify-center py-10">
+              <div className="w-8 h-8 border-4 border-[#2A5C32]/20 border-t-[#2A5C32] rounded-full animate-spin" />
+            </div>
+          }
+          endMessage={
+            <p className="col-span-full text-center py-10 text-gray-400 text-sm italic">
+              You have seen all products.
+            </p>
+          }
+          className="overflow-hidden"
+        >
+          {viewMode === "grid" ? (
+            <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-5">
+              {sorted.slice(0, visibleCount).map((p) => (
+                <ProductCardGrid key={p.id} product={p} onShowImage={setSelectedProductImage} />
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-col gap-3">
+              {sorted.slice(0, visibleCount).map((p) => (
+                <ProductCardList key={p.id} product={p} onShowImage={setSelectedProductImage} />
+              ))}
+            </div>
+          )}
+        </InfiniteScroll>
+      )}
+
+      {/* Footer CTA */}
+      {sorted.length > 0 && (
+        <div className="text-center mt-14 pb-6">
+          <p className="text-sm text-gray-400 mb-6">
+            Showing <span className="font-semibold text-gray-600">{sorted.length}</span> of 300+ products in our portfolio.
+          </p>
+          <Link href="/contact">
+            <div className="inline-flex items-center gap-2 border-2 border-[#2A5C32] text-[#2A5C32] font-bold px-8 py-3.5 rounded-2xl transition-all duration-300 hover:bg-[#2A5C32] hover:text-white hover:shadow-lg hover:shadow-[#2A5C32]/25 group cursor-pointer">
+              Request Full Catalogue
+              <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
+            </div>
+          </Link>
+        </div>
+      )}
+
+    </div>
+  </div>
+</div>
 
       {/* ── IMAGE MODAL ──────────────────────────────────────────── */}
       {selectedProductImage && (

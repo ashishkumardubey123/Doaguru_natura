@@ -8,13 +8,14 @@ import {
   Shield, Award, Users, TrendingUp, Calendar, ExternalLink, MapPin
 } from "lucide-react";
 import { mediaNewsArticles } from "../data/mediaNews";
-import { allProducts, therapyFilters, dosageFilters, therapyColorMap } from "@/utils/utils";
+import { therapyFilters, dosageFilters, therapyColorMap } from "@/utils/utils";
+import { useProductContext } from "@/Context/ProductContext";
 
 // ─── DATA ────────────────────────────────────────────────────────────────────
 const heroSlides = [
   {
     id: 1,
-    image: "/media/banner1.jpg",
+    image: "/media/banner1.webp",
     tag: "Manufacturing Excellence",
     headline: "World-Class Pharmaceutical\nManufacturing for Global Markets",
     subtext: "WHO-GMP certified facilities producing 500+ formulations across 25 dosage forms, exported to 50+ countries.",
@@ -36,7 +37,7 @@ const heroSlides = [
   },
   {
     id: 3,
-    image: "/media/banner3.jpg",
+    image: "/media/banner3.webp",
     tag: "Global Reach",
     headline: "Connecting Healthcare\nAcross 50+ Nations",
     subtext: "Robust supply chain infrastructure ensuring timely delivery of quality medicines to every corner of the globe.",
@@ -285,6 +286,9 @@ function HeroSlider() {
 
 // ─── MAIN PAGE ────────────────────────────────────────────────────────────────
 export default function Home() {
+  const { productsData } = useProductContext();
+  const allProducts = productsData || [];
+
   return (
     <div>
       <HeroSlider />
@@ -345,16 +349,16 @@ export default function Home() {
             {/* Image grid — simpler on mobile: 2-col equal rows, no negative margins */ }
             <div className="grid grid-cols-2 gap-3 sm:gap-4 mt-2 lg:mt-0">
               <div className="rounded-xl sm:rounded-2xl overflow-hidden h-36 sm:h-44 md:h-48">
-                <img loading="lazy" decoding="async" src="/media/About1.jpg" className="w-full h-full object-cover" alt="Lab" />
+                <img loading="lazy" decoding="async" src="/media/About1.webp" className="w-full h-full object-cover" alt="Lab" />
               </div>
               <div className="rounded-xl sm:rounded-2xl overflow-hidden h-36 sm:h-44 md:h-48 sm:mt-8">
-                <img loading="lazy" decoding="async" src="/media/about2.jpg" className="w-full h-full object-cover" alt="Research" />
+                <img loading="lazy" decoding="async" src="/media/about2.webp" className="w-full h-full object-cover" alt="Research" />
               </div>
               <div className="rounded-xl sm:rounded-2xl overflow-hidden h-36 sm:h-44 md:h-48 sm:-mt-4">
-                <img loading="lazy" decoding="async" src="/media/about3.jpg" className="w-full h-full object-cover" alt="Manufacturing" />
+                <img loading="lazy" decoding="async" src="/media/about3.webp" className="w-full h-full object-cover" alt="Manufacturing" />
               </div>
               <div className="rounded-xl sm:rounded-2xl overflow-hidden h-36 sm:h-44 md:h-48">
-                <img loading="lazy" decoding="async" src="/media/about4.jpg" className="w-full h-full object-cover" alt="Quality" />
+                <img loading="lazy" decoding="async" src="/media/about4.webp" className="w-full h-full object-cover" alt="Quality" />
               </div>
             </div>
           </div>
@@ -820,7 +824,7 @@ export default function Home() {
             {/* Image: shorter on mobile */ }
             <div className="relative rounded-3xl overflow-hidden h-64 sm:h-80 md:h-[400px]">
               <img loading="lazy" decoding="async"
-                src="/media/OurPurpose.jpg"
+                src="/media/OurPurpose.webp"
                 alt="Patient care"
                 className="w-full h-full object-cover"
               />

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useContext, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { UserContext } from '@/Context/UserContext';
 import { FormsContext } from '@/Context/FormsContext';
 import { fetchPendingAdmins as fetchPendingAdminsApi, updateAdminStatus as updateAdminStatusApi } from '@/app/api/adminApi';
@@ -9,7 +10,7 @@ import {
   LogOut, CheckCircle, Clock, Loader2, Mail, Phone,
   LayoutDashboard, Inbox, CheckSquare, UserCircle,
   Database, ExternalLink, ShieldCheck, AlertTriangle,
-  RefreshCcw, Users, Leaf
+  RefreshCcw, Users, Leaf, Package
 } from 'lucide-react';
 
 /* ─────────────────────────────────────────────
@@ -687,6 +688,20 @@ export default function AdminDashboard() {
                 </div>
               </div>
             )}
+
+            {/* ━━━ QUICK ACTIONS ━━━ */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', marginBottom: 20 }}>
+               <Link href="/admin/upload-product" style={{
+                 display: 'inline-flex', alignItems: 'center', gap: 8,
+                 background: 'linear-gradient(135deg, #2a6e38 0%, #1c4d28 100%)',
+                 color: '#fff', padding: '12px 24px', borderRadius: 99,
+                 fontSize: 13, fontWeight: 700, textDecoration: 'none',
+                 boxShadow: '0 8px 24px rgba(42, 110, 56, 0.25)',
+                 transition: 'transform 0.2s',
+               }} onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'none'}>
+                 <Package size={16} /> Upload New Product
+               </Link>
+            </div>
 
             {/* ━━━ STAT CARDS ━━━ */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(200px,1fr))', gap: 16, marginBottom: 28 }}>

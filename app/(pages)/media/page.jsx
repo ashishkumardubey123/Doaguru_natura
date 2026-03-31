@@ -9,10 +9,10 @@ const pressReleases = [
 ];
 
 const galleryImages = [
-  { src: "/media/banner1.jpg", caption: "Oral Solids Manufacturing â€” Ahmedabad Unit I" },
-  { src: "/media/manufacturing-CentralR&DInstitute.jpg", caption: "Central R&D Institute" },
-  { src: "/media/about2.jpg", caption: "Injectable Production Line â€” Vadodara" },
-  { src: "/media/bannar2.jpg", caption: "QC Laboratory" },
+  { src: "/media/banner1.webp", caption: "Oral Solids Manufacturing — Ahmedabad Unit I" },
+  { src: "/media/manufacturing-CentralR&DInstitute.webp", caption: "Central R&D Institute" },
+  { src: "/media/about2.webp", caption: "Injectable Production Line — Vadodara" },
+  { src: "/media/bannar2.webp", caption: "QC Laboratory" },
 ];
 
 export default function Media() {

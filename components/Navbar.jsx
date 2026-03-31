@@ -190,7 +190,7 @@ export default function Navbar() {
       {/* Main Header */ }
       <div className="max-w-[1440px] mx-auto py-0 flex items-stretch justify-between relative">
         <Link href="/" className="flex items-center shrink-0">
-          <img src="./Logo/Navlogo.png" className="w-45 my-2 h-16 object-contain" alt="logo" />
+          <img src="./Logo/Navlogo.webp" className="w-45 my-2 h-16 object-contain" alt="logo" />
         </Link>
 
         {/* Desktop Nav */ }

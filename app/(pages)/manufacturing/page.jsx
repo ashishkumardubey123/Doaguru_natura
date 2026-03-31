@@ -13,7 +13,7 @@ const facilities = [
     capacity: "6 Billion units/year",
     area: "150,000 sq. ft.",
     products: "Tablets, Capsules, Pellets, Dry Syrups",
-    image: "/media/About1.jpg",
+    image: "/media/About1.webp",
   },
   {
     name: "Unit II - Sterile Injectables",
@@ -22,7 +22,7 @@ const facilities = [
     capacity: "250 Million units/year",
     area: "100,000 sq. ft.",
     products: "Liquid Vials, Ampoules, Lyophilized Injections",
-    image: "/media/about2.jpg",
+    image: "/media/about2.webp",
   },
   {
     name: "Unit III - API Synthesis & Intermediates",
@@ -31,7 +31,7 @@ const facilities = [
     capacity: "1,500 MT/year",
     area: "200,000 sq. ft.",
     products: "Complex APIs, Active Ingredients",
-    image: "/media/about3.jpg",
+    image: "/media/about3.webp",
   },
   {
     name: "Unit IV - Global Export & Packaging Hub",
@@ -40,7 +40,7 @@ const facilities = [
     capacity: "25 Million units/year",
     area: "60,000 sq. ft.",
     products: "Secondary Packaging, Global Track & Trace",
-    image: "/media/about4.jpg",
+    image: "/media/about4.webp",
   },
 ];
 
@@ -101,7 +101,7 @@ const rdCenters = [
     focus: "Formulation Development & Optimisation",
     scientists: "280+",
     molecules: "80+",
-    image: "/media/manufacturing-CentralR&DInstitute.jpg",
+    image: "/media/manufacturing-CentralR&DInstitute.webp",
   },
   {
     name: "API Research Centre",
@@ -109,7 +109,7 @@ const rdCenters = [
     focus: "Novel API Synthesis & Process Chemistry",
     scientists: "120+",
     molecules: "40+",
-    image: "/media/manufacturing-APIResearchCentre.JPG",
+    image: "/media/manufacturing-APIResearchCentre.webp",
   },
   {
     name: "Bioequivalence Centre",
@@ -117,7 +117,7 @@ const rdCenters = [
     focus: "Clinical Pharmacology & BE Studies",
     scientists: "45+",
     molecules: "25+",
-    image: "/media/manufacturing-BioequivalenceCentre.jpg",
+    image: "/media/manufacturing-BioequivalenceCentre.webp",
   },
 ];
 
