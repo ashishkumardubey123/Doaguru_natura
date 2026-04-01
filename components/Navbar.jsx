@@ -81,6 +81,7 @@ const navItems = [
   { label: "About Us", path: "/about" },
   { label: "Products", path: "/products" },
   { label: "Manufacturing", path: "/manufacturing" },
+  { label: "Services", path: "/services" },
   { label: "Who We Serve", path: "/who-we-serve" },
   { label: "Global Presence", path: "/global-presence" },
   { label: "Contact", path: "/contact" },

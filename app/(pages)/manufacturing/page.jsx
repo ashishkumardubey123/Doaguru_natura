@@ -215,7 +215,7 @@ export default function Manufacturing() {
         </div>
 
         {/* GMP Compliance Tab */}
-        <div id="gmp" className="scroll-mt-24 mb-20">
+        {/* <div id="gmp" className="scroll-mt-24 mb-20">
           <div className="mb-10">
             <span className="text-xs font-bold uppercase tracking-widest" style={{ color: "#6B4226" }}>Regulatory Compliance</span>
             <h2 className="mt-2 text-3xl font-bold text-gray-900" style={{ fontFamily: "'Montserrat', sans-serif" }}>GMP & Regulatory Standing</h2>
@@ -231,10 +231,10 @@ export default function Manufacturing() {
               </div>
             ))}
           </div>
-        </div>
+        </div> */}
 
         {/* R&D Centers Tab */}
-        <div id="rnd" className="scroll-mt-24 mb-10">
+        {/* <div id="rnd" className="scroll-mt-24 mb-10">
           <div className="mb-10">
             <span className="text-xs font-bold uppercase tracking-widest" style={{ color: "#6B4226" }}>Innovation</span>
             <h2 className="mt-2 text-3xl font-bold text-gray-900" style={{ fontFamily: "'Montserrat', sans-serif" }}>Research & Development Centres</h2>
@@ -264,7 +264,7 @@ export default function Manufacturing() {
               </div>
             ))}
           </div>
-        </div>
+        </div> */}
       </div>
 
       {/* CTA */}
