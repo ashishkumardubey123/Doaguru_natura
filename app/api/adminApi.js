@@ -71,3 +71,24 @@ export const updateAdminStatus = async (id, status, token) => {
     throw error;
   }
 };
+
+export const uploadExportShipments = async (formData, token) => {
+  try {
+    const response = await axios.post(
+      `${API_BASE_URL}/api/shipments/upload-shipments`,
+      formData,
+      {
+        ...getAuthConfig(token),
+        headers: {
+          ...getAuthConfig(token).headers,
+          // usually axios sets multipart/form-data automatically for FormData
+          "Content-Type": "multipart/form-data",
+        }
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error uploading shipments:', error);
+    throw error;
+  }
+};

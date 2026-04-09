@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ChevronRight, Building2, Users, Globe, Package, ArrowRight, MapPin, Phone, Mail } from "lucide-react";
+import { ChevronRight, Building2, Users, Globe, Package, ArrowRight, MapPin, Phone, Mail, PlaneTakeoff, Ship, Calendar, Anchor, Loader2 } from "lucide-react";
+import { fetchAllShipments } from "@/app/api/fetchShipments";
 
 const regions = [
   {
@@ -96,6 +97,66 @@ function WorldMap({ activeRegion, onRegionClick }) {
 
 export default function GlobalPresence() {
   const [activeRegion, setActiveRegion] = useState(null);
+  const [shipments, setShipments] = useState([]);
+  const [loadingShipments, setLoadingShipments] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(false);
+
+  // Fetch exports
+  const fetchShipments = async (pageNumber) => {
+    if (pageNumber === 1) setLoadingShipments(true);
+    else setLoadingMore(true);
+
+    try {
+      const data = await fetchAllShipments(pageNumber, 20); // limits to 20 per UI load
+      if (data.success) {
+        // Map DB snake_case column names → frontend camelCase keys
+        const mapped = data.data.map((row) => ({
+          product: row.product_description,
+          destinationCountry: row.country_of_destination,
+          destinationPort: row.port_of_destination,
+          mode: row.shipment_mode,
+          date: row.sb_date,
+          quantity: row.quantity,
+          unit: row.unit,
+          exportPort: row.indian_port,
+        }));
+
+        if (pageNumber === 1) {
+          setShipments(mapped);
+        } else {
+          setShipments(prev => [...prev, ...mapped]);
+        }
+
+        if (data.pagination) {
+          setHasMore(pageNumber < data.pagination.totalPages);
+        } else {
+          setHasMore(mapped.length === 20);
+        }
+
+      } else {
+        if (pageNumber === 1) setShipments([]);
+        console.error("Failed to fetch shipments:", data.error || data.message);
+      }
+    } catch (error) {
+      console.error("Error fetching shipments:", error);
+      if (pageNumber === 1) setShipments([]);
+    } finally {
+      if (pageNumber === 1) setLoadingShipments(false);
+      else setLoadingMore(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchShipments(1);
+  }, []);
+
+  const handleLoadMore = () => {
+    const nextPage = page + 1;
+    setPage(nextPage);
+    fetchShipments(nextPage);
+  };
 
   const handleRegionClick = (id) => {
     setActiveRegion((prev) => {
@@ -111,6 +172,26 @@ export default function GlobalPresence() {
   };
 
   const selectedRegion = regions.find((r) => r.id === activeRegion) || null;
+
+  // Compute dynamic details from shipments
+  const regionalShipments = selectedRegion
+    ? shipments.filter(s => selectedRegion.countryList.some(c => c.toLowerCase() === s.destinationCountry.toLowerCase()))
+    : [];
+
+  const dynamicCountries = [...new Set(regionalShipments.map(s => s.destinationCountry))];
+  const displayCountries = dynamicCountries.length > 0 ? dynamicCountries : (selectedRegion?.countryList || []);
+
+  const productCounts = {};
+  regionalShipments.forEach(s => {
+    productCounts[s.product] = (productCounts[s.product] || 0) + 1; // Count by number of shipments
+  });
+  
+  const dynamicTopProducts = Object.entries(productCounts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5) // Top 5 logic
+    .map(p => p[0]);
+    
+  const displayTopProducts = dynamicTopProducts.length > 0 ? dynamicTopProducts : (selectedRegion?.topProducts || []);
 
   useEffect(() => {
     const applyHashRegion = () => {
@@ -242,145 +323,143 @@ export default function GlobalPresence() {
                   {selectedRegion.name}
                 </h2>
                 <p className="text-gray-500 text-sm">
-                  Serving {selectedRegion.countries} markets with {selectedRegion.offices.length} strategic office locations.
+                  Serving expanding markets in the region with live export tracking.
                 </p>
               </div>
               <div className="flex gap-6 text-center">
                 <div>
-                  <div className="text-2xl font-black" style={{ fontFamily: "'Montserrat', sans-serif", color: selectedRegion.activeColor }}>{selectedRegion.countries}+</div>
-                  <div className="text-xs text-gray-500">Countries</div>
+                  <div className="text-2xl font-black" style={{ fontFamily: "'Montserrat', sans-serif", color: selectedRegion.activeColor }}>{displayCountries.length}</div>
+                  <div className="text-xs text-gray-500">Active Countries</div>
                 </div>
                 <div>
-                  <div className="text-2xl font-black" style={{ fontFamily: "'Montserrat', sans-serif", color: selectedRegion.activeColor }}>{selectedRegion.teamSize}</div>
-                  <div className="text-xs text-gray-500">Employees</div>
+                  <div className="text-2xl font-black flex items-center justify-center gap-1" style={{ fontFamily: "'Montserrat', sans-serif", color: selectedRegion.activeColor }}>
+                    <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: selectedRegion.activeColor }} /> LIVE
+                  </div>
+                  <div className="text-xs text-gray-500">Data Feed</div>
                 </div>
               </div>
             </div>
 
-            <div className="grid lg:grid-cols-3 gap-6">
-              {/* Office Contacts */}
-              <div className="lg:col-span-2">
-                <h4 className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-4">Regional Offices</h4>
-                <div className="grid md:grid-cols-2 gap-4">
-                  {selectedRegion.offices.map((office) => (
-                    <div key={office.city} className="bg-white rounded-2xl p-5 shadow-sm border border-white">
-                      <div className="flex items-center justify-between mb-3">
-                        <div>
-                          <div className="font-bold text-gray-900" style={{ fontFamily: "'Montserrat', sans-serif" }}>{office.city}</div>
-                          <div className="text-xs text-gray-400">{office.country}</div>
-                        </div>
-                        <span
-                          className="text-[10px] font-bold px-2 py-1 rounded-full text-white"
-                          style={{ backgroundColor: selectedRegion.activeColor }}
-                        >
-                          {office.type}
-                        </span>
-                      </div>
-                      <div className="space-y-2">
-                        <div className="flex items-center gap-2 text-xs text-gray-500">
-                          <Phone size={11} style={{ color: selectedRegion.activeColor }} />
-                          <span>{office.phone}</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-xs text-gray-500">
-                          <Mail size={11} style={{ color: selectedRegion.activeColor }} />
-                          <span>{office.email}</span>
-                        </div>
-                      </div>
-                    </div>
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* Countries */}
+              <div className="bg-white rounded-2xl p-6 shadow-sm border border-white">
+                <h4 className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-4 flex items-center gap-2">
+                  <Globe size={13} style={{ color: selectedRegion.activeColor }} /> Live Countries Served
+                </h4>
+                <div className="flex flex-wrap gap-2">
+                  {displayCountries.map((c) => (
+                    <span key={c} className="text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-gray-50 text-gray-700 border border-gray-100 transition-colors hover:border-gray-200">
+                      {c}
+                    </span>
                   ))}
+                  {dynamicCountries.length === 0 && (
+                    <span className="text-xs text-gray-400 italic mt-1 w-full">(Showing target markets. Awaiting live shipment data to update.)</span>
+                  )}
                 </div>
               </div>
 
-              {/* Side info */}
-              <div className="space-y-5">
-                {/* Countries */}
-                <div className="bg-white rounded-2xl p-5 shadow-sm">
-                  <h4 className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3 flex items-center gap-2">
-                    <Globe size={12} /> Countries Served
+              {/* Top Products */}
+              <div className="bg-white rounded-2xl p-6 shadow-sm border border-white flex flex-col justify-between">
+                <div>
+                  <h4 className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-4 flex items-center gap-2">
+                    <Package size={13} style={{ color: selectedRegion.activeColor }} /> High Request Products
                   </h4>
-                  <div className="flex flex-wrap gap-1.5">
-                    {selectedRegion.countryList.map((c) => (
-                      <span key={c} className="text-xs px-2 py-1 rounded-full bg-gray-50 text-gray-600 border border-gray-100">
-                        {c}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Top Products */}
-                <div className="bg-white rounded-2xl p-5 shadow-sm">
-                  <h4 className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3 flex items-center gap-2">
-                    <Package size={12} /> Top Product Categories
-                  </h4>
-                  <ul className="space-y-2">
-                    {selectedRegion.topProducts.map((p) => (
-                      <li key={p} className="flex items-center gap-2 text-sm text-gray-700">
-                        <div className="w-2 h-2 rounded-full" style={{ backgroundColor: selectedRegion.activeColor }} />
+                  <ul className="space-y-3">
+                    {displayTopProducts.map((p) => (
+                      <li key={p} className="flex items-center gap-2 text-sm font-medium text-gray-800">
+                        <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: selectedRegion.activeColor }} />
                         {p}
                       </li>
                     ))}
                   </ul>
-                  <Link
-                    href="/products"
-                    className="mt-4 flex items-center gap-1 text-xs font-semibold transition-colors"
-                    style={{ color: selectedRegion.activeColor }}
-                  >
-                    View Regional Portfolio <ArrowRight size={12} />
-                  </Link>
+                  {dynamicTopProducts.length === 0 && (
+                    <span className="text-xs text-gray-400 italic mt-3 block">(Showing internal product focus. Awaiting live shipment data to update.)</span>
+                  )}
                 </div>
+                <Link
+                  href="/products"
+                  className="mt-6 flex items-center gap-1 text-xs font-bold transition-all hover:gap-2"
+                  style={{ color: selectedRegion.activeColor }}
+                >
+                  View Full Portfolio <ArrowRight size={13} />
+                </Link>
               </div>
             </div>
           </div>
         )}
 
-        {/* All Offices Table */}
-      {/* All Offices Table */}
+        {/* Recent Global Shipments */}
         <div>
-          <h2
-            className="text-xl font-bold text-gray-900 mb-6"
-            style={{ fontFamily: "'Montserrat', sans-serif" }}
-          >
-            All Office Locations
-          </h2>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-3">
+            <div>
+              <h2
+                className="text-xl font-bold text-gray-900"
+                style={{ fontFamily: "'Montserrat', sans-serif" }}
+              >
+                Recent Global Shipments
+              </h2>
+              <p className="text-sm text-gray-500 mt-1">Live export tracking from our distribution centers</p>
+            </div>
+            <span className="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full bg-[#f0f7f1] text-[#2A5C32] border border-[#d8ecd8]">
+              <div className="w-2 h-2 rounded-full bg-[#2A5C32] animate-pulse"></div> Live Tracker
+            </span>
+          </div>
 
-          {/* Desktop Table View (Hidden on Mobile) */}
-          <div className="hidden md:block bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
+          <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
             <div className="overflow-x-auto">
-              <table className="w-full min-w-[760px] text-sm">
+              <table className="w-full min-w-[1000px] text-sm">
                 <thead>
                   <tr className="border-b border-gray-100" style={{ backgroundColor: "#f5f8f5" }}>
-                    <th className="text-left px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-400">City</th>
-                    <th className="text-left px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-400">Country</th>
-                    <th className="text-left px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-400">Region</th>
-                    <th className="text-left px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-400">Type</th>
-                    <th className="text-left px-6 py-4 text-xs font-bold uppercase tracking-wider text-gray-400">Contact</th>
+                    <th className="text-left px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-400">Product Name</th>
+                    <th className="text-left px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-400">Country</th>
+                    <th className="text-left px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-400">Destination Port</th>
+                    <th className="text-left px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-400">Mode</th>
+                    <th className="text-left px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-400">Shipment Date</th>
+                    <th className="text-left px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-400">Quantity</th>
+                    <th className="text-left px-5 py-4 text-xs font-bold uppercase tracking-wider text-gray-400">Export Port</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-50">
-                  {regions.flatMap((r) =>
-                    r.offices.map((o) => (
-                      <tr key={`${r.id}-${o.city}`} className="hover:bg-gray-50 transition-colors">
-                        <td className="px-6 py-4">
-                          <div className="flex items-center gap-2">
-                            <MapPin size={13} style={{ color: r.activeColor }} />
-                            <span className="font-semibold text-gray-800">{o.city}</span>
-                          </div>
+                  {loadingShipments ? (
+                    <tr>
+                      <td colSpan="7" className="px-6 py-12 text-center text-gray-400">
+                        <Loader2 className="w-6 h-6 animate-spin mx-auto mb-2 text-[#2A5C32]" />
+                        <p>Loading recent shipments...</p>
+                      </td>
+                    </tr>
+                  ) : shipments.length === 0 ? (
+                    <tr>
+                      <td colSpan="7" className="px-6 py-12 text-center text-gray-400">
+                        No recent shipments found.
+                      </td>
+                    </tr>
+                  ) : (
+                    shipments.map((s, idx) => (
+                      <tr key={idx} className="hover:bg-gray-50 transition-colors">
+                        <td className="px-5 py-4">
+                          <div className="font-semibold text-gray-800">{s.product}</div>
                         </td>
-                        <td className="px-6 py-4 text-gray-600">{o.country}</td>
-                        <td className="px-6 py-4">
-                          <span
-                            className="text-xs font-bold px-2.5 py-1 rounded-full text-white"
-                            style={{ backgroundColor: r.activeColor }}
-                          >
-                            {r.name}
+                        <td className="px-5 py-4 font-medium text-gray-900 flex items-center gap-2">
+                           <MapPin size={14} className="text-[#2A5C32]" /> {s.destinationCountry}
+                        </td>
+                        <td className="px-5 py-4 text-gray-600">{s.destinationPort}</td>
+                        <td className="px-5 py-4">
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-gray-100 text-gray-600 border border-gray-200">
+                            {s.mode?.toLowerCase().includes("air") ? <PlaneTakeoff size={13} /> : s.mode?.toLowerCase().includes("sea") ? <Ship size={13} /> : <Package size={13} />}
+                            {s.mode}
                           </span>
                         </td>
-                        <td className="px-6 py-4 text-gray-500">{o.type}</td>
-                        <td className="px-6 py-4">
-                          <div className="flex flex-col gap-0.5">
-                            <span className="text-xs text-gray-500">{o.phone}</span>
-                            <span className="text-xs text-[#2A5C32]">{o.email}</span>
-                          </div>
+                        <td className="px-5 py-4 text-gray-500 whitespace-nowrap">
+                          <div className="flex items-center gap-1.5"><Calendar size={13} className="text-gray-400" /> {s.date}</div>
+                        </td>
+                        <td className="px-5 py-4 whitespace-nowrap">
+                          <span className="font-bold text-gray-700">{s.quantity}</span> <span className="text-xs text-gray-400 ml-0.5">{s.unit}</span>
+                        </td>
+                        <td className="px-5 py-4">
+                           <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                             <Anchor size={13} className="text-[#2A5C32] opacity-70" />
+                             <span className="truncate max-w-[150px]" title={s.exportPort}>{s.exportPort}</span>
+                           </div>
                         </td>
                       </tr>
                     ))
@@ -388,44 +467,28 @@ export default function GlobalPresence() {
                 </tbody>
               </table>
             </div>
-          </div>
 
-          {/* Mobile Card View (Hidden on Desktop) */}
-          <div className="md:hidden flex flex-col gap-4">
-            {regions.flatMap((r) =>
-              r.offices.map((o) => (
-                <div key={`mobile-${r.id}-${o.city}`} className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm flex flex-col gap-3">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <MapPin size={15} style={{ color: r.activeColor }} />
-                        <span className="font-bold text-gray-900 text-base">{o.city}</span>
-                      </div>
-                      <div className="text-sm text-gray-500 ml-6">{o.country}</div>
-                    </div>
-                    <span
-                      className="text-[10px] font-bold px-2 py-1 rounded-full text-white"
-                      style={{ backgroundColor: r.activeColor }}
-                    >
-                      {r.name}
-                    </span>
-                  </div>
-                  
-                  <div className="ml-6 pt-3 border-t border-gray-50">
-                    <span className="text-xs font-medium text-gray-500 mb-2 block">{o.type}</span>
-                    <div className="flex flex-col gap-1.5">
-                      <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <Phone size={13} className="text-gray-400" />
-                        <span>{o.phone}</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-sm text-[#2A5C32]">
-                        <Mail size={13} className="text-[#2A5C32]" />
-                        <span>{o.email}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))
+            {hasMore && (
+              <div className="flex justify-center p-6 border-t border-gray-100">
+                <button
+                  onClick={handleLoadMore}
+                  disabled={loadingMore}
+                  className="flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-semibold transition-all"
+                  style={{
+                    backgroundColor: loadingMore ? "#f1f5f2" : "#2A5C32",
+                    color: loadingMore ? "#2A5C32" : "white",
+                  }}
+                >
+                  {loadingMore ? (
+                    <>
+                      <Loader2 size={16} className="animate-spin" />
+                      Loading...
+                    </>
+                  ) : (
+                    "View More Shipments"
+                  )}
+                </button>
+              </div>
             )}
           </div>
         </div>
