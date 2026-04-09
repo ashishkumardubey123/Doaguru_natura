@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ChevronRight, Building2, Users, Globe, Package, ArrowRight, MapPin, Phone, Mail, PlaneTakeoff, Ship, Calendar, Anchor, Loader2 } from "lucide-react";
 import { fetchAllShipments } from "@/app/api/fetchShipments";
+import countryCoords from "@/app/utils/countryCoordinates";
 
 const regions = [
   {
@@ -82,15 +83,114 @@ const regionToHash = {
   mea: "emerging-markets",
 };
 
-function WorldMap({ activeRegion, onRegionClick }) {
+function WorldMap({ activeRegion, onRegionClick, shipments = [] }) {
+  const [hoveredCountry, setHoveredCountry] = useState(null);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+
+  // Extract unique countries from shipments
+  const servedCountries = [...new Set(shipments.map(s => s.destinationCountry?.toUpperCase()).filter(Boolean))];
+
+  const handleMouseMove = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    setMousePos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+  };
+
   return (
-    <div className="w-full h-[400px] bg-gray-50 rounded-3xl flex items-center justify-center border border-gray-200 relative overflow-hidden">
-      <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(#2A5C32 1px, transparent 1px)', backgroundSize: '20px 20px' }}></div>
-      <div className="text-center z-10">
-        <Globe size={48} className="mx-auto text-gray-300 mb-4" />
-        <p className="text-gray-500 font-medium">Interactive Map Visualization</p>
-        <p className="text-xs text-gray-400 mt-2">Select a region below to view details</p>
+    <div
+      className="w-full bg-gradient-to-br from-[#f0f7f1] to-[#e8f0e9] rounded-3xl border border-gray-200 relative overflow-hidden"
+      style={{ minHeight: 420 }}
+      onMouseMove={handleMouseMove}
+    >
+      {/* Grid pattern background */}
+      <div className="absolute inset-0 opacity-[0.07]" style={{ backgroundImage: 'radial-gradient(#2A5C32 1px, transparent 1px)', backgroundSize: '24px 24px' }}></div>
+
+      {/* Map Title */}
+      <div className="absolute top-5 left-6 z-10 flex items-center gap-2">
+        <div className="w-2.5 h-2.5 rounded-full bg-[#2A5C32] animate-pulse"></div>
+        <span className="text-xs font-bold text-[#2A5C32] uppercase tracking-widest">Live Export Map</span>
+        <span className="text-[10px] text-gray-400 ml-1">({servedCountries.length} countries)</span>
       </div>
+
+      {/* SVG World Map */}
+      <svg viewBox="0 0 1000 500" className="w-full h-full" style={{ minHeight: 400 }}>
+        {/* Simplified continent outlines */}
+        {/* North America */}
+        <path d="M50,80 L80,60 L120,55 L160,50 L200,55 L230,70 L250,90 L260,120 L250,150 L240,180 L220,200 L200,210 L180,220 L160,230 L140,225 L120,210 L100,200 L80,190 L60,170 L50,140 L45,110 Z" fill="#d4e8d6" stroke="#b8d4ba" strokeWidth="1" opacity="0.7" />
+        {/* Central America */}
+        <path d="M120,210 L140,225 L150,240 L155,260 L145,270 L135,265 L125,255 L115,240 L110,225 Z" fill="#d4e8d6" stroke="#b8d4ba" strokeWidth="1" opacity="0.7" />
+        {/* South America */}
+        <path d="M155,260 L175,255 L200,260 L220,275 L235,300 L240,330 L235,360 L225,385 L210,395 L195,390 L185,375 L175,355 L165,340 L160,320 L155,300 L150,280 Z" fill="#d4e8d6" stroke="#b8d4ba" strokeWidth="1" opacity="0.7" />
+        {/* Europe */}
+        <path d="M370,60 L400,55 L430,60 L460,70 L480,80 L485,100 L480,120 L470,140 L460,155 L445,160 L430,155 L415,145 L400,140 L385,130 L375,115 L370,95 Z" fill="#d4e8d6" stroke="#b8d4ba" strokeWidth="1" opacity="0.7" />
+        {/* UK/Ireland */}
+        <path d="M375,95 L385,90 L395,95 L395,110 L388,115 L378,110 Z" fill="#d4e8d6" stroke="#b8d4ba" strokeWidth="1" opacity="0.7" />
+        {/* Africa */}
+        <path d="M390,170 L420,165 L450,170 L475,180 L500,200 L520,230 L530,260 L530,290 L525,320 L515,345 L500,365 L480,370 L460,365 L445,350 L430,330 L420,305 L415,280 L410,255 L400,230 L390,205 L385,185 Z" fill="#d4e8d6" stroke="#b8d4ba" strokeWidth="1" opacity="0.7" />
+        {/* Middle East */}
+        <path d="M520,155 L545,150 L570,155 L590,170 L595,190 L585,205 L570,210 L555,205 L540,195 L525,180 L520,165 Z" fill="#d4e8d6" stroke="#b8d4ba" strokeWidth="1" opacity="0.7" />
+        {/* India */}
+        <path d="M620,180 L645,170 L670,175 L690,190 L700,210 L705,235 L700,260 L690,280 L675,290 L660,285 L650,270 L640,250 L630,230 L625,210 L620,195 Z" fill="#c8e0ca" stroke="#a8cca8" strokeWidth="1" opacity="0.8" />
+        {/* China/East Asia */}
+        <path d="M680,100 L720,90 L760,95 L800,100 L830,115 L840,135 L835,160 L820,180 L800,190 L775,195 L750,190 L730,180 L715,165 L700,150 L690,130 L685,115 Z" fill="#d4e8d6" stroke="#b8d4ba" strokeWidth="1" opacity="0.7" />
+        {/* Southeast Asia */}
+        <path d="M720,210 L745,200 L770,210 L785,230 L790,250 L780,265 L765,270 L750,268 L735,260 L725,245 L720,225 Z" fill="#d4e8d6" stroke="#b8d4ba" strokeWidth="1" opacity="0.7" />
+        {/* Japan */}
+        <path d="M845,130 L855,120 L865,125 L870,140 L865,155 L855,160 L845,155 L840,145 Z" fill="#d4e8d6" stroke="#b8d4ba" strokeWidth="1" opacity="0.7" />
+        {/* Australia */}
+        <path d="M780,330 L820,315 L860,310 L900,315 L920,330 L930,350 L925,375 L910,390 L890,395 L860,390 L835,380 L810,370 L795,355 L785,340 Z" fill="#d4e8d6" stroke="#b8d4ba" strokeWidth="1" opacity="0.7" />
+        {/* Russia (simplified) */}
+        <path d="M460,30 L520,25 L580,20 L640,22 L700,25 L760,30 L820,40 L860,55 L870,75 L850,90 L820,95 L780,90 L740,85 L700,80 L660,75 L620,70 L580,65 L540,60 L500,55 L470,50 L460,40 Z" fill="#d4e8d6" stroke="#b8d4ba" strokeWidth="1" opacity="0.5" />
+
+        {/* Country dots */}
+        {servedCountries.map((country) => {
+          const coords = countryCoords[country];
+          if (!coords) return null;
+          const cx = coords[0] * 10; // Convert % to SVG coordinate (0-1000)
+          const cy = coords[1] * 10; // Convert % to SVG coordinate (0-500 scaled)
+          return (
+            <g key={country}
+              onMouseEnter={() => setHoveredCountry(country)}
+              onMouseLeave={() => setHoveredCountry(null)}
+              style={{ cursor: 'pointer' }}
+            >
+              {/* Pulsating ring */}
+              <circle cx={cx} cy={cy} r="12" fill="none" stroke="#2A5C32" strokeWidth="1.5" opacity="0.3">
+                <animate attributeName="r" from="6" to="18" dur="2s" repeatCount="indefinite" />
+                <animate attributeName="opacity" from="0.5" to="0" dur="2s" repeatCount="indefinite" />
+              </circle>
+              {/* Solid dot */}
+              <circle cx={cx} cy={cy} r="5" fill="#2A5C32" stroke="#fff" strokeWidth="2" />
+            </g>
+          );
+        })}
+      </svg>
+
+      {/* Hover Tooltip */}
+      {hoveredCountry && (
+        <div
+          className="absolute z-50 pointer-events-none px-3 py-1.5 rounded-lg text-xs font-bold text-white shadow-lg"
+          style={{
+            backgroundColor: '#1a3c22',
+            left: mousePos.x + 12,
+            top: mousePos.y - 30,
+            transform: 'translateX(-50%)',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          {hoveredCountry.charAt(0) + hoveredCountry.slice(1).toLowerCase()}
+          <div className="absolute left-1/2 -translate-x-1/2 top-full w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-[#1a3c22]"></div>
+        </div>
+      )}
+
+      {/* Legend */}
+      {servedCountries.length === 0 && (
+        <div className="absolute inset-0 flex items-center justify-center z-10">
+          <div className="text-center">
+            <Globe size={40} className="mx-auto text-gray-300 mb-3" />
+            <p className="text-gray-400 text-sm font-medium">Upload shipment data to see served countries</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -101,7 +201,7 @@ export default function GlobalPresence() {
   const [loadingShipments, setLoadingShipments] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(false);
+  const [totalPages, setTotalPages] = useState(1);
 
   // Fetch exports
   const fetchShipments = async (pageNumber) => {
@@ -109,7 +209,7 @@ export default function GlobalPresence() {
     else setLoadingMore(true);
 
     try {
-      const data = await fetchAllShipments(pageNumber, 20); // limits to 20 per UI load
+      const data = await fetchAllShipments(pageNumber, 50); // Fetch 50 records per page
       if (data.success) {
         // Map DB snake_case column names → frontend camelCase keys
         const mapped = data.data.map((row) => ({
@@ -123,28 +223,22 @@ export default function GlobalPresence() {
           exportPort: row.indian_port,
         }));
 
-        if (pageNumber === 1) {
-          setShipments(mapped);
-        } else {
-          setShipments(prev => [...prev, ...mapped]);
-        }
+        setShipments(mapped);
 
         if (data.pagination) {
-          setHasMore(pageNumber < data.pagination.totalPages);
-        } else {
-          setHasMore(mapped.length === 20);
+          setTotalPages(data.pagination.totalPages || 1);
         }
 
       } else {
-        if (pageNumber === 1) setShipments([]);
+        setShipments([]);
         console.error("Failed to fetch shipments:", data.error || data.message);
       }
     } catch (error) {
       console.error("Error fetching shipments:", error);
-      if (pageNumber === 1) setShipments([]);
+      setShipments([]);
     } finally {
-      if (pageNumber === 1) setLoadingShipments(false);
-      else setLoadingMore(false);
+      setLoadingShipments(false);
+      setLoadingMore(false);
     }
   };
 
@@ -152,10 +246,10 @@ export default function GlobalPresence() {
     fetchShipments(1);
   }, []);
 
-  const handleLoadMore = () => {
-    const nextPage = page + 1;
-    setPage(nextPage);
-    fetchShipments(nextPage);
+  const handlePageChange = (newPage) => {
+    if (newPage < 1 || newPage > totalPages) return;
+    setPage(newPage);
+    fetchShipments(newPage);
   };
 
   const handleRegionClick = (id) => {
@@ -264,7 +358,7 @@ export default function GlobalPresence() {
 
         {/* Interactive World Map */}
         <div className="mb-12">
-          <WorldMap activeRegion={activeRegion} onRegionClick={handleRegionClick} />
+          <WorldMap activeRegion={activeRegion} onRegionClick={handleRegionClick} shipments={shipments} />
         </div>
 
         {/* Region Cards */}
@@ -468,28 +562,45 @@ export default function GlobalPresence() {
               </table>
             </div>
 
-            {hasMore && (
-              <div className="flex justify-center p-6 border-t border-gray-100">
-                <button
-                  onClick={handleLoadMore}
-                  disabled={loadingMore}
-                  className="flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-semibold transition-all"
-                  style={{
-                    backgroundColor: loadingMore ? "#f1f5f2" : "#2A5C32",
-                    color: loadingMore ? "#2A5C32" : "white",
-                  }}
+            <div className="flex items-center justify-between p-5 border-t border-gray-100 bg-gray-50/50">
+              <span className="text-sm text-gray-500">
+                Page <span className="font-semibold text-gray-800">{page}</span> of <span className="font-semibold text-gray-800">{totalPages}</span>
+              </span>
+              
+              <div className="flex items-center gap-2">
+                <button 
+                  onClick={() => handlePageChange(page - 1)}
+                  disabled={page === 1 || loadingMore}
+                  className="px-4 py-2 text-sm font-medium border border-gray-200 rounded-lg bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-gray-700 shadow-sm"
                 >
-                  {loadingMore ? (
-                    <>
-                      <Loader2 size={16} className="animate-spin" />
-                      Loading...
-                    </>
-                  ) : (
-                    "View More Shipments"
-                  )}
+                  Previous
+                </button>
+                
+                <div className="relative">
+                  <select 
+                     value={page}
+                     onChange={(e) => handlePageChange(Number(e.target.value))}
+                     disabled={loadingMore}
+                     className="appearance-none pl-4 pr-9 py-2 text-sm font-medium border border-gray-200 rounded-lg bg-white hover:bg-gray-50 disabled:opacity-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#2A5C32]/20 shadow-sm cursor-pointer"
+                  >
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map(num => (
+                      <option key={num} value={num}>Page {num}</option>
+                    ))}
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                  </div>
+                </div>
+
+                <button 
+                  onClick={() => handlePageChange(page + 1)}
+                  disabled={page === totalPages || loadingMore}
+                  className="px-4 py-2 text-sm font-medium border border-gray-200 rounded-lg bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-gray-700 shadow-sm"
+                >
+                  Next
                 </button>
               </div>
-            )}
+            </div>
           </div>
         </div>
       </div>
