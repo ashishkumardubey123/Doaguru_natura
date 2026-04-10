@@ -1,139 +1,18 @@
-// Country name → approximate [x%, y%] on a standard world map SVG projection
-// These are percentage-based coordinates for a Mercator-style map layout
-const countryCoordinates = {
-  // Asia
-  "INDIA": [68.5, 45],
-  "CHINA": [76, 35],
-  "JAPAN": [84, 33],
-  "SOUTH KOREA": [82, 35],
-  "VIETNAM": [77, 47],
-  "THAILAND": [75, 48],
-  "MALAYSIA": [75, 55],
-  "SINGAPORE": [75.5, 57],
-  "INDONESIA": [78, 58],
-  "PHILIPPINES": [81, 48],
-  "BANGLADESH": [72, 43],
-  "SRI LANKA": [69, 53],
-  "NEPAL": [70, 40],
-  "PAKISTAN": [65, 40],
-  "MYANMAR": [74, 45],
-  "CAMBODIA": [76, 50],
-  "TAIWAN": [81, 42],
-  "HONG KONG": [79, 42],
-  "UAE": [60, 43],
-  "UNITED ARAB EMIRATES": [60, 43],
-  "SAUDI ARABIA": [56, 43],
-  "QATAR": [58, 43],
-  "KUWAIT": [57, 40],
-  "OMAN": [60, 45],
-  "BAHRAIN": [57.5, 42],
-  "IRAQ": [56, 37],
-  "IRAN": [60, 37],
-  "ISRAEL": [52, 38],
-  "JORDAN": [53, 38],
-  "LEBANON": [52, 36],
-  "AFGHANISTAN": [64, 36],
-  "UZBEKISTAN": [63, 32],
-  "KAZAKHSTAN": [63, 28],
+import axios from 'axios';
 
-  // Africa
-  "NIGERIA": [42, 53],
-  "SOUTH AFRICA": [48, 72],
-  "KENYA": [52, 57],
-  "ETHIOPIA": [53, 52],
-  "TANZANIA": [52, 60],
-  "UGANDA": [50, 57],
-  "GHANA": [39, 53],
-  "EGYPT": [50, 40],
-  "MOROCCO": [38, 37],
-  "ALGERIA": [40, 37],
-  "TUNISIA": [43, 35],
-  "SUDAN": [50, 48],
-  "MOZAMBIQUE": [52, 66],
-  "ANGOLA": [44, 62],
-  "CAMEROON": [43, 55],
-  "IVORY COAST": [38, 54],
-  "COTE D'IVOIRE": [38, 54],
-  "SENEGAL": [34, 48],
-  "CONGO": [46, 58],
-  "ZAMBIA": [48, 64],
-  "ZIMBABWE": [49, 67],
-  "MADAGASCAR": [56, 66],
-  "RWANDA": [50, 58],
-  "MALI": [38, 46],
-
-  // Europe
-  "UNITED KINGDOM": [39, 24],
-  "UK": [39, 24],
-  "GERMANY": [43, 24],
-  "FRANCE": [40, 27],
-  "ITALY": [44, 29],
-  "SPAIN": [38, 30],
-  "NETHERLANDS": [41, 23],
-  "BELGIUM": [41, 24],
-  "SWITZERLAND": [42, 27],
-  "AUSTRIA": [44, 26],
-  "POLAND": [45, 23],
-  "SWEDEN": [44, 17],
-  "NORWAY": [43, 16],
-  "DENMARK": [43, 21],
-  "FINLAND": [47, 16],
-  "PORTUGAL": [36, 30],
-  "IRELAND": [37, 23],
-  "CZECH REPUBLIC": [44, 25],
-  "ROMANIA": [47, 27],
-  "HUNGARY": [45, 26],
-  "GREECE": [46, 31],
-  "TURKEY": [52, 32],
-  "UKRAINE": [50, 25],
-  "RUSSIA": [55, 18],
-  "SERBIA": [46, 28],
-  "CROATIA": [44, 27],
-  "BULGARIA": [47, 29],
-  "SLOVAKIA": [45, 25],
-  "LITHUANIA": [47, 21],
-  "LATVIA": [47, 20],
-  "ESTONIA": [47, 19],
-
-  // Americas - North
-  "USA": [18, 33],
-  "UNITED STATES": [18, 33],
-  "UNITED STATES OF AMERICA": [18, 33],
-  "CANADA": [18, 24],
-  "MEXICO": [14, 42],
-
-  // Americas - Central & Caribbean
-  "GUATEMALA": [13, 47],
-  "PANAMA": [15, 52],
-  "COSTA RICA": [14, 52],
-  "JAMAICA": [16, 46],
-  "HAITI": [18, 45],
-  "DOMINICAN REPUBLIC": [19, 45],
-  "TRINIDAD AND TOBAGO": [21, 50],
-  "CUBA": [16, 43],
-  "HONDURAS": [14, 47],
-  "EL SALVADOR": [13, 48],
-  "NICARAGUA": [14, 49],
-
-  // Americas - South
-  "BRAZIL": [23, 60],
-  "ARGENTINA": [21, 73],
-  "COLOMBIA": [17, 55],
-  "CHILE": [19, 72],
-  "PERU": [16, 60],
-  "VENEZUELA": [20, 52],
-  "ECUADOR": [16, 57],
-  "BOLIVIA": [20, 64],
-  "PARAGUAY": [22, 68],
-  "URUGUAY": [23, 72],
-  "GUYANA": [22, 53],
-  "SURINAME": [23, 53],
-
-  // Oceania
-  "AUSTRALIA": [84, 71],
-  "NEW ZEALAND": [90, 78],
-  "FIJI": [93, 65],
-  "PAPUA NEW GUINEA": [87, 59],
+export const fetchAllCountryCoordinates = async () => {
+  try {
+    // Apne Node.js backend ka sahi URL yahan dalein
+     const baseUrl = `http://localhost:5000`
+    const response = await axios.get(`${baseUrl}/api/contry/AllCountries`);
+    
+    if (response.data.success) {
+      return response.data.data; // Ye database ki saari countries return karega
+    } else {
+      return [];
+    }
+  } catch (error) {
+    console.error("Failed to fetch country coordinates from backend:", error);
+    return [];
+  }
 };
-
-export default countryCoordinates;

@@ -1,11 +1,14 @@
 'use client';
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { ChevronRight, Building2, Users, Globe, Package, ArrowRight, MapPin, Phone, Mail, PlaneTakeoff, Ship, Calendar, Anchor, Loader2 } from "lucide-react";
+import { ChevronRight, Globe, Package, ArrowRight, MapPin, Phone, Mail, PlaneTakeoff, Ship, Calendar, Anchor, Loader2 } from "lucide-react";
 import { fetchAllShipments } from "@/app/api/fetchShipments";
-import countryCoords from "@/app/utils/countryCoordinates";
+import { ComposableMap, Geographies, Geography, Marker } from "react-simple-maps";
+import { fetchAllCountryCoordinates } from "@/app/utils/countryCoordinates";
 
+const geoUrl = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
+// countryList is used ONLY for filtering shipment data — no dummy display fallback
 const regions = [
   {
     id: "apac",
@@ -13,14 +16,12 @@ const regions = [
     countries: 15,
     color: "#c8e6c9",
     activeColor: "#2A5C32",
-    offices: [
-      { city: "Mumbai", country: "India", phone: "+91 22 4567 8900", email: "india@naturahealthcare.com", type: "Regional HQ" },
-      { city: "Singapore", country: "Singapore", phone: "+65 6789 0123", email: "apac@naturahealthcare.com", type: "APAC Hub" },
-      { city: "Ho Chi Minh City", country: "Vietnam", phone: "+84 28 3456 7890", email: "vietnam@naturahealthcare.com", type: "Country Office" },
+    countryList: [
+      "india", "china", "vietnam", "philippines", "indonesia", "thailand",
+      "malaysia", "bangladesh", "sri lanka", "nepal", "myanmar", "cambodia",
+      "pakistan", "japan", "south korea", "singapore", "hong kong", "taiwan",
+      "laos", "brunei", "timor-leste", "mongolia", "bhutan", "maldives",
     ],
-    countryList: ["India", "China", "Vietnam", "Philippines", "Indonesia", "Thailand", "Malaysia", "Bangladesh", "Sri Lanka", "Nepal", "Myanmar", "Cambodia", "Pakistan", "Japan", "South Korea"],
-    topProducts: ["Cardiology Range", "Anti-Infectives", "Diabetes Portfolio"],
-    teamSize: "850+",
   },
   {
     id: "mea",
@@ -28,14 +29,14 @@ const regions = [
     countries: 20,
     color: "#ffe0b2",
     activeColor: "#e65100",
-    offices: [
-      { city: "Dubai", country: "UAE", phone: "+971 4 234 5678", email: "mea@naturahealthcare.com", type: "Regional HQ" },
-      { city: "Nairobi", country: "Kenya", phone: "+254 20 234 5678", email: "africa@naturahealthcare.com", type: "Africa Hub" },
-      { city: "Riyadh", country: "Saudi Arabia", phone: "+966 11 234 5678", email: "ksa@naturahealthcare.com", type: "Country Office" },
+    countryList: [
+      "uae", "saudi arabia", "kenya", "nigeria", "south africa", "ethiopia",
+      "tanzania", "ghana", "jordan", "egypt", "morocco", "algeria", "oman",
+      "qatar", "bahrain", "kuwait", "iraq", "uganda", "zambia", "zimbabwe",
+      "united arab emirates", "iran", "israel", "lebanon", "syria", "yemen",
+      "libya", "tunisia", "sudan", "cameroon", "senegal", "mozambique",
+      "angola", "madagascar", "ivory coast", "côte d'ivoire", "mali",
     ],
-    countryList: ["UAE", "Saudi Arabia", "Kenya", "Nigeria", "South Africa", "Ethiopia", "Tanzania", "Ghana", "Jordan", "Egypt", "Morocco", "Algeria", "Oman", "Qatar", "Bahrain", "Kuwait", "Iraq", "Uganda", "Zambia", "Zimbabwe"],
-    topProducts: ["Anti-Infectives", "Oncology Range", "Cardiology"],
-    teamSize: "620+",
   },
   {
     id: "europe",
@@ -43,14 +44,13 @@ const regions = [
     countries: 8,
     color: "#bbdefb",
     activeColor: "#1565c0",
-    offices: [
-      { city: "Zurich", country: "Switzerland", phone: "+41 44 123 4567", email: "europe@naturahealthcare.com", type: "Global HQ" },
-      { city: "London", country: "United Kingdom", phone: "+44 20 7890 1234", email: "uk@naturahealthcare.com", type: "Country Office" },
-      { city: "Frankfurt", country: "Germany", phone: "+49 69 1234 5678", email: "germany@naturahealthcare.com", type: "Country Office" },
+    countryList: [
+      "switzerland", "united kingdom", "germany", "france", "netherlands",
+      "poland", "spain", "italy", "sweden", "norway", "denmark", "finland",
+      "belgium", "austria", "portugal", "greece", "czech republic", "slovakia",
+      "hungary", "romania", "bulgaria", "croatia", "ukraine", "russia",
+      "uk", "great britain", "england",
     ],
-    countryList: ["Switzerland", "United Kingdom", "Germany", "France", "Netherlands", "Poland", "Spain", "Italy"],
-    topProducts: ["Neurology Range", "Oncology", "Cardiology"],
-    teamSize: "280+",
   },
   {
     id: "americas",
@@ -58,14 +58,13 @@ const regions = [
     countries: 10,
     color: "#f3e5f5",
     activeColor: "#6a1b9a",
-    offices: [
-      { city: "Miami", country: "USA", phone: "+1 305 234 5678", email: "usa@naturahealthcare.com", type: "Americas HQ" },
-      { city: "São Paulo", country: "Brazil", phone: "+55 11 2345 6789", email: "brazil@naturahealthcare.com", type: "Country Office" },
-      { city: "Mexico City", country: "Mexico", phone: "+52 55 1234 5678", email: "mexico@naturahealthcare.com", type: "Country Office" },
+    countryList: [
+      "usa", "united states", "united states of america", "brazil", "mexico",
+      "colombia", "argentina", "peru", "chile", "canada", "ecuador",
+      "venezuela", "bolivia", "paraguay", "uruguay", "guyana", "suriname",
+      "panama", "costa rica", "guatemala", "honduras", "el salvador",
+      "nicaragua", "cuba", "dominican republic", "haiti", "jamaica",
     ],
-    countryList: ["USA", "Brazil", "Mexico", "Colombia", "Argentina", "Peru", "Chile", "Canada", "Ecuador", "Venezuela"],
-    topProducts: ["Generics Portfolio", "Cardiology", "Anti-Infectives"],
-    teamSize: "340+",
   },
 ];
 
@@ -83,117 +82,199 @@ const regionToHash = {
   mea: "emerging-markets",
 };
 
-function WorldMap({ activeRegion, onRegionClick, shipments = [] }) {
-  const [hoveredCountry, setHoveredCountry] = useState(null);
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-
-  // Extract unique countries from shipments
-  const servedCountries = [...new Set(shipments.map(s => s.destinationCountry?.toUpperCase()).filter(Boolean))];
-
-  const handleMouseMove = (e) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    setMousePos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
-  };
+function WorldMap({ mapDots = [], isLoading }) {
+  const [hoveredDot, setHoveredDot] = useState(null);
 
   return (
     <div
-      className="w-full bg-gradient-to-br from-[#f0f7f1] to-[#e8f0e9] rounded-3xl border border-gray-200 relative overflow-hidden"
-      style={{ minHeight: 420 }}
-      onMouseMove={handleMouseMove}
+      className="w-full relative overflow-hidden rounded-3xl"
+      style={{
+        background: "linear-gradient(135deg, #0a1f0e 0%, #0f2d15 40%, #12361a 70%, #0e2410 100%)",
+        minHeight: 480,
+        boxShadow: "0 32px 80px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.06)",
+        border: "1px solid rgba(42,92,50,0.4)",
+      }}
     >
-      {/* Grid pattern background */}
-      <div className="absolute inset-0 opacity-[0.07]" style={{ backgroundImage: 'radial-gradient(#2A5C32 1px, transparent 1px)', backgroundSize: '24px 24px' }}></div>
+      {/* Subtle grid pattern overlay */}
+      <div
+        className="absolute inset-0 z-0 pointer-events-none"
+        style={{
+          backgroundImage:
+            "linear-gradient(rgba(42,92,50,0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(42,92,50,0.07) 1px, transparent 1px)",
+          backgroundSize: "40px 40px",
+        }}
+      />
 
-      {/* Map Title */}
-      <div className="absolute top-5 left-6 z-10 flex items-center gap-2">
-        <div className="w-2.5 h-2.5 rounded-full bg-[#2A5C32] animate-pulse"></div>
-        <span className="text-xs font-bold text-[#2A5C32] uppercase tracking-widest">Live Export Map</span>
-        <span className="text-[10px] text-gray-400 ml-1">({servedCountries.length} countries)</span>
+      {/* Glow orbs */}
+      <div className="absolute top-10 left-1/4 w-72 h-72 rounded-full pointer-events-none z-0"
+        style={{ background: "radial-gradient(circle, rgba(42,92,50,0.18) 0%, transparent 70%)" }} />
+      <div className="absolute bottom-10 right-1/4 w-56 h-56 rounded-full pointer-events-none z-0"
+        style={{ background: "radial-gradient(circle, rgba(42,92,50,0.12) 0%, transparent 70%)" }} />
+
+      {/* Top header bar */}
+      <div className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-6 pt-5 pb-3">
+        <div className="flex items-center gap-2.5">
+          <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+          <span className="text-xs font-bold tracking-[0.18em] text-emerald-400 uppercase">
+            Live Export Tracking
+          </span>
+        </div>
+        <div className="flex items-center gap-3">
+          {!isLoading && mapDots.length > 0 && (
+            <div className="flex items-center gap-2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full px-3 py-1.5">
+              <Globe size={11} className="text-emerald-400" />
+              <span className="text-xs font-semibold text-white/80">{mapDots.length} Countries Active</span>
+            </div>
+          )}
+          <div
+            className="text-xs font-black tracking-widest px-3 py-1.5 rounded-full flex items-center gap-1.5"
+            style={{
+              background: "rgba(42,92,50,0.35)",
+              border: "1px solid rgba(42,92,50,0.6)",
+              color: "#6ee7a0",
+            }}
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse inline-block" />
+            LIVE
+          </div>
+        </div>
       </div>
 
-      {/* SVG World Map */}
-      <svg viewBox="0 0 1000 500" className="w-full h-full" style={{ minHeight: 400 }}>
-        {/* Simplified continent outlines */}
-        {/* North America */}
-        <path d="M50,80 L80,60 L120,55 L160,50 L200,55 L230,70 L250,90 L260,120 L250,150 L240,180 L220,200 L200,210 L180,220 L160,230 L140,225 L120,210 L100,200 L80,190 L60,170 L50,140 L45,110 Z" fill="#d4e8d6" stroke="#b8d4ba" strokeWidth="1" opacity="0.7" />
-        {/* Central America */}
-        <path d="M120,210 L140,225 L150,240 L155,260 L145,270 L135,265 L125,255 L115,240 L110,225 Z" fill="#d4e8d6" stroke="#b8d4ba" strokeWidth="1" opacity="0.7" />
-        {/* South America */}
-        <path d="M155,260 L175,255 L200,260 L220,275 L235,300 L240,330 L235,360 L225,385 L210,395 L195,390 L185,375 L175,355 L165,340 L160,320 L155,300 L150,280 Z" fill="#d4e8d6" stroke="#b8d4ba" strokeWidth="1" opacity="0.7" />
-        {/* Europe */}
-        <path d="M370,60 L400,55 L430,60 L460,70 L480,80 L485,100 L480,120 L470,140 L460,155 L445,160 L430,155 L415,145 L400,140 L385,130 L375,115 L370,95 Z" fill="#d4e8d6" stroke="#b8d4ba" strokeWidth="1" opacity="0.7" />
-        {/* UK/Ireland */}
-        <path d="M375,95 L385,90 L395,95 L395,110 L388,115 L378,110 Z" fill="#d4e8d6" stroke="#b8d4ba" strokeWidth="1" opacity="0.7" />
-        {/* Africa */}
-        <path d="M390,170 L420,165 L450,170 L475,180 L500,200 L520,230 L530,260 L530,290 L525,320 L515,345 L500,365 L480,370 L460,365 L445,350 L430,330 L420,305 L415,280 L410,255 L400,230 L390,205 L385,185 Z" fill="#d4e8d6" stroke="#b8d4ba" strokeWidth="1" opacity="0.7" />
-        {/* Middle East */}
-        <path d="M520,155 L545,150 L570,155 L590,170 L595,190 L585,205 L570,210 L555,205 L540,195 L525,180 L520,165 Z" fill="#d4e8d6" stroke="#b8d4ba" strokeWidth="1" opacity="0.7" />
-        {/* India */}
-        <path d="M620,180 L645,170 L670,175 L690,190 L700,210 L705,235 L700,260 L690,280 L675,290 L660,285 L650,270 L640,250 L630,230 L625,210 L620,195 Z" fill="#c8e0ca" stroke="#a8cca8" strokeWidth="1" opacity="0.8" />
-        {/* China/East Asia */}
-        <path d="M680,100 L720,90 L760,95 L800,100 L830,115 L840,135 L835,160 L820,180 L800,190 L775,195 L750,190 L730,180 L715,165 L700,150 L690,130 L685,115 Z" fill="#d4e8d6" stroke="#b8d4ba" strokeWidth="1" opacity="0.7" />
-        {/* Southeast Asia */}
-        <path d="M720,210 L745,200 L770,210 L785,230 L790,250 L780,265 L765,270 L750,268 L735,260 L725,245 L720,225 Z" fill="#d4e8d6" stroke="#b8d4ba" strokeWidth="1" opacity="0.7" />
-        {/* Japan */}
-        <path d="M845,130 L855,120 L865,125 L870,140 L865,155 L855,160 L845,155 L840,145 Z" fill="#d4e8d6" stroke="#b8d4ba" strokeWidth="1" opacity="0.7" />
-        {/* Australia */}
-        <path d="M780,330 L820,315 L860,310 L900,315 L920,330 L930,350 L925,375 L910,390 L890,395 L860,390 L835,380 L810,370 L795,355 L785,340 Z" fill="#d4e8d6" stroke="#b8d4ba" strokeWidth="1" opacity="0.7" />
-        {/* Russia (simplified) */}
-        <path d="M460,30 L520,25 L580,20 L640,22 L700,25 L760,30 L820,40 L860,55 L870,75 L850,90 L820,95 L780,90 L740,85 L700,80 L660,75 L620,70 L580,65 L540,60 L500,55 L470,50 L460,40 Z" fill="#d4e8d6" stroke="#b8d4ba" strokeWidth="1" opacity="0.5" />
-
-        {/* Country dots */}
-        {servedCountries.map((country) => {
-          const coords = countryCoords[country];
-          if (!coords) return null;
-          const cx = coords[0] * 10; // Convert % to SVG coordinate (0-1000)
-          const cy = coords[1] * 10; // Convert % to SVG coordinate (0-500 scaled)
-          return (
-            <g key={country}
-              onMouseEnter={() => setHoveredCountry(country)}
-              onMouseLeave={() => setHoveredCountry(null)}
-              style={{ cursor: 'pointer' }}
-            >
-              {/* Pulsating ring */}
-              <circle cx={cx} cy={cy} r="12" fill="none" stroke="#2A5C32" strokeWidth="1.5" opacity="0.3">
-                <animate attributeName="r" from="6" to="18" dur="2s" repeatCount="indefinite" />
-                <animate attributeName="opacity" from="0.5" to="0" dur="2s" repeatCount="indefinite" />
-              </circle>
-              {/* Solid dot */}
-              <circle cx={cx} cy={cy} r="5" fill="#2A5C32" stroke="#fff" strokeWidth="2" />
-            </g>
-          );
-        })}
-      </svg>
-
-      {/* Hover Tooltip */}
-      {hoveredCountry && (
-        <div
-          className="absolute z-50 pointer-events-none px-3 py-1.5 rounded-lg text-xs font-bold text-white shadow-lg"
-          style={{
-            backgroundColor: '#1a3c22',
-            left: mousePos.x + 12,
-            top: mousePos.y - 30,
-            transform: 'translateX(-50%)',
-            whiteSpace: 'nowrap',
-          }}
+      {/* Map */}
+      {isLoading ? (
+        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3">
+          <div className="relative">
+            <Loader2 className="w-10 h-10 animate-spin text-emerald-400" />
+            <div className="absolute inset-0 rounded-full animate-ping opacity-20 bg-emerald-500" />
+          </div>
+          <p className="text-sm font-semibold text-emerald-300/80 tracking-wide">
+            Loading Map Data...
+          </p>
+        </div>
+      ) : (
+        <ComposableMap
+          projectionConfig={{ scale: 147 }}
+          style={{ width: "100%", height: "100%" }}
+          className="z-10"
         >
-          {hoveredCountry.charAt(0) + hoveredCountry.slice(1).toLowerCase()}
-          <div className="absolute left-1/2 -translate-x-1/2 top-full w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-[#1a3c22]"></div>
+          <Geographies geography={geoUrl}>
+            {({ geographies }) =>
+              geographies.map((geo) => (
+                <Geography
+                  key={geo.rsmKey}
+                  geography={geo}
+                  fill="#1d4a26"
+                  stroke="#0a1f0e"
+                  strokeWidth={0.6}
+                  style={{
+                    default: { outline: "none" },
+                    hover: { fill: "#255c30", outline: "none" },
+                    pressed: { outline: "none" },
+                  }}
+                />
+              ))
+            }
+          </Geographies>
+
+          {mapDots.map((dot, index) => (
+            <Marker
+              key={index}
+              coordinates={dot.coordinates}
+              onMouseEnter={() => setHoveredDot(dot.name)}
+              onMouseLeave={() => setHoveredDot(null)}
+              style={{ cursor: "pointer" }}
+            >
+              {/* Outer pulse ring 1 */}
+              <circle r={10} fill="none" stroke="#4ade80" strokeWidth={0.8} opacity="0">
+                <animate attributeName="r" from="4" to="16" dur="2.4s" repeatCount="indefinite" />
+                <animate attributeName="opacity" from="0.7" to="0" dur="2.4s" repeatCount="indefinite" />
+              </circle>
+              {/* Outer pulse ring 2 (offset) */}
+              <circle r={6} fill="none" stroke="#86efac" strokeWidth={1} opacity="0">
+                <animate attributeName="r" from="3" to="11" dur="2.4s" begin="0.8s" repeatCount="indefinite" />
+                <animate attributeName="opacity" from="0.5" to="0" dur="2.4s" begin="0.8s" repeatCount="indefinite" />
+              </circle>
+              {/* Glowing core dot */}
+              <circle
+                r={3.5}
+                fill={hoveredDot === dot.name ? "#86efac" : "#4ade80"}
+                stroke={hoveredDot === dot.name ? "#fff" : "rgba(255,255,255,0.5)"}
+                strokeWidth={1.2}
+                style={{ filter: "drop-shadow(0 0 4px rgba(74,222,128,0.9))", transition: "all 0.2s" }}
+              />
+              {/* Tooltip on hover */}
+              {hoveredDot === dot.name && (
+                <g>
+                  <rect
+                    x={-38} y={-30} width={76} height={20}
+                    rx={5} ry={5}
+                    fill="rgba(10,31,14,0.92)"
+                    stroke="rgba(74,222,128,0.4)"
+                    strokeWidth={0.8}
+                  />
+                  <text
+                    textAnchor="middle"
+                    y={-15}
+                    style={{
+                      fontFamily: "Inter, system-ui",
+                      fill: "#86efac",
+                      fontSize: "9px",
+                      fontWeight: "700",
+                      letterSpacing: "0.04em",
+                      pointerEvents: "none",
+                    }}
+                  >
+                    {dot.name}
+                  </text>
+                </g>
+              )}
+            </Marker>
+          ))}
+        </ComposableMap>
+      )}
+
+      {/* Empty state */}
+      {!isLoading && mapDots.length === 0 && (
+        <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
+          <div
+            className="text-center p-6 rounded-2xl backdrop-blur-md"
+            style={{
+              background: "rgba(10,31,14,0.7)",
+              border: "1px solid rgba(42,92,50,0.4)",
+            }}
+          >
+            <Globe size={36} className="mx-auto text-emerald-500/50 mb-3" />
+            <p className="text-emerald-300/60 text-sm font-medium">Awaiting shipment data...</p>
+          </div>
         </div>
       )}
 
-      {/* Legend */}
-      {servedCountries.length === 0 && (
-        <div className="absolute inset-0 flex items-center justify-center z-10">
-          <div className="text-center">
-            <Globe size={40} className="mx-auto text-gray-300 mb-3" />
-            <p className="text-gray-400 text-sm font-medium">Upload shipment data to see served countries</p>
+      {/* Bottom stats bar */}
+      {!isLoading && mapDots.length > 0 && (
+        <div
+          className="absolute bottom-0 left-0 right-0 z-20 flex items-center justify-between px-6 py-3"
+          style={{
+            background: "linear-gradient(to top, rgba(10,31,14,0.95) 0%, transparent 100%)",
+          }}
+        >
+          <p className="text-xs text-white/30 flex items-center gap-1.5">
+            <MapPin size={10} className="text-emerald-500/60" />
+            Hover a dot to see country name
+          </p>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-1.5">
+              <div className="w-2.5 h-2.5 rounded-full bg-emerald-400" style={{ boxShadow: "0 0 6px rgba(74,222,128,0.8)" }} />
+              <span className="text-xs text-white/40 font-medium">Active Shipment Country</span>
+            </div>
           </div>
         </div>
       )}
     </div>
   );
 }
+
+// --- MAIN PAGE COMPONENT ---
+
 
 export default function GlobalPresence() {
   const [activeRegion, setActiveRegion] = useState(null);
@@ -202,6 +283,18 @@ export default function GlobalPresence() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+
+  const [dbCountries, setDbCountries] = useState([]);
+  const [loadingDB, setLoadingDB] = useState(true)
+
+  useEffect(() => {
+    const loadCountries = async () => {
+      const countriesData = await fetchAllCountryCoordinates(); 
+      setDbCountries(countriesData);
+      setLoadingDB(false);
+    };
+    loadCountries();
+  }, []);
 
   // Fetch exports
   const fetchShipments = async (pageNumber) => {
@@ -241,6 +334,14 @@ export default function GlobalPresence() {
       setLoadingMore(false);
     }
   };
+const activeMapDots = useMemo(() => {
+    if (!dbCountries || dbCountries.length === 0) return [];
+
+    return dbCountries.map(country => ({
+      name: country.country_name,
+      coordinates: [parseFloat(country.longitude), parseFloat(country.latitude)]
+    }));
+  }, [dbCountries]);
 
   useEffect(() => {
     fetchShipments(1);
@@ -267,13 +368,16 @@ export default function GlobalPresence() {
 
   const selectedRegion = regions.find((r) => r.id === activeRegion) || null;
 
-  // Compute dynamic details from shipments
+  // Filter shipments to only those matching the selected region's country list
   const regionalShipments = selectedRegion
-    ? shipments.filter(s => selectedRegion.countryList.some(c => c.toLowerCase() === s.destinationCountry.toLowerCase()))
+    ? shipments.filter(s => {
+        const dest = s.destinationCountry?.trim().toLowerCase();
+        return dest && selectedRegion.countryList.some(c => c === dest || dest.includes(c) || c.includes(dest));
+      })
     : [];
 
-  const dynamicCountries = [...new Set(regionalShipments.map(s => s.destinationCountry))];
-  const displayCountries = dynamicCountries.length > 0 ? dynamicCountries : (selectedRegion?.countryList || []);
+  const dynamicCountries = [...new Set(regionalShipments.map(s => s.destinationCountry).filter(Boolean))];
+  const displayCountries = dynamicCountries;
 
   const productCounts = {};
   regionalShipments.forEach(s => {
@@ -285,7 +389,7 @@ export default function GlobalPresence() {
     .slice(0, 5) // Top 5 logic
     .map(p => p[0]);
     
-  const displayTopProducts = dynamicTopProducts.length > 0 ? dynamicTopProducts : (selectedRegion?.topProducts || []);
+  const displayTopProducts = dynamicTopProducts.length > 0 ? dynamicTopProducts : [];
 
   useEffect(() => {
     const applyHashRegion = () => {
@@ -309,6 +413,7 @@ export default function GlobalPresence() {
     window.addEventListener("hashchange", applyHashRegion);
     return () => window.removeEventListener("hashchange", applyHashRegion);
   }, []);
+  
 
   return (
     <div style={{ fontFamily: "'Inter', sans-serif" }}>
@@ -356,10 +461,13 @@ export default function GlobalPresence() {
           </p>
         </div>
 
-        {/* Interactive World Map */}
-        <div className="mb-12">
-          <WorldMap activeRegion={activeRegion} onRegionClick={handleRegionClick} shipments={shipments} />
-        </div>
+       {/* Interactive World Map */}
+<div className="mb-12">
+  <WorldMap 
+    mapDots={activeMapDots} 
+    isLoading={loadingDB || loadingShipments} 
+  />
+</div>
 
         {/* Region Cards */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5 mb-14">
@@ -394,10 +502,7 @@ export default function GlobalPresence() {
               <h3 className="font-bold text-gray-900 mb-1" style={{ fontFamily: "'Montserrat', sans-serif" }}>
                 {region.name}
               </h3>
-              <div className="flex items-center gap-3 text-xs text-gray-400">
-                <span className="flex items-center gap-1"><Building2 size={11} /> {region.offices.length} Offices</span>
-                <span className="flex items-center gap-1"><Users size={11} /> {region.teamSize} Staff</span>
-              </div>
+
             </button>
           ))}
         </div>
@@ -482,7 +587,7 @@ export default function GlobalPresence() {
           </div>
         )}
 
-        {/* Recent Global Shipments */}
+        {/* Recent Shipments */}
         <div>
           <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-3">
             <div>
@@ -490,9 +595,11 @@ export default function GlobalPresence() {
                 className="text-xl font-bold text-gray-900"
                 style={{ fontFamily: "'Montserrat', sans-serif" }}
               >
-                Recent Global Shipments
+                {selectedRegion ? `Recent ${selectedRegion.name} Shipments` : "Recent Global Shipments"}
               </h2>
-              <p className="text-sm text-gray-500 mt-1">Live export tracking from our distribution centers</p>
+              <p className="text-sm text-gray-500 mt-1">
+                {selectedRegion ? `Live export tracking for ${selectedRegion.name}` : "Live export tracking from our distribution centers"}
+              </p>
             </div>
             <span className="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full bg-[#f0f7f1] text-[#2A5C32] border border-[#d8ecd8]">
               <div className="w-2 h-2 rounded-full bg-[#2A5C32] animate-pulse"></div> Live Tracker
@@ -521,14 +628,14 @@ export default function GlobalPresence() {
                         <p>Loading recent shipments...</p>
                       </td>
                     </tr>
-                  ) : shipments.length === 0 ? (
+                  ) : (selectedRegion ? regionalShipments : shipments).length === 0 ? (
                     <tr>
                       <td colSpan="7" className="px-6 py-12 text-center text-gray-400">
-                        No recent shipments found.
+                        No recent shipments found{selectedRegion ? ` for ${selectedRegion.name}` : ""}.
                       </td>
                     </tr>
                   ) : (
-                    shipments.map((s, idx) => (
+                    (selectedRegion ? regionalShipments : shipments).map((s, idx) => (
                       <tr key={idx} className="hover:bg-gray-50 transition-colors">
                         <td className="px-5 py-4">
                           <div className="font-semibold text-gray-800">{s.product}</div>

@@ -187,7 +187,7 @@ export default function Manufacturing() {
         </div>
 
         {/* Quality Assurance Tab */}
-        <div id="qa" className="scroll-mt-24 mb-20">
+        {/* <div id="qa" className="scroll-mt-24 mb-20">
           <div className="mb-10">
             <span className="text-xs font-bold uppercase tracking-widest" style={{ color: "#6B4226" }}>QA Systems</span>
             <h2 className="mt-2 text-3xl font-bold text-gray-900" style={{ fontFamily: "'Montserrat', sans-serif" }}>Quality from Source to Patient</h2>
@@ -212,7 +212,7 @@ export default function Manufacturing() {
               </div>
             ))}
           </div>
-        </div>
+        </div> */}
 
         {/* GMP Compliance Tab */}
         {/* <div id="gmp" className="scroll-mt-24 mb-20">

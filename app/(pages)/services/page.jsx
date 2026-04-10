@@ -1,160 +1,216 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import {
   ArrowRight, Globe, Package, FileText, FlaskConical,
-  Truck, Shield, CheckCircle, Users, Building2
+  Truck, Shield, CheckCircle, Users, Building2, Search,
+  Sparkles, Award, Target, Layers
 } from "lucide-react";
+
+// Custom hook for scroll animations
+const useScrollAnimation = () => {
+  const elementRef = useRef(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (elementRef.current) {
+      observer.observe(elementRef.current);
+    }
+
+    return () => {
+      if (elementRef.current) observer.unobserve(elementRef.current);
+    };
+  }, []);
+
+  return [elementRef, isVisible];
+};
 
 const services = [
   {
-    id: "export-services",
+    id: "pharma-trading",
     icon: Globe,
-    title: "Export Services",
+    title: "Pharmaceutical Trading",
     color: "#2A5C32",
+    gradient: "from-emerald-600 to-[#1a3c22]",
     bg: "#e8f5e9",
-    desc: "End-to-end pharmaceutical export solutions to 50+ countries with full regulatory support, documentation, and logistics coordination.",
+    desc: "Comprehensive pharmaceutical trading services connecting global suppliers with healthcare distributors. We source quality medicines and medical products from certified manufacturers worldwide.",
     features: [
-      "Export documentation & customs compliance",
-      "Product registration assistance in target markets",
-      "Cold chain logistics management",
-      "INCOTERMS-based flexible shipping",
-      "Order tracking & delivery confirmation",
-      "Regulatory dossier preparation (CTD/ACTD)",
+      "WHO-GMP certified product sourcing",
+      "Generic and branded pharmaceutical supply",
+      "Medical devices and surgical instruments",
+      "API and raw material procurement",
+      "Competitive pricing and bulk discounts",
     ],
-    image: "https://images.unsplash.com/photo-1765206257996-9b4a5d886a2c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800",
+    image: "https://images.unsplash.com/photo-1587854692152-cbe660dbde88?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1200",
   },
   {
-    id: "import-services",
-    icon: Package,
-    title: "Import Services",
-    color: "#1d6fa4",
-    bg: "#e8f4ff",
-    desc: "Streamlined pharmaceutical import services with end-to-end handling of customs, quality testing, and local distribution setup.",
+    id: "export-import",
+    icon: Search,
+    title: "International Import & Export",
+    color: "#0369a1",
+    gradient: "from-sky-500 to-blue-700",
+    bg: "#e0f2fe",
+    desc: "Seamless cross-border pharmaceutical trade with complete regulatory compliance. We handle all documentation, customs, and logistics for hassle-free international transactions.",
     features: [
-      "Import clearance & customs documentation",
-      "Local quality testing at approved labs",
-      "Warehousing & temperature-controlled storage",
-      "Distribution network setup",
-      "Regulatory compliance review",
-      "Re-labelling & secondary packaging",
+      "IEC certified import-export operations",
+      "Complete customs clearance support",
+      "Export documentation and COA management",
+      "Multi-country regulatory compliance",
+      "Freight forwarding and shipping coordination",
     ],
-    image: "https://images.unsplash.com/photo-1757578097654-fdae0f7cf008?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800",
+    image: "https://images.unsplash.com/photo-1578575437130-527eed3abbec?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1200",
+  },
+ 
+  
+  {
+    id: "product-sourcing",
+    icon: Search,
+    title: "Product Sourcing Solutions",
+    color: "#dc2626",
+    gradient: "from-red-500 to-rose-700",
+    bg: "#fee2e2",
+    desc: "Expert product sourcing from verified manufacturers across multiple therapeutic categories. We connect you with the right suppliers for your specific pharmaceutical needs.",
+    features: [
+      "Multi-category product portfolio",
+      "Manufacturer verification and selection",
+      "Competitive price negotiations",
+      "Sample procurement and evaluation",
+      "Long-term supplier partnerships",
+    ],
+    image: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1200",
   },
   {
-    id: "regulatory-support",
+    id: "documentation-support",
     icon: FileText,
-    title: "Regulatory Support",
-    color: "#7c3aed",
-    bg: "#f3e8ff",
-    desc: "Expert regulatory affairs support for product registrations, dossier submissions, and compliance management across multiple jurisdictions.",
+    title: "Documentation & Regulatory Support",
+    color: "#059669",
+    gradient: "from-emerald-500 to-green-700",
+    bg: "#d1fae5",
+    desc: "Complete documentation and regulatory assistance for pharmaceutical trading operations. We handle all paperwork, licenses, and compliance requirements for smooth operations.",
     features: [
-      "CTD/ACTD dossier preparation",
-      "Product registration in 50+ countries",
-      "WHO PQ application support",
-      "Regulatory intelligence & monitoring",
-      "GMP audit preparation & support",
-      "Variation & renewal management",
+      "Export-import license management",
+      "GST filing and tax documentation",
+      "Health authority approvals coordination",
+      "Product registration assistance",
+      "Invoice and shipping documentation",
     ],
-    image: "https://images.unsplash.com/photo-1576765608689-c0e8f69a46b2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800",
-  },
-  {
-    id: "contract-mfg",
-    icon: FlaskConical,
-    title: "Contract Manufacturing",
-    color: "#c2440c",
-    bg: "#fff3e8",
-    desc: "Full-scale contract manufacturing services on our WHO-GMP certified, USFDA-registered facilities for third-party brands and generic companies.",
-    features: [
-      "Formulation development & optimisation",
-      "Technology transfer & scale-up",
-      "Dedicated manufacturing capacity",
-      "Full QC/QA testing & release",
-      "Customised packaging & labelling",
-      "Stability studies (ICH compliant)",
-    ],
-    image: "https://images.unsplash.com/photo-1581056771085-3ce30d907416?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=800",
+    image: "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1200",
   },
 ];
 
 const whyChoose = [
-  { icon: Shield, title: "WHO-GMP Certified", desc: "All manufacturing sites certified to WHO-GMP and other international standards." },
-  { icon: Globe, title: "Global Logistics", desc: "Established freight and cold chain partnerships across all major trade routes." },
-  { icon: FileText, title: "Regulatory Expertise", desc: "In-house regulatory teams with registrations in 50+ countries." },
-  { icon: Users, title: "Dedicated Account Managers", desc: "Single point of contact for all your supply and business needs." },
-  { icon: Truck, title: "On-Time Delivery", desc: "98.5% on-time delivery rate with real-time order tracking systems." },
-  { icon: Building2, title: "8 Manufacturing Plants", desc: "Diverse manufacturing capacity from tablets to sterile injectables." },
+  { icon: Shield, title: "Trusted Compliance", desc: "Fully registered and compliant with GST, IEC, and other international trade regulations.", gradient: "from-emerald-500 to-teal-600" },
+  { icon: Globe, title: "Global Network", desc: "A robust logistics and partnership network spanning key international trade routes.", gradient: "from-blue-500 to-cyan-600" },
+  { icon: Layers, title: "Multi-Category Expertise", desc: "Diverse portfolio ranging from pharmaceuticals to textiles and food products.", gradient: "from-purple-500 to-pink-600" },
+  { icon: Users, title: "Dedicated Support", desc: "Single point of contact providing personalized solutions for your business needs.", gradient: "from-orange-500 to-red-600" },
+  { icon: Award, title: "Quality Assurance", desc: "Stringent quality checks ensuring only the best products reach our clients.", gradient: "from-green-500 to-emerald-600" },
+  { icon: Target, title: "Reliability", desc: "Proven track record of transparent, ethical, and timely business operations.", gradient: "from-indigo-500 to-purple-600" },
 ];
 
 export default function Services() {
+  const [heroRef, heroVisible] = useScrollAnimation();
+
   return (
-    <div style={{ fontFamily: "'Inter', sans-serif" }}>
-      {/* Hero */}
-      <div className="bg-gradient-to-r from-[#0f2415] to-[#2A5C32] text-white py-20">
-        <div className="max-w-[1440px] mx-auto px-6">
-          <div className="flex items-center gap-2 text-sm text-green-300 mb-3">
-            <Link href="/" className="hover:text-white">Home</Link>
-            <span>/</span>
-            <span>Our Services</span>
-          </div>
-          <h1 className="text-5xl font-bold mb-4" style={{ fontFamily: "'Montserrat', sans-serif" }}>Our Services</h1>
-          <p className="text-green-200 max-w-2xl text-lg">Comprehensive pharmaceutical solutions â€” from export & import to regulatory support and contract manufacturing.</p>
+    <div style={{ fontFamily: "'Inter', sans-serif" }} className="bg-white">
+      {/* Hero Section */}
+      <div className="relative bg-gradient-to-br from-[#1a3c22] via-[#2A5C32] to-[#1a3c22] text-white py-20 md:py-32 overflow-hidden">
+        {/* Animated Background Elements */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute -top-1/2 -right-1/4 w-96 h-96 bg-green-400/10 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute -bottom-1/2 -left-1/4 w-96 h-96 bg-emerald-400/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
         </div>
+
+        {/* Grid Pattern Overlay */}
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS1vcGFjaXR5PSIwLjAzIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-30"></div>
+
+        <div ref={heroRef} className="max-w-[1440px] mx-auto px-4 md:px-6 relative z-10">
+          <div className={`transition-all duration-1000 ${heroVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+            <div className="flex items-center gap-2 text-xs sm:text-sm text-green-200 mb-6 font-medium tracking-wide">
+              <Link href="/" className="hover:text-white transition-colors hover:underline">Home</Link>
+              <span>/</span>
+              <span className="text-white">Our Services</span>
+            </div>
+            
+            <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold mb-6 tracking-tight bg-gradient-to-r from-white via-green-50 to-green-100 bg-clip-text text-transparent" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+              Our Services
+            </h1>
+            
+            <p className="text-green-100 max-w-2xl text-lg md:text-xl leading-relaxed mb-8">
+              Comprehensive trading solutions â€” from global sourcing and export/import to logistics and contract manufacturing support.
+            </p>
+
+            <div className="flex flex-wrap gap-4">
+              <Link href="#services-list" className="group px-8 py-4 bg-white text-[#2A5C32] rounded-full font-bold hover:bg-green-50 transition-all duration-300 hover:shadow-2xl hover:shadow-white/20 inline-flex items-center gap-2">
+                Explore Services
+                <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        {/* Floating shapes */}
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white to-transparent"></div>
       </div>
 
-      {/* Services */}
-      <div className="max-w-[1440px] mx-auto px-6 py-16">
-        <div className="space-y-16">
+      {/* Services List */}
+      <div id="services-list" className="max-w-[1440px] mx-auto px-4 md:px-6 py-16 md:py-24 scroll-mt-20">
+        <div className="space-y-20 md:space-y-32">
           {services.map((service, i) => (
-            <div
-              key={service.id}
-              id={service.id}
-              className={`grid lg:grid-cols-2 gap-14 items-center scroll-mt-20 ${i % 2 !== 0 ? "lg:grid-flow-dense" : ""}`}
-            >
-              <div className={i % 2 !== 0 ? "lg:col-start-2" : ""}>
-                <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-5" style={{ backgroundColor: service.bg }}>
-                  <service.icon size={26} style={{ color: service.color }} />
-                </div>
-                <h2 className="text-3xl font-bold text-gray-900 mb-4" style={{ fontFamily: "'Montserrat', sans-serif" }}>{service.title}</h2>
-                <p className="text-gray-600 leading-relaxed mb-6">{service.desc}</p>
-                <ul className="space-y-3 mb-8">
-                  {service.features.map((f) => (
-                    <li key={f} className="flex items-center gap-3 text-sm text-gray-600">
-                      <CheckCircle size={16} style={{ color: service.color, flexShrink: 0 }} />
-                      {f}
-                    </li>
-                  ))}
-                </ul>
-                <Link
-                  href="/contact"
-                  className="inline-flex items-center gap-2 text-white font-semibold px-7 py-3.5 rounded-full transition-all hover:opacity-90"
-                  style={{ backgroundColor: service.color }}
-                >
-                  Enquire About This Service <ArrowRight size={16} />
-                </Link>
-              </div>
-              <div className={`relative rounded-3xl overflow-hidden h-[400px] ${i % 2 !== 0 ? "lg:col-start-1" : ""}`}>
-                <img loading="lazy" decoding="async" src={service.image} alt={service.title} className="w-full h-full object-cover" />
-                <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${service.color}33 0%, transparent 60%)` }} />
-              </div>
-            </div>
+            <ServiceSection key={service.id} service={service} index={i} />
           ))}
         </div>
       </div>
 
       {/* Why Choose Us */}
-      <section className="py-20" style={{ backgroundColor: "#f7f9f8" }}>
-        <div className="max-w-[1440px] mx-auto px-6">
-          <div className="text-center mb-14">
-            <span className="text-xs font-bold uppercase tracking-widest" style={{ color: "#6B4226" }}>Why Natura</span>
-            <h2 className="mt-3 text-3xl font-bold text-gray-900" style={{ fontFamily: "'Montserrat', sans-serif" }}>Why Choose Us as Your Pharma Partner</h2>
+      <section className="py-16 md:py-24 bg-gradient-to-br from-gray-50 via-white to-green-50/30 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-green-100 rounded-full opacity-20 blur-3xl"></div>
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-100 rounded-full opacity-20 blur-3xl"></div>
+
+        <div className="max-w-[1440px] mx-auto px-4 md:px-6 relative z-10">
+          <div className="text-center mb-12 md:mb-16">
+            <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#2A5C32] bg-white px-4 py-2 rounded-full mb-6 shadow-md">
+              <Shield size={14} />
+              Why Natura
+            </div>
+            <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-4" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+              Why Choose Us as Your Trading Partner
+            </h2>
+            <p className="text-gray-600 max-w-2xl mx-auto text-lg">
+              We bring unparalleled transparency, efficiency, and scale to your global sourcing operations.
+            </p>
           </div>
+
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {whyChoose.map((item) => (
-              <div key={item.title} className="bg-white rounded-2xl border border-gray-100 p-6 hover:shadow-md transition-all">
-                <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ backgroundColor: "#e8f0e9" }}>
-                  <item.icon size={22} style={{ color: "#2A5C32" }} />
+            {whyChoose.map((item, i) => (
+              <div
+                key={item.title}
+                className="group relative bg-white rounded-3xl p-8 hover:shadow-2xl transition-all duration-500 border border-gray-100 hover:border-transparent overflow-hidden"
+              >
+                <div className={`absolute inset-0 bg-gradient-to-br ${item.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}></div>
+                
+                <div className="relative z-10">
+                  <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${item.gradient} flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 group-hover:rotate-6 transition-all duration-500`}>
+                    <item.icon size={28} className="text-white" />
+                  </div>
+                  
+                  <h3 className="font-bold text-xl text-gray-900 mb-3 group-hover:text-[#2A5C32] transition-colors duration-300" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+                    {item.title}
+                  </h3>
+                  
+                  <p className="text-gray-600 leading-relaxed">
+                    {item.desc}
+                  </p>
                 </div>
-                <h3 className="font-bold text-gray-900 mb-2" style={{ fontFamily: "'Montserrat', sans-serif" }}>{item.title}</h3>
-                <p className="text-sm text-gray-500 leading-relaxed">{item.desc}</p>
               </div>
             ))}
           </div>
@@ -162,15 +218,114 @@ export default function Services() {
       </section>
 
       {/* CTA */}
-      <section className="py-16" style={{ background: "linear-gradient(135deg, #2A5C32 0%, #1a3c22 100%)" }}>
-        <div className="max-w-[1440px] mx-auto px-6 text-center text-white">
-          <h2 className="text-2xl font-bold mb-4" style={{ fontFamily: "'Montserrat', sans-serif" }}>Need a Custom Service Solution?</h2>
-          <p className="text-green-200 mb-8 max-w-lg mx-auto">Our team will work with you to design a service package that meets your specific pharmaceutical supply needs.</p>
-          <Link href="/contact" className="inline-flex items-center gap-2 bg-white text-[#2A5C32] font-bold px-8 py-3.5 rounded-full transition-all duration-200 hover:bg-[#f0f7f1] hover:text-[#1f4b28] hover:shadow-lg">
-            Get a Custom Quote <ArrowRight size={16} />
+      <section className="py-20 md:py-24 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-[#2A5C32] via-[#1a3c22] to-[#2A5C32] animate-gradient-shift"></div>
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS1vcGFjaXR5PSIwLjAzIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-20"></div>
+
+        <div className="max-w-[1440px] mx-auto px-4 md:px-6 text-center relative z-10">
+          <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-green-200 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full mb-6">
+            <Sparkles size={14} />
+            Let's Collaborate
+          </div>
+
+          <h2 className="text-3xl md:text-5xl font-bold mb-6 text-white" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+            Need a Custom Trade Solution?
+          </h2>
+          
+          <p className="text-green-100 text-lg md:text-xl mb-10 max-w-2xl mx-auto leading-relaxed">
+            Our team will work with you to design a supply chain or procurement package that meets your specific business needs.
+          </p>
+
+          <Link href="/contact" className="group px-10 py-5 bg-white text-[#2A5C32] font-bold rounded-full transition-all duration-300 hover:bg-green-50 hover:shadow-2xl hover:shadow-white/20 inline-flex items-center gap-3 text-lg">
+            Get a Custom Quote
+            <ArrowRight size={20} className="group-hover:translate-x-2 transition-transform duration-300" />
           </Link>
         </div>
       </section>
+
+      <style jsx>{`
+        @keyframes gradient-shift {
+          0%, 100% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+        }
+        .animate-gradient-shift {
+          background-size: 200% 200%;
+          animation: gradient-shift 15s ease infinite;
+        }
+      `}</style>
+    </div>
+  );
+}
+
+function ServiceSection({ service, index }) {
+  const [ref, isVisible] = useScrollAnimation();
+  const isReverse = index % 2 !== 0;
+
+  return (
+    <div 
+      ref={ref}
+      id={service.id} 
+      className={`grid lg:grid-cols-2 gap-10 md:gap-16 items-center scroll-mt-24 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-16'}`}
+    >
+      <div className={isReverse ? "lg:col-start-2 lg:row-start-1" : ""}>
+        <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${service.gradient} flex items-center justify-center mb-6 shadow-lg`}>
+          <service.icon size={28} className="text-white" />
+        </div>
+        
+        <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-6" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+          {service.title}
+        </h2>
+        
+        <p className="text-gray-600 leading-relaxed text-lg mb-8">
+          {service.desc}
+        </p>
+        
+        <div className="bg-gray-50 rounded-2xl p-6 mb-8 border border-gray-100">
+          <ul className="space-y-4">
+            {service.features.map((f, i) => (
+              <li key={i} className="flex items-start gap-3">
+                <CheckCircle size={20} className="mt-0.5 shrink-0" style={{ color: service.color }} />
+                <span className="text-gray-700 font-medium">{f}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        
+        <Link
+          href="/contact"
+          className="group inline-flex items-center gap-2 text-white font-bold px-8 py-4 rounded-full transition-all duration-300 hover:shadow-xl"
+          style={{ background: `linear-gradient(135deg, ${service.color} 0%, ${service.color}dd 100%)` }}
+        >
+          Enquire Now <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+        </Link>
+      </div>
+
+      <div className={`relative ${isReverse ? "lg:col-start-1 lg:row-start-1" : ""}`}>
+        <div className="relative rounded-3xl overflow-hidden h-[400px] sm:h-[500px] shadow-2xl group">
+          <div className={`absolute inset-0 bg-gradient-to-br ${service.gradient} opacity-20 mix-blend-multiply z-10 group-hover:opacity-10 transition-opacity duration-500`}></div>
+          <img 
+            loading="lazy" 
+            decoding="async" 
+            src={service.image} 
+            alt={service.title} 
+            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
+          />
+          
+          {/* Glass floating card */}
+          <div className="absolute bottom-6 left-6 right-6 bg-white/90 backdrop-blur-md p-4 rounded-2xl shadow-xl z-20 flex items-center justify-between group-hover:-translate-y-2 transition-transform duration-500">
+            <div className="flex items-center gap-3">
+              <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${service.gradient} flex items-center justify-center`}>
+                <service.icon size={18} className="text-white" />
+              </div>
+              <span className="font-bold text-gray-900">{service.title}</span>
+            </div>
+            <ArrowRight size={20} className="text-gray-400 group-hover:text-gray-900 transition-colors" />
+          </div>
+        </div>
+
+        {/* Decorative background blob */}
+        <div className="absolute -z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-gray-100 rounded-full blur-3xl opacity-50"></div>
+      </div>
     </div>
   );
 }

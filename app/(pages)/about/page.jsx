@@ -1,113 +1,267 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Award, Users, Globe2, FlaskConical, CheckCircle, Leaf, Sparkles } from "lucide-react";
+import { ArrowRight, Award, Users, Globe2, FlaskConical, CheckCircle, Leaf, Sparkles, FileText, Shield, TrendingUp, Building2, Phone, Mail, MapPin } from "lucide-react";
 
-const timeline = [
-  { year: "1998", title: "Founded in Ahmedabad", desc: "Natura Health Care started as a small formulation unit with 50 employees and a vision to supply quality generics domestically." },
-  { year: "2003", title: "First Export License", desc: "Obtained our first export license and started supplying to Sri Lanka and Nepal, marking the beginning of our global journey." },
-  { year: "2008", title: "WHO-GMP Certification", desc: "Achieved WHO-GMP certification for our oral solids plant â€” opening doors to regulated markets across Asia, Africa and beyond." },
-  { year: "2012", title: "USFDA Registration", desc: "Successfully registered two manufacturing units with the USFDA, enabling supply to the lucrative US generics market." },
-  { year: "2016", title: "European Expansion", desc: "Established the Basel packaging and distribution hub, gaining EU GMP certification and access to European markets." },
-  { year: "2020", title: "COVID-19 Response", desc: "Pivoted manufacturing capacity to produce critical medicines for COVID-19, supplying to 35 countries through UNICEF and WHO procurement." },
-  { year: "2024", title: "50 Countries Milestone", desc: "Reached the milestone of serving 50+ countries with 500+ products, 8 manufacturing plants, and 3,500+ employees globally." },
-];
-
-const leadership = [
+const certifications = [
   {
-    name: "Dr. Rajesh Mehta",
-    role: "Chairman & Managing Director",
-    bio: "25+ years in pharmaceutical industry. Former board member of Pharmexcil. Drives Natura's global vision and strategic direction.",
-    image: "/media/abouPageDr.RajeshMehta.webp",
+    name: "IEC Certificate",
+    number: "CZGPC3313P",
+    issueDate: "20/02/2025",
+    authority: "DGFT, Ministry of Commerce and Industry",
+    icon: Shield,
+    color: "#2A5C32"
   },
   {
-    name: "Mrs. Priya Sharma",
-    role: "Chief Executive Officer",
-    bio: "MBA from INSEAD. Led Natura's international expansion across Africa and the Americas. Champion of operational excellence.",
-    image: "/media/AboutpageMrs.Priy%20Sharma.webp",
-  },
-  {
-    name: "Dr. Klaus Weber",
-    role: "Chief Scientific Officer",
-    bio: "PhD Pharmaceutical Sciences, ETH Zurich. Heads our R&D strategy with 280+ scientists under his leadership.",
-    image: "/media/AboutPageDr.KlausWeber.webp",
-  },
-  {
-    name: "Mr. Arun Patel",
-    role: "Chief Financial Officer",
-    bio: "Chartered Accountant with 20+ years of experience in pharmaceutical finance. Led Natura's Series B and C funding rounds.",
-    image: "/media/aboutPageMr.%20Arun%20Patel.webp",
-  },
+    name: "GST Registration",
+    number: "23CZGPC3313P1ZH",
+    issueDate: "18/03/2025",
+    authority: "Government of India",
+    icon: Award,
+    color: "#0369a1"
+  }
 ];
 
 const values = [
-  { icon: Award, title: "Quality First", desc: "Every product, every batch, every time â€” uncompromising quality is our foundation." },
-  { icon: Globe2, title: "Global Mindset", desc: "We think globally but act locally, understanding the unique needs of every market we serve." },
-  { icon: Users, title: "Patient Centricity", desc: "Every decision we make is guided by the impact it has on the patient at the end of the supply chain." },
-  { icon: FlaskConical, title: "Innovation", desc: "Continuous investment in R&D ensures we stay at the forefront of pharmaceutical science." },
-  { icon: Leaf, title: "Sustainability", desc: "We are committed to environmentally responsible manufacturing and carbon neutrality goals." },
-  { icon: CheckCircle, title: "Integrity", desc: "Transparent, ethical, and compliant operations build trust with every stakeholder." },
+  { icon: Award, title: "Quality First", desc: "Committed to delivering high-quality pharmaceutical and health care products.", gradient: "from-emerald-500 to-teal-600" },
+  { icon: Globe2, title: "Export Ready", desc: "Authorized for import-export operations with proper licensing and certifications.", gradient: "from-blue-500 to-cyan-600" },
+  { icon: Users, title: "Patient Centricity", desc: "Every decision guided by the impact on patient health and wellbeing.", gradient: "from-purple-500 to-pink-600" },
+  { icon: Shield, title: "Compliance", desc: "Fully compliant with Indian regulatory standards including GST and foreign trade regulations.", gradient: "from-orange-500 to-red-600" },
+  { icon: Leaf, title: "Natural Focus", desc: "Specializing in natural and herbal health care solutions.", gradient: "from-green-500 to-emerald-600" },
+  { icon: CheckCircle, title: "Integrity", desc: "Transparent, ethical operations building trust with every stakeholder.", gradient: "from-indigo-500 to-purple-600" },
 ];
 
+const businessCategories = [
+  { name: "Chemicals or Allied Products", icon: FlaskConical },
+  { name: "Food Products", icon: Sparkles },
+  { name: "Pharmaceutical Products", icon: Award },
+  { name: "Medical or Surgical Instruments", icon: Shield },
+  { name: "Handicrafts", icon: Sparkles },
+  { name: "Leather Products", icon: TrendingUp },
+  { name: "Sports Goods", icon: Users },
+  { name: "Textile & Apparel Products", icon: Sparkles },
+  { name: "Agricultural or Allied Products", icon: Leaf },
+];
+
+// Custom hook for scroll animations
+const useScrollAnimation = () => {
+  const elementRef = useRef(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (elementRef.current) {
+      observer.observe(elementRef.current);
+    }
+
+    return () => {
+      if (elementRef.current) {
+        observer.unobserve(elementRef.current);
+      }
+    };
+  }, []);
+
+  return [elementRef, isVisible];
+};
+
+// Counter animation component
+const AnimatedCounter = ({ end, duration = 2000, suffix = "" }) => {
+  const [count, setCount] = useState(0);
+  const [isVisible, setIsVisible] = useState(false);
+  const elementRef = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !isVisible) {
+          setIsVisible(true);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (elementRef.current) {
+      observer.observe(elementRef.current);
+    }
+
+    return () => {
+      if (elementRef.current) {
+        observer.unobserve(elementRef.current);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isVisible) return;
+
+    let startTime;
+    const animateCount = (timestamp) => {
+      if (!startTime) startTime = timestamp;
+      const progress = timestamp - startTime;
+      const percentage = Math.min(progress / duration, 1);
+      
+      if (typeof end === 'number') {
+        setCount(Math.floor(percentage * end));
+      }
+
+      if (percentage < 1) {
+        requestAnimationFrame(animateCount);
+      } else {
+        setCount(end);
+      }
+    };
+
+    requestAnimationFrame(animateCount);
+  }, [isVisible, end, duration]);
+
+  return <span ref={elementRef}>{count}{suffix}</span>;
+};
+
 export default function About() {
+  const [heroRef, heroVisible] = useScrollAnimation();
+  const [overviewRef, overviewVisible] = useScrollAnimation();
+
   return (
     <div style={{ fontFamily: "'Inter', sans-serif" }}>
-      {/* Hero */}
-      <div className="relative bg-[#1a3c22] text-white py-16 md:py-24 overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          <img loading="lazy" decoding="async"
-            src="/media/aboutpageBanner.webp"
-            className="w-full h-full object-cover opacity-30 mix-blend-overlay"
-            alt="About Us Background"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#1a3c22] via-[#1a3c22]/80 to-transparent"></div>
+      {/* Hero Section with Parallax Effect */}
+      <div className="relative bg-gradient-to-br from-[#1a3c22] via-[#2A5C32] to-[#1a3c22] text-white py-20 md:py-32 overflow-hidden">
+        {/* Animated Background Elements */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute -top-1/2 -right-1/4 w-96 h-96 bg-green-400/10 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute -bottom-1/2 -left-1/4 w-96 h-96 bg-emerald-400/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-teal-400/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
         </div>
-        <div className="max-w-[1440px] mx-auto px-4 md:px-6 relative z-10">
-          <div className="flex items-center gap-2 text-xs sm:text-sm text-green-300 mb-4 font-medium tracking-wide">
-            <Link href="/" className="hover:text-white transition-colors">Home</Link>
-            <span>/</span>
-            <span>About Us</span>
+
+        {/* Grid Pattern Overlay */}
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS1vcGFjaXR5PSIwLjAzIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-30"></div>
+
+        <div ref={heroRef} className="max-w-[1440px] mx-auto px-4 md:px-6 relative z-10">
+          <div className={`transition-all duration-1000 ${heroVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+            <div className="flex items-center gap-2 text-xs sm:text-sm text-green-200 mb-6 font-medium tracking-wide">
+              <Link href="/" className="hover:text-white transition-colors hover:underline">Home</Link>
+              <span>/</span>
+              <span className="text-white">About Us</span>
+            </div>
+            
+            <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold mb-6 md:mb-8 tracking-tight bg-gradient-to-r from-white via-green-50 to-green-100 bg-clip-text text-transparent" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+              About Natura Health Care
+            </h1>
+            
+            <p className="text-green-100 max-w-2xl text-lg md:text-xl leading-relaxed mb-8">
+              Your trusted partner in pharmaceutical and health care products, committed to quality and compliance.
+            </p>
+
+            <div className="flex flex-wrap gap-4">
+              <Link href="#certifications" className="group px-8 py-4 bg-white text-[#2A5C32] rounded-full font-bold hover:bg-green-50 transition-all duration-300 hover:shadow-2xl hover:shadow-white/20 inline-flex items-center gap-2">
+                View Certifications
+                <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+              </Link>
+              <Link href="/contact" className="px-8 py-4 border-2 border-white/30 backdrop-blur-sm text-white rounded-full font-bold hover:bg-white/10 transition-all duration-300 inline-flex items-center gap-2">
+                Contact Us
+              </Link>
+            </div>
           </div>
-          <h1 className="text-3xl sm:text-4xl md:text-6xl font-extrabold mb-4 md:mb-6 tracking-tight" style={{ fontFamily: "'Montserrat', sans-serif" }}>About Natura Health Care</h1>
-          <p className="text-green-100 max-w-2xl text-base md:text-lg leading-relaxed">
-            25 years of pharmaceutical excellence. From a single formulation unit in Ahmedabad to a global leader serving 50+ countries.
-          </p>
         </div>
+
+        {/* Floating shapes */}
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white to-transparent"></div>
       </div>
 
-      {/* Company Overview */}
-      <section id="company-overview" className="py-16 md:py-24 bg-white scroll-mt-20">
+      {/* Stats Section with Animated Counters */}
+      <section className="py-12 -mt-16 relative z-20">
+        <div className="max-w-[1440px] mx-auto px-4 md:px-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              { label: "Registered", value: "2025", suffix: "" },
+              { label: "Certified", value: "IEC", suffix: "" },
+              { label: "Compliant", value: "GST", suffix: "" },
+              { label: "Categories", value: 9, suffix: "+" },
+            ].map((stat, i) => (
+              <div 
+                key={stat.label} 
+                className="bg-white rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-gray-100"
+                style={{ animationDelay: `${i * 100}ms` }}
+              >
+                <div className="text-center">
+                  <div className="text-3xl md:text-4xl font-bold mb-2 bg-gradient-to-r from-[#2A5C32] to-[#0f7a3c] bg-clip-text text-transparent" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+                    {typeof stat.value === 'number' ? <AnimatedCounter end={stat.value} suffix={stat.suffix} /> : stat.value}
+                  </div>
+                  <div className="text-sm font-semibold text-gray-500 uppercase tracking-wider">{stat.label}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Company Overview with Stagger Animation */}
+      <section ref={overviewRef} id="company-overview" className="py-16 md:py-24 bg-white scroll-mt-20">
         <div className="max-w-[1440px] mx-auto px-4 md:px-6">
           <div className="grid lg:grid-cols-2 gap-10 md:gap-16 items-center">
-            <div className="relative rounded-3xl overflow-hidden h-[300px] sm:h-[380px] lg:h-[500px] shadow-2xl">
+            {/* Image with Hover Effect */}
+            <div className={`relative rounded-3xl overflow-hidden h-[350px] sm:h-[420px] lg:h-[550px] shadow-2xl group transition-all duration-700 ${overviewVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'}`}>
+              <div className="absolute inset-0 bg-gradient-to-br from-[#2A5C32]/20 to-transparent z-10 group-hover:from-[#2A5C32]/10 transition-all duration-500"></div>
               <img loading="lazy" decoding="async"
                 src="/media/aboutPage2.webp"
-                className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
-                alt="Natura manufacturing"
+                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                alt="Natura Health Care"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-              <div className="absolute bottom-6 left-6 text-white">
-                <div className="text-3xl font-bold mb-1" style={{ fontFamily: "'Montserrat', sans-serif" }}>8</div>
-                <div className="text-sm font-medium text-green-300 uppercase tracking-wider">Global Plants</div>
+              
+              {/* Floating Badge */}
+              <div className="absolute bottom-6 left-6 right-6 bg-white/95 backdrop-blur-md rounded-2xl p-4 shadow-xl group-hover:shadow-2xl transition-all duration-500 z-20">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#2A5C32] to-[#0f7a3c] flex items-center justify-center">
+                    <Building2 className="text-white" size={24} />
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold text-[#2A5C32]" style={{ fontFamily: "'Montserrat', sans-serif" }}>2025</div>
+                    <div className="text-xs font-medium text-gray-600 uppercase tracking-wider">Established</div>
+                  </div>
+                </div>
               </div>
             </div>
-            <div>
-              <span className="text-xs font-bold uppercase tracking-widest text-[#2A5C32] bg-[#f0f7f1] px-3 py-1.5 rounded-full">Who We Are</span>
-              <h2 className="mt-5 md:mt-6 mb-4 md:mb-6 text-gray-900 leading-tight text-3xl md:text-4xl font-extrabold" style={{ fontFamily: "'Montserrat', sans-serif" }}>
-                A Global Pharmaceutical Company Driven by Purpose
+
+            {/* Content with Stagger Effect */}
+            <div className={`transition-all duration-700 delay-200 ${overviewVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'}`}>
+              <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#2A5C32] bg-[#f0f7f1] px-4 py-2 rounded-full mb-6">
+                <Sparkles size={14} />
+                Who We Are
+              </div>
+              
+              <h2 className="mb-6 text-gray-900 leading-tight text-3xl md:text-5xl font-extrabold" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+                A Registered Pharmaceutical{" "}
+                <span className="bg-gradient-to-r from-[#2A5C32] to-[#0f7a3c] bg-clip-text text-transparent">
+                  Trading Company
+                </span>
               </h2>
-              <p className="text-gray-600 leading-relaxed mb-5 md:mb-6 text-base md:text-lg">
-                Natura Health Care is a fully integrated pharmaceutical company with capabilities spanning API synthesis, formulation development, manufacturing, regulatory affairs, and global distribution. Founded in 1998, we have grown from a domestic generics supplier to a trusted partner for health ministries, hospital networks, and international aid organizations worldwide.
-              </p>
-              <p className="text-gray-600 leading-relaxed mb-6 md:mb-8 text-base md:text-lg">
-                Our 8 manufacturing facilitiesâ€”certified by WHO, USFDA, and EU GMP authoritiesâ€”produce over 500 formulations across 25 dosage forms. Our portfolio addresses critical therapy areas including cardiology, oncology, neurology, diabetes, and infectious diseases.
-              </p>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4">
-                {[
-                  { v: "1998", l: "Founded" }, { v: "500+", l: "Products" },
-                  { v: "50+", l: "Countries" }, { v: "3,500+", l: "Employees" },
-                ].map((s) => (
-                  <div key={s.l} className="bg-gray-50 rounded-2xl p-4 md:p-5 border border-gray-100 text-center hover:border-[#2A5C32] hover:shadow-md transition-all">
-                    <div className="text-3xl font-bold mb-1" style={{ fontFamily: "'Montserrat', sans-serif", color: "#2A5C32" }}>{s.v}</div>
-                    <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider">{s.l}</div>
+              
+              <div className="space-y-4 mb-8">
+                <p className="text-gray-600 leading-relaxed text-base md:text-lg">
+                  Natura Health Care is a proprietorship firm registered in Indore, Madhya Pradesh, specializing in pharmaceutical products, health care items, and related goods. We are authorized for both import and export operations under the Government of India's foreign trade regulations.
+                </p>
+                <p className="text-gray-600 leading-relaxed text-base md:text-lg">
+                  Our business is built on the foundation of regulatory compliance, quality assurance, and customer trust. With proper licensing and certifications, we operate across multiple product categories.
+                </p>
+              </div>
+
+              {/* Feature Pills */}
+              <div className="flex flex-wrap gap-3">
+                {["IEC Certified", "GST Registered", "Multi-Category", "Quality Assured"].map((feature, i) => (
+                  <div 
+                    key={feature}
+                    className="px-4 py-2 bg-gradient-to-r from-[#2A5C32]/10 to-[#0f7a3c]/10 rounded-full text-sm font-semibold text-[#2A5C32] border border-[#2A5C32]/20 hover:border-[#2A5C32] hover:shadow-lg transition-all duration-300 cursor-default"
+                    style={{ animationDelay: `${i * 100}ms` }}
+                  >
+                    {feature}
                   </div>
                 ))}
               </div>
@@ -116,167 +270,327 @@ export default function About() {
         </div>
       </section>
 
-      {/* Our Journey / Timeline */}
-      <section id="our-journey" className="py-16 md:py-24 scroll-mt-20 relative overflow-hidden" style={{ backgroundColor: "#f7f9f8" }}>
-        <div className="absolute top-0 right-0 w-96 h-96 bg-green-100 rounded-full opacity-10 -mr-48 -mt-48"></div>
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-green-100 rounded-full opacity-10 -ml-48 -mb-48"></div>
-        <div className="absolute top-1/3 left-10 w-72 h-72 bg-blue-100 rounded-full opacity-5 -translate-x-1/2"></div>
+      {/* Business Categories with Card Flip Animation */}
+      <section className="py-16 md:py-24 bg-gradient-to-br from-gray-50 via-white to-green-50/30 relative overflow-hidden">
+        {/* Background Decoration */}
+        <div className="absolute top-0 right-0 w-96 h-96 bg-green-100 rounded-full opacity-20 blur-3xl"></div>
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-100 rounded-full opacity-20 blur-3xl"></div>
+
         <div className="max-w-[1440px] mx-auto px-4 md:px-6 relative z-10">
-          <div className="text-center mb-10 md:mb-16">
-            <span className="text-xs font-bold uppercase tracking-widest px-4 py-2 rounded-full" style={{ color: "#2A5C32", backgroundColor: "#e8f0e9" }}>Our Story</span>
-            <h2 className="mt-5 md:mt-6 text-3xl md:text-4xl font-bold text-gray-900" style={{ fontFamily: "'Montserrat', sans-serif" }}>25 Years of Pharmaceutical Excellence</h2>
-            <p className="mt-3 text-sm md:text-base text-gray-600 max-w-3xl mx-auto">From a single formulation unit in Ahmedabad to a global pharmaceutical leader. Witness our remarkable journey of innovation, growth, and impact across 50+ countries.</p>
+          <div className="text-center mb-12 md:mb-16">
+            <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#2A5C32] bg-white px-4 py-2 rounded-full mb-6 shadow-md">
+              <Globe2 size={14} />
+              Our Business
+            </div>
+            <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-4" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+              Product Categories
+            </h2>
+            <p className="text-gray-600 max-w-2xl mx-auto text-lg">
+              Authorized to import and export across multiple categories
+            </p>
           </div>
-          <div className="relative lg:mt-16">
-            <div className="absolute left-1/2 top-0 bottom-0 w-1 bg-gradient-to-b from-[#2A5C32] via-[#2A5C32] to-transparent -translate-x-1/2 hidden lg:block" />
-            <div className="space-y-8 lg:space-y-12">
-              {timeline.map((item, i) => {
-                const colorSchemes = [
-                  { primary: "#2A5C32", light: "#e8f0e9", accent: "#0f7a3c" },
-                  { primary: "#1a6f5e", light: "#e0f5f1", accent: "#0d9488" },
-                  { primary: "#0369a1", light: "#e0f2fe", accent: "#0284c7" },
-                  { primary: "#7c2d12", light: "#fed7aa", accent: "#ea580c" },
-                  { primary: "#6b21a8", light: "#f3e8ff", accent: "#a855f7" },
-                  { primary: "#1e40af", light: "#dbeafe", accent: "#2563eb" },
-                  { primary: "#15803d", light: "#f0fdf4", accent: "#22c55e" },
-                ];
-                const colors = colorSchemes[i % colorSchemes.length];
-                const isLeftCard = i % 2 === 0;
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {businessCategories.map((category, i) => (
+              <div
+                key={category.name}
+                className="group bg-white rounded-2xl p-6 border-2 border-gray-100 hover:border-[#2A5C32] hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 cursor-pointer relative overflow-hidden"
+                style={{ animationDelay: `${i * 50}ms` }}
+              >
+                {/* Gradient overlay on hover */}
+                <div className="absolute inset-0 bg-gradient-to-br from-[#2A5C32]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                 
-                const TimelineCard = () => (
-                  <div className={`bg-white rounded-2xl border-2 p-6 lg:p-8 hover:shadow-lg transition-all duration-300 group cursor-pointer`} style={{ borderColor: colors.primary }}>
-                    <div className="flex items-center justify-between mb-4 gap-3">
-                      <span className="text-xs font-bold text-white px-3 py-1.5 rounded-full" style={{ backgroundColor: colors.primary }}>{item.year}</span>
-                      <Sparkles size={20} style={{ color: colors.primary }} />
-                    </div>
-                    <div
-                      className="font-bold text-xl text-gray-900 mb-3 transition-colors duration-300"
-                      style={{ fontFamily: "'Montserrat', sans-serif", color: colors.primary }}
+                <div className="relative z-10 flex items-center gap-4">
+                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#2A5C32] to-[#0f7a3c] flex items-center justify-center group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-lg">
+                    <category.icon className="text-white" size={24} />
+                  </div>
+                  <div className="flex-1">
+                    <span className="font-semibold text-gray-800 group-hover:text-[#2A5C32] transition-colors duration-300">
+                      {category.name}
+                    </span>
+                  </div>
+                  <CheckCircle size={20} className="text-[#2A5C32] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Values with 3D Card Effect */}
+      <section className="py-16 md:py-24 bg-white">
+        <div className="max-w-[1440px] mx-auto px-4 md:px-6">
+          <div className="text-center mb-12 md:mb-16">
+            <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#6B4226] bg-orange-50 px-4 py-2 rounded-full mb-6">
+              <Award size={14} />
+              What Drives Us
+            </div>
+            <h2 className="text-3xl md:text-5xl font-bold text-gray-900" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+              Our Core Values
+            </h2>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {values.map((v, i) => (
+              <div
+                key={v.title}
+                className="group relative bg-white rounded-3xl p-8 hover:shadow-2xl transition-all duration-500 border border-gray-100 hover:border-transparent overflow-hidden"
+                style={{ animationDelay: `${i * 100}ms` }}
+              >
+                {/* Gradient background on hover */}
+                <div className={`absolute inset-0 bg-gradient-to-br ${v.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}></div>
+                
+                <div className="relative z-10">
+                  <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${v.gradient} flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-lg`}>
+                    <v.icon size={28} className="text-white" />
+                  </div>
+                  
+                  <h3 className="font-bold text-xl text-gray-900 mb-3 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-gray-900 group-hover:to-gray-700 group-hover:bg-clip-text transition-all duration-300" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+                    {v.title}
+                  </h3>
+                  
+                  <p className="text-gray-600 leading-relaxed">
+                    {v.desc}
+                  </p>
+                </div>
+
+                {/* Corner decoration */}
+                <div className="absolute -bottom-10 -right-10 w-32 h-32 rounded-full bg-gradient-to-br from-gray-100 to-transparent opacity-50 group-hover:opacity-100 transition-opacity duration-500"></div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Company Details with Split Layout */}
+      <section className="py-16 md:py-24 bg-gradient-to-br from-gray-50 to-white">
+        <div className="max-w-[1440px] mx-auto px-4 md:px-6">
+          <div className="text-center mb-12 md:mb-16">
+            <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#6B4226] bg-white px-4 py-2 rounded-full mb-6 shadow-md">
+              <Building2 size={14} />
+              Company Information
+            </div>
+            <h2 className="text-3xl md:text-5xl font-bold text-gray-900" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+              Business Details
+            </h2>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8">
+            {/* Company Info Card */}
+            <div className="group bg-white rounded-3xl p-8 md:p-10 border-2 border-gray-100 hover:border-[#2A5C32] hover:shadow-2xl transition-all duration-500 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-[#2A5C32]/10 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              
+              <div className="relative z-10">
+                <div className="flex items-center gap-3 mb-8">
+                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#2A5C32] to-[#0f7a3c] flex items-center justify-center shadow-lg">
+                    <FileText className="text-white" size={24} />
+                  </div>
+                  <h3 className="font-bold text-2xl text-[#2A5C32]" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+                    Company Information
+                  </h3>
+                </div>
+
+                <div className="space-y-4">
+                  {[
+                    { label: "Legal Name", value: "Kushagra Chaturvedi" },
+                    { label: "Trade Name", value: "NATURA HEALTH CARE" },
+                    { label: "Constitution", value: "Proprietorship" },
+                    { label: "PAN", value: "CZGPC3313P" },
+                  ].map((item, i) => (
+                    <div 
+                      key={item.label}
+                      className="flex justify-between items-center py-4 border-b border-gray-100 last:border-0 hover:bg-gray-50 px-3 rounded-lg transition-all duration-300"
+                      style={{ animationDelay: `${i * 100}ms` }}
                     >
-                      {item.title}
+                      <span className="text-gray-600 font-medium">{item.label}:</span>
+                      <span className="font-bold text-gray-900">{item.value}</span>
                     </div>
-                    <p className="text-sm text-gray-600 leading-relaxed mb-4">{item.desc}</p>
-                    <div className="h-1 w-0 group-hover:w-full transition-all duration-300 rounded-full" style={{ backgroundColor: colors.accent }}></div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Address Card */}
+            <div className="group bg-gradient-to-br from-[#2A5C32] to-[#1a3c22] rounded-3xl p-8 md:p-10 text-white hover:shadow-2xl transition-all duration-500 relative overflow-hidden">
+              <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS1vcGFjaXR5PSIwLjAzIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-30"></div>
+              
+              <div className="relative z-10">
+                <div className="flex items-center gap-3 mb-8">
+                  <div className="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-lg">
+                    <MapPin className="text-white" size={24} />
                   </div>
-                );
-                
-                return (
-                  <div key={i} className="flex gap-4 lg:gap-12 items-stretch">
-                    {/* Left Card */}
-                    <div className="hidden lg:flex flex-1 flex-col justify-center">
-                      {isLeftCard ? <TimelineCard /> : null}
-                    </div>
-                    
-                    {/* Center Timeline Dot */}
-                    <div className="hidden lg:flex w-16 h-16 rounded-full items-center justify-center shrink-0 text-white font-bold text-lg z-20 ring-4 shadow-lg transition-shadow duration-300 hover:shadow-xl" style={{ backgroundColor: colors.primary, ringColor: colors.light }}>
-                      {i + 1}
-                    </div>
-                    
-                    {/* Right Card */}
-                    <div className="hidden lg:flex flex-1 flex-col justify-center">
-                      {!isLeftCard ? <TimelineCard /> : null}
-                    </div>
-                    
-                    {/* Mobile Timeline Card */}
-                    <div className="lg:hidden flex-1">
-                      <div className={`bg-white rounded-2xl border-2 p-5 shadow-md hover:shadow-xl transition-all`} style={{ borderColor: colors.primary }}>
-                        <div className="flex items-center justify-between gap-2 mb-4">
-                          <div className="flex items-center gap-2">
-                            <div className="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-bold" style={{ backgroundColor: colors.primary }}>
-                              {i + 1}
-                            </div>
-                            <span className="text-xs font-bold text-white px-2.5 py-1 rounded-full" style={{ backgroundColor: colors.primary }}>{item.year}</span>
-                          </div>
-                          <Sparkles size={18} style={{ color: colors.primary }} />
-                        </div>
-                        <div className="font-bold text-gray-900 mb-2 text-sm" style={{ fontFamily: "'Montserrat', sans-serif", color: colors.primary }}>{item.title}</div>
-                        <p className="text-xs text-gray-600 leading-relaxed">{item.desc}</p>
-                      </div>
-                    </div>
+                  <h3 className="font-bold text-2xl" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+                    Registered Address
+                  </h3>
+                </div>
+
+                <div className="space-y-4 mb-6">
+                  <p className="font-semibold text-lg">31 R.R. Avenue, Tulsi Nagar</p>
+                  <p className="text-green-100">Near Mahalaxmi Nagar, Nipania</p>
+                  <p className="text-green-100">Indore, Madhya Pradesh - 452010/452016</p>
+                </div>
+
+                <div className="space-y-3 pt-6 border-t border-white/20">
+                  <div className="flex items-center gap-3 group/item hover:translate-x-2 transition-transform duration-300">
+                    <Phone size={18} className="text-green-200" />
+                    <span className="text-green-100">+91 7000657818</span>
                   </div>
-                );
-              })}
+                  <div className="flex items-center gap-3 group/item hover:translate-x-2 transition-transform duration-300">
+                    <Mail size={18} className="text-green-200" />
+                    <span className="text-green-100 break-all">chandrayanherbal@gmail.com</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Values */}
-      <section className="py-16 md:py-20 bg-white">
-        <div className="max-w-[1440px] mx-auto px-4 md:px-6">
-          <div className="text-center mb-10 md:mb-14">
-            <span className="text-xs font-bold uppercase tracking-widest" style={{ color: "#6B4226" }}>What Drives Us</span>
-            <h2 className="mt-3 text-2xl md:text-3xl font-bold text-gray-900" style={{ fontFamily: "'Montserrat', sans-serif" }}>Our Values</h2>
-          </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-            {values.map((v) => (
-              <div key={v.title} className="bg-gray-50 rounded-2xl p-5 md:p-6 hover:shadow-md transition-all">
-                <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ backgroundColor: "#e8f0e9" }}>
-                  <v.icon size={22} style={{ color: "#2A5C32" }} />
-                </div>
-                <h3 className="font-bold text-gray-900 mb-2" style={{ fontFamily: "'Montserrat', sans-serif" }}>{v.title}</h3>
-                <p className="text-sm text-gray-500 leading-relaxed">{v.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Certifications with 3D Cards */}
+      <section id="certifications" className="py-16 md:py-24 bg-white scroll-mt-20 relative overflow-hidden">
+        {/* Background Elements */}
+        <div className="absolute top-1/4 left-0 w-72 h-72 bg-blue-100 rounded-full opacity-10 blur-3xl"></div>
+        <div className="absolute bottom-1/4 right-0 w-72 h-72 bg-green-100 rounded-full opacity-10 blur-3xl"></div>
 
-      {/* Leadership */}
-      <section id="leadership" className="py-16 md:py-20 scroll-mt-20" style={{ backgroundColor: "#f7f9f8" }}>
-        <div className="max-w-[1440px] mx-auto px-4 md:px-6">
-          <div className="text-center mb-10 md:mb-14">
-            <span className="text-xs font-bold uppercase tracking-widest" style={{ color: "#6B4226" }}>Our Team</span>
-            <h2 className="mt-3 text-2xl md:text-3xl font-bold text-gray-900" style={{ fontFamily: "'Montserrat', sans-serif" }}>Leadership Team</h2>
+        <div className="max-w-[1440px] mx-auto px-4 md:px-6 relative z-10">
+          <div className="text-center mb-12 md:mb-16">
+            <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#6B4226] bg-orange-50 px-4 py-2 rounded-full mb-6">
+              <Shield size={14} />
+              Our Credentials
+            </div>
+            <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-4" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+              Certifications & Licenses
+            </h2>
+            <p className="text-gray-600 max-w-2xl mx-auto text-lg">
+              Officially recognized and certified by Government of India
+            </p>
           </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-            {leadership.map((person) => (
-              <div key={person.name} className="bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg transition-all group">
-                <div className="h-52 md:h-56 overflow-hidden">
-                  <img loading="lazy" decoding="async" src={person.image} alt={person.name} className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500" />
-                </div>
-                <div className="p-4 md:p-5">
-                  <h3 className="font-bold text-gray-900 mb-0.5" style={{ fontFamily: "'Montserrat', sans-serif" }}>{person.name}</h3>
-                  <div className="text-xs font-semibold mb-3" style={{ color: "#2A5C32" }}>{person.role}</div>
-                  <p className="text-xs text-gray-500 leading-relaxed">{person.bio}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
-      {/* Certifications */}
-      <section id="certifications" className="py-16 md:py-20 bg-white scroll-mt-20">
-        <div className="max-w-[1440px] mx-auto px-4 md:px-6">
-          <div className="text-center mb-10 md:mb-14">
-            <span className="text-xs font-bold uppercase tracking-widest" style={{ color: "#6B4226" }}>Our Credentials</span>
-            <h2 className="mt-3 text-2xl md:text-3xl font-bold text-gray-900" style={{ fontFamily: "'Montserrat', sans-serif" }}>Certifications & Accreditations</h2>
-          </div>
-          <div className="flex flex-wrap justify-center gap-3 md:gap-5">
-            {["WHO-GMP", "ISO 9001:2015", "USFDA Registered", "EU GMP", "ISO 14001:2015", "PICS GMP"].map((cert) => (
+          <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            {certifications.map((cert, i) => (
               <div
-                key={cert}
-                className="flex items-center gap-2 md:gap-3 bg-gray-50 rounded-2xl px-4 md:px-6 py-3 md:py-4 border border-gray-100 hover:shadow-md transition-all"
+                key={cert.number}
+                className="group relative bg-gradient-to-br from-white to-gray-50 rounded-3xl p-8 md:p-10 border-2 border-gray-200 hover:border-transparent hover:shadow-2xl transition-all duration-500 overflow-hidden"
+                style={{ 
+                  animationDelay: `${i * 200}ms`,
+                  transform: 'perspective(1000px) rotateX(0deg)'
+                }}
               >
-                <CheckCircle size={20} style={{ color: "#2A5C32" }} />
-                <span className="font-bold text-sm md:text-base text-gray-800">{cert}</span>
+                {/* Animated gradient background */}
+                <div 
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                  style={{
+                    background: `linear-gradient(135deg, ${cert.color}15 0%, ${cert.color}05 100%)`
+                  }}
+                ></div>
+
+                {/* Decorative circles */}
+                <div className="absolute -top-20 -right-20 w-40 h-40 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-500" style={{ background: `radial-gradient(circle, ${cert.color}20 0%, transparent 70%)` }}></div>
+
+                <div className="relative z-10">
+                  <div className="flex items-start justify-between mb-6">
+                    <div 
+                      className="w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:rotate-6 transition-all duration-500"
+                      style={{ background: `linear-gradient(135deg, ${cert.color} 0%, ${cert.color}dd 100%)` }}
+                    >
+                      <cert.icon className="text-white" size={28} />
+                    </div>
+                    <div className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold">
+                      VERIFIED
+                    </div>
+                  </div>
+
+                  <h3 className="font-bold text-2xl text-gray-900 mb-4" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+                    {cert.name}
+                  </h3>
+
+                  <div className="space-y-3 mb-6">
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 rounded-full" style={{ backgroundColor: cert.color }}></div>
+                      <span className="text-sm text-gray-600">Certificate Number:</span>
+                      <span className="font-bold text-gray-900">{cert.number}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 rounded-full" style={{ backgroundColor: cert.color }}></div>
+                      <span className="text-sm text-gray-600">Issued on:</span>
+                      <span className="font-semibold text-gray-900">{cert.issueDate}</span>
+                    </div>
+                  </div>
+
+                  <div className="pt-4 border-t border-gray-200">
+                    <p className="text-sm text-gray-500 leading-relaxed">
+                      {cert.authority}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Shine effect on hover */}
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="py-14 md:py-16" style={{ background: "linear-gradient(135deg, #2A5C32 0%, #1a3c22 100%)" }}>
-        <div className="max-w-[1440px] mx-auto px-4 md:px-6 text-center text-white">
-          <h2 className="text-xl md:text-2xl font-bold mb-4" style={{ fontFamily: "'Montserrat', sans-serif" }}>Ready to Partner with Natura?</h2>
-          <p className="text-green-200 text-sm md:text-base mb-7 md:mb-8 max-w-lg mx-auto">Join hundreds of distributors and healthcare organisations that trust Natura Health Care.</p>
-          <Link href="/contact" className="inline-flex items-center gap-2 bg-white text-[#2A5C32] font-bold px-8 py-3.5 rounded-full transition-all duration-200 hover:bg-[#f0f7f1] hover:text-[#1f4b28] hover:shadow-lg">
-            Contact Us Today <ArrowRight size={16} />
-          </Link>
+      {/* CTA Section with Gradient Animation */}
+      <section className="py-20 md:py-24 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-[#2A5C32] via-[#1a3c22] to-[#2A5C32] animate-gradient-shift"></div>
+        
+        {/* Animated background elements */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-white/5 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-white/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+        </div>
+
+        <div className="max-w-[1440px] mx-auto px-4 md:px-6 text-center relative z-10">
+          <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-green-200 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full mb-6">
+            <Sparkles size={14} />
+            Get in Touch
+          </div>
+
+          <h2 className="text-3xl md:text-5xl font-bold mb-6 text-white" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+            Ready to Partner with{" "}
+            <span className="bg-gradient-to-r from-green-200 to-green-100 bg-clip-text text-transparent">
+              Natura Health Care?
+            </span>
+          </h2>
+          
+          <p className="text-green-100 text-lg md:text-xl mb-10 max-w-2xl mx-auto leading-relaxed">
+            Connect with us for pharmaceutical and health care product requirements. We're here to serve you with quality and compliance.
+          </p>
+
+          <div className="flex flex-wrap justify-center gap-4">
+            <Link href="/contact" className="group px-10 py-5 bg-white text-[#2A5C32] font-bold rounded-full transition-all duration-300 hover:bg-green-50 hover:shadow-2xl hover:shadow-white/20 inline-flex items-center gap-3 text-lg">
+              Contact Us Today
+              <ArrowRight size={20} className="group-hover:translate-x-2 transition-transform duration-300" />
+            </Link>
+            <Link href="/products" className="px-10 py-5 border-2 border-white/30 backdrop-blur-sm text-white rounded-full font-bold hover:bg-white/10 transition-all duration-300 inline-flex items-center gap-3 text-lg">
+              View Products
+            </Link>
+          </div>
+        </div>
+
+        {/* Bottom wave */}
+        <div className="absolute bottom-0 left-0 right-0">
+          <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full">
+            <path d="M0 120L60 110C120 100 240 80 360 70C480 60 600 60 720 65C840 70 960 80 1080 80C1200 80 1320 70 1380 65L1440 60V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0Z" fill="white"/>
+          </svg>
         </div>
       </section>
+
+      {/* Add custom styles for animations */}
+      <style jsx>{`
+        @keyframes gradient-shift {
+          0%, 100% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+        }
+        .animate-gradient-shift {
+          background-size: 200% 200%;
+          animation: gradient-shift 15s ease infinite;
+        }
+      `}</style>
     </div>
   );
 }
