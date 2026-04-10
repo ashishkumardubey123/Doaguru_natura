@@ -58,10 +58,10 @@ const heroSlides = [
 const stats = [
   { value: "50+", label: "Countries Served", icon: Globe2 },
   { value: "500+", label: "Product SKUs", icon: Pill },
-  { value: "25+", label: "Years Experience", icon: Award },
-  { value: "3,500+", label: "Employees Worldwide", icon: Users },
-  { value: "8", label: "Manufacturing Plants", icon: FlaskConical },
-  { value: "120+", label: "R&D Molecules", icon: TrendingUp },
+  { value: "2025", label: "Registered", icon: Award },
+  { value: "9+", label: "Categories", icon: Users },
+  { value: "IEC", label: "Certified", icon: FlaskConical },
+  { value: "GST", label: "Compliant", icon: TrendingUp },
 ];
 
 const therapyDescriptions = {
@@ -110,7 +110,7 @@ function HeroSlider() {
   }, [previous]);
 
   return (
-    <div className="relative w-full h-[480px] sm:h-[520px] md:h-[600px] overflow-hidden bg-gray-900">
+    <div className="relative w-full h-[520px] sm:h-[580px] md:h-[680px] overflow-hidden bg-[#020b06]">
       { heroSlides.map((s, i) => {
         const isCurrent = i === current;
         const isPrevious = i === previous;
@@ -136,13 +136,16 @@ function HeroSlider() {
                 style={ { "--hero-zoom-duration": `${HERO_ZOOM_MS}ms` } }
               />
             </div>
-            <div className="absolute inset-0" style={ { background: "linear-gradient(90deg, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.45) 60%, rgba(0,0,0,0.2) 100%)" } } />
+            {/* Premium cinematic gradient overlay */}
+            <div className="absolute inset-0" style={ { background: "linear-gradient(100deg, rgba(2,11,6,0.92) 0%, rgba(10,31,14,0.7) 45%, rgba(0,0,0,0.25) 100%)" } } />
+            {/* Subtle dot grid overlay */}
+            <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
           </div>
         );
       }) }
 
       <div className="relative z-10 max-w-[1440px] mx-auto px-4 sm:px-6 h-full flex items-center">
-        <div className="relative w-full max-w-2xl min-h-[280px] sm:min-h-[320px] text-white">
+        <div className="relative w-full max-w-3xl min-h-[300px] sm:min-h-[360px] text-white">
           { heroSlides.map((s, i) => {
             const isCurrent = i === current;
             const isPrevious = i === previous;
@@ -158,20 +161,20 @@ function HeroSlider() {
                   pointerEvents: isCurrent ? "auto" : "none",
                 } }
               >
-                <span className="inline-block text-[10px] sm:text-xs font-bold uppercase tracking-widest px-3 sm:px-4 py-1.5 rounded-full mb-3 sm:mb-5 w-fit" style={ { backgroundColor: "rgba(42,92,50,0.85)", border: "1px solid rgba(255,255,255,0.2)" } }>
+                <span className="inline-block text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] px-4 sm:px-5 py-2 rounded-full mb-4 sm:mb-6 w-fit backdrop-blur-md shadow-lg" style={ { backgroundColor: "rgba(42,92,50,0.7)", border: "1px solid rgba(255,255,255,0.15)" } }>
                   { s.tag }
                 </span>
-                <h1 className="mb-3 sm:mb-5 leading-tight" style={ { fontFamily: "'Montserrat', sans-serif", fontWeight: 800, fontSize: "clamp(1.55rem, 5vw, 3.2rem)", whiteSpace: "pre-line" } }>
+                <h1 className="mb-4 sm:mb-6 leading-[1.1]" style={ { fontFamily: "'Montserrat', sans-serif", fontWeight: 800, fontSize: "clamp(1.8rem, 5.5vw, 3.8rem)", whiteSpace: "pre-line", letterSpacing: "-0.02em" } }>
                   { s.headline }
                 </h1>
-                <p className="hidden sm:block text-gray-300 text-sm sm:text-base leading-relaxed mb-6 sm:mb-8 max-w-xl">
+                <p className="hidden sm:block text-green-100/70 text-sm sm:text-lg leading-relaxed mb-8 sm:mb-10 max-w-xl font-light">
                   { s.subtext }
                 </p>
-                <div className="flex gap-2 sm:gap-4 flex-wrap">
-                  <Link href={ s.ctaPath } className="inline-flex items-center gap-2 font-semibold px-5 sm:px-7 py-3 sm:py-3.5 text-sm sm:text-base rounded-full transition-all duration-200 bg-[#2A5C32] text-white hover:bg-[#234e2a] hover:shadow-lg active:scale-95">
-                    { s.cta } <ArrowRight size={ 15 } />
+                <div className="flex gap-3 sm:gap-4 flex-wrap">
+                  <Link href={ s.ctaPath } className="inline-flex items-center gap-2.5 font-bold px-6 sm:px-8 py-3.5 sm:py-4 text-sm sm:text-base rounded-full transition-all duration-300 bg-white text-[#1a3c22] hover:bg-green-50 hover:shadow-xl hover:shadow-white/10 active:scale-95">
+                    { s.cta } <ArrowRight size={ 16 } />
                   </Link>
-                  <Link href={ s.ctaSecondaryPath } className="inline-flex items-center gap-2 border-2 border-white/50 text-white font-semibold px-5 sm:px-7 py-3 sm:py-3.5 text-sm sm:text-base rounded-full hover:border-white hover:bg-white/10 transition-all active:scale-95">
+                  <Link href={ s.ctaSecondaryPath } className="inline-flex items-center gap-2 border border-white/30 text-white font-semibold px-6 sm:px-8 py-3.5 sm:py-4 text-sm sm:text-base rounded-full hover:border-white/60 hover:bg-white/10 backdrop-blur-sm transition-all duration-300 active:scale-95">
                     { s.ctaSecondary }
                   </Link>
                 </div>
@@ -181,14 +184,15 @@ function HeroSlider() {
         </div>
       </div>
 
-      <div className="absolute bottom-5 sm:bottom-8 left-1/2 -translate-x-1/2 z-10 flex items-center gap-3 sm:gap-4">
-        <button onClick={ prev } className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center text-white transition-all backdrop-blur-sm active:scale-90" aria-label="Previous slide"><ChevronLeft size={ 17 } /></button>
-        <div className="flex gap-2">
+      {/* Premium slide controls */}
+      <div className="absolute bottom-6 sm:bottom-10 left-1/2 -translate-x-1/2 z-10 flex items-center gap-4 sm:gap-5 bg-black/20 backdrop-blur-md rounded-full px-4 py-2.5 border border-white/10">
+        <button onClick={ prev } className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white/10 hover:bg-white/25 flex items-center justify-center text-white transition-all duration-300 active:scale-90" aria-label="Previous slide"><ChevronLeft size={ 16 } /></button>
+        <div className="flex gap-2.5">
           { heroSlides.map((_, i) => (
-            <button key={ i } onClick={ () => goTo(i) } className="rounded-full transition-all" style={ { width: i === current ? "22px" : "7px", height: "7px", backgroundColor: i === current ? "#fff" : "rgba(255,255,255,0.4)" } } aria-label={ `Go to slide ${i + 1}` } />
+            <button key={ i } onClick={ () => goTo(i) } className="rounded-full transition-all duration-500" style={ { width: i === current ? "28px" : "8px", height: "8px", backgroundColor: i === current ? "#fff" : "rgba(255,255,255,0.3)" } } aria-label={ `Go to slide ${i + 1}` } />
           )) }
         </div>
-        <button onClick={ next } className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center text-white transition-all backdrop-blur-sm active:scale-90" aria-label="Next slide"><ChevronRight size={ 17 } /></button>
+        <button onClick={ next } className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white/10 hover:bg-white/25 flex items-center justify-center text-white transition-all duration-300 active:scale-90" aria-label="Next slide"><ChevronRight size={ 16 } /></button>
       </div>
     </div>
   );
@@ -323,15 +327,18 @@ export default function Home() {
       <HeroSlider />
 
       {/* ── Stats Strip ── */}
-      <div style={ { backgroundColor: "#2A5C32" } } className="py-5 sm:py-6">
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-6">
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-x-4 gap-y-5 sm:gap-6">
+      <div className="relative bg-[#020b06] py-8 sm:py-10 overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#1d522a]/30 via-transparent to-transparent" />
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 relative z-10">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-6">
             { stats.map((s) => (
-              <div key={ s.label } className="flex items-center gap-2.5 sm:gap-3 text-white">
-                <s.icon size={ 20 } className="text-green-300 shrink-0" />
+              <div key={ s.label } className="flex items-center gap-3 sm:gap-4 text-white group">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-[#2A5C32]/30 transition-colors duration-300 shrink-0">
+                  <s.icon size={ 20 } className="text-green-400" />
+                </div>
                 <div>
-                  <div className="text-lg sm:text-xl font-bold leading-tight" style={ { fontFamily: "'Montserrat', sans-serif" } }>{ s.value }</div>
-                  <div className="text-[11px] sm:text-xs text-green-300 leading-tight">{ s.label }</div>
+                  <div className="text-xl sm:text-2xl font-extrabold leading-tight tracking-tight" style={ { fontFamily: "'Montserrat', sans-serif" } }>{ s.value }</div>
+                  <div className="text-[10px] sm:text-xs text-green-300/60 leading-tight uppercase tracking-wider font-semibold">{ s.label }</div>
                 </div>
               </div>
             )) }
@@ -340,43 +347,43 @@ export default function Home() {
       </div>
 
       {/* ── Company Intro ── */}
-      <section className="py-14 sm:py-20 md:py-24 bg-white">
+      <section className="py-16 sm:py-24 md:py-32 bg-[#fafcfa]">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6">
-          <div className="grid lg:grid-cols-2 gap-10 sm:gap-12 lg:gap-16 items-center">
+          <div className="grid lg:grid-cols-2 gap-12 sm:gap-16 lg:gap-20 items-center">
             <div>
-              <span className="text-xs font-bold uppercase tracking-widest" style={ { color: "#6B4226" } }>About Natura</span>
-              <h2 className="mt-3 mb-4 sm:mb-5 text-gray-900 leading-tight" style={ { fontFamily: "'Montserrat', sans-serif", fontWeight: 800, fontSize: "clamp(1.6rem, 4vw, 2.5rem)" } }>
+              <span className="text-xs font-extrabold uppercase tracking-[0.2em] bg-[#2A5C32]/10 text-[#2A5C32] px-4 py-2 rounded-full">About Natura</span>
+              <h2 className="mt-6 mb-5 sm:mb-6 text-gray-900 leading-[1.1]" style={ { fontFamily: "'Montserrat', sans-serif", fontWeight: 800, fontSize: "clamp(1.8rem, 4.5vw, 3rem)", letterSpacing: "-0.02em" } }>
                 25+ Years of Pharmaceutical<br />
-                <span style={ { color: "#2A5C32" } }>Excellence & Trust</span>
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#2A5C32] to-emerald-600">Excellence & Trust</span>
               </h2>
-              <p className="text-gray-600 leading-relaxed mb-4 sm:mb-5 text-sm sm:text-base">
+              <p className="text-gray-600 leading-relaxed mb-5 text-sm sm:text-[16px] font-light">
                 Natura Health Care is a globally recognised pharmaceutical company specialising in the development, manufacturing, and export of high-quality medicines. With 8 WHO-GMP certified facilities and a portfolio spanning 500+ formulations, we serve healthcare systems in 50+ countries.
               </p>
-              <p className="text-gray-600 leading-relaxed mb-7 sm:mb-8 text-sm sm:text-base">
+              <p className="text-gray-500 leading-relaxed mb-8 sm:mb-10 text-sm sm:text-[16px] font-light">
                 Our mission is simple: to ensure that life-saving, quality medicines are accessible and affordable to patients across the world, from emerging markets in Africa to regulated markets in Europe and North America.
               </p>
-              <div className="flex gap-3 sm:gap-4 flex-wrap">
-                <Link href="/about" className="inline-flex items-center gap-2 text-white font-semibold px-6 sm:px-7 py-3 sm:py-3.5 text-sm sm:text-base rounded-full bg-[#2A5C32] transition-all duration-200 hover:bg-[#234e2a] hover:shadow-lg active:scale-95">
-                  Our Story <ArrowRight size={ 15 } />
+              <div className="flex gap-4 sm:gap-5 flex-wrap">
+                <Link href="/about" className="inline-flex items-center gap-2 text-white font-bold px-7 sm:px-8 py-3.5 sm:py-4 text-sm sm:text-base rounded-full bg-[#1a3c22] transition-all duration-300 hover:bg-[#234e2a] hover:shadow-xl hover:shadow-[#2A5C32]/15 active:scale-95">
+                  Our Story <ArrowRight size={ 16 } />
                 </Link>
-                <Link href="/contact" className="inline-flex items-center gap-2 font-semibold px-6 sm:px-7 py-3 sm:py-3.5 text-sm sm:text-base rounded-full border-2 text-[#2A5C32] border-[#2A5C32] hover:bg-[#2A5C32] hover:text-white transition-all duration-200 active:scale-95">
+                <Link href="/contact" className="inline-flex items-center gap-2 font-bold px-7 sm:px-8 py-3.5 sm:py-4 text-sm sm:text-base rounded-full border-2 text-[#2A5C32] border-[#2A5C32]/30 hover:border-[#2A5C32] hover:bg-[#2A5C32] hover:text-white transition-all duration-300 active:scale-95">
                   Partner With Us
                 </Link>
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-3 sm:gap-4 mt-2 lg:mt-0">
-              <div className="rounded-xl sm:rounded-2xl overflow-hidden h-36 sm:h-44 md:h-48">
-                <img loading="lazy" decoding="async" src="/media/About1.webp" className="w-full h-full object-cover" alt="Lab" />
+            <div className="grid grid-cols-2 gap-4 sm:gap-5 mt-2 lg:mt-0">
+              <div className="rounded-2xl sm:rounded-3xl overflow-hidden h-40 sm:h-48 md:h-56 group shadow-lg shadow-black/5">
+                <img loading="lazy" decoding="async" src="/media/About1.webp" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="Lab" />
               </div>
-              <div className="rounded-xl sm:rounded-2xl overflow-hidden h-36 sm:h-44 md:h-48 sm:mt-8">
-                <img loading="lazy" decoding="async" src="/media/about2.webp" className="w-full h-full object-cover" alt="Research" />
+              <div className="rounded-2xl sm:rounded-3xl overflow-hidden h-40 sm:h-48 md:h-56 sm:mt-10 group shadow-lg shadow-black/5">
+                <img loading="lazy" decoding="async" src="/media/about2.webp" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="Research" />
               </div>
-              <div className="rounded-xl sm:rounded-2xl overflow-hidden h-36 sm:h-44 md:h-48 sm:-mt-4">
-                <img loading="lazy" decoding="async" src="/media/about3.webp" className="w-full h-full object-cover" alt="Manufacturing" />
+              <div className="rounded-2xl sm:rounded-3xl overflow-hidden h-40 sm:h-48 md:h-56 sm:-mt-6 group shadow-lg shadow-black/5">
+                <img loading="lazy" decoding="async" src="/media/about3.webp" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="Manufacturing" />
               </div>
-              <div className="rounded-xl sm:rounded-2xl overflow-hidden h-36 sm:h-44 md:h-48">
-                <img loading="lazy" decoding="async" src="/media/about4.webp" className="w-full h-full object-cover" alt="Quality" />
+              <div className="rounded-2xl sm:rounded-3xl overflow-hidden h-40 sm:h-48 md:h-56 group shadow-lg shadow-black/5">
+                <img loading="lazy" decoding="async" src="/media/about4.webp" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="Quality" />
               </div>
             </div>
           </div>
@@ -384,14 +391,14 @@ export default function Home() {
       </section>
 
       {/* ── Therapy Areas ── */}
-      <section style={ { backgroundColor: "#f7f9f8" } } className="py-14 sm:py-20 md:py-24">
+      <section className="py-16 sm:py-24 md:py-32 bg-white">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6">
-          <div className="text-center mb-10 sm:mb-14">
-            <span className="text-xs font-bold uppercase tracking-widest" style={ { color: "#6B4226" } }>Our Portfolio</span>
-            <h2 className="mt-3 text-gray-900" style={ { fontFamily: "'Montserrat', sans-serif", fontWeight: 800, fontSize: "clamp(1.4rem, 3.5vw, 2.2rem)" } }>
+          <div className="text-center mb-12 sm:mb-16">
+            <span className="text-xs font-extrabold uppercase tracking-[0.2em] bg-[#2A5C32]/10 text-[#2A5C32] px-4 py-2 rounded-full">Our Portfolio</span>
+            <h2 className="mt-6 text-gray-900" style={ { fontFamily: "'Montserrat', sans-serif", fontWeight: 800, fontSize: "clamp(1.6rem, 4vw, 2.8rem)", letterSpacing: "-0.02em" } }>
               Therapy Areas We Excel In
             </h2>
-            <p className="mt-3 text-gray-500 max-w-xl mx-auto text-xs sm:text-sm leading-relaxed px-2">
+            <p className="mt-4 text-gray-500 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed px-2 font-light">
               Our diverse therapeutic portfolio ensures we can address the most critical healthcare needs across multiple disease areas worldwide.
             </p>
           </div>
@@ -401,24 +408,24 @@ export default function Home() {
               const count = allProducts.filter((p) => p.therapy === f.id).length;
               const desc = therapyDescriptions[f.id] ?? "";
               return (
-                <div key={ f.id } className="rounded-2xl p-4 sm:p-5 border border-gray-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group bg-white">
-                  <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center mb-3 sm:mb-4 transition-colors duration-300" style={ { backgroundColor: colors.bg } }>
-                    <f.icon size={ 18 } style={ { color: colors.text } } className="group-hover:scale-110 transition-transform" />
+                <div key={ f.id } className="rounded-3xl p-5 sm:p-6 border border-gray-100/80 hover:shadow-2xl hover:shadow-[#2A5C32]/8 transition-all duration-500 group bg-white">
+                  <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center mb-4 sm:mb-5 transition-all duration-300 ring-4 ring-white shadow-sm group-hover:shadow-md" style={ { backgroundColor: colors.bg } }>
+                    <f.icon size={ 20 } style={ { color: colors.text } } className="group-hover:scale-110 transition-transform duration-500" />
                   </div>
-                  <h3 className="font-bold text-gray-900 mb-1.5 leading-snug" style={ { fontFamily: "'Montserrat', sans-serif", fontSize: "0.9rem" } }>{ f.label }</h3>
-                  <p className="text-xs text-gray-500 leading-relaxed mb-4 line-clamp-3">{ desc }</p>
+                  <h3 className="font-extrabold text-gray-900 mb-2 leading-snug tracking-tight" style={ { fontFamily: "'Montserrat', sans-serif", fontSize: "0.95rem" } }>{ f.label }</h3>
+                  <p className="text-xs text-gray-500 leading-relaxed mb-5 line-clamp-3 font-light">{ desc }</p>
                   <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-bold px-2.5 py-1 rounded-full" style={ { backgroundColor: colors.bg, color: colors.text } }>{ count } Products</span>
-                    <Link href={ `/products#${f.id}` } className="text-[11px] font-semibold flex items-center gap-1" style={ { color: colors.text } }>
-                      Browse <ArrowRight size={ 11 } />
+                    <span className="text-[11px] font-bold px-3 py-1.5 rounded-xl shadow-sm border border-black/5" style={ { backgroundColor: colors.bg, color: colors.text } }>{ count } Products</span>
+                    <Link href={ `/products#${f.id}` } className="text-[11px] font-bold flex items-center gap-1 hover:gap-2 transition-all duration-300" style={ { color: colors.text } }>
+                      Browse <ArrowRight size={ 12 } />
                     </Link>
                   </div>
                 </div>
               );
             }) }
           </div>
-          <div className="text-center mt-8 sm:mt-10">
-            <Link href="/products" className="inline-flex items-center gap-2 font-semibold px-7 sm:px-8 py-3 sm:py-3.5 text-sm sm:text-base rounded-full border-2 border-[#2A5C32] text-[#2A5C32] hover:bg-[#2A5C32] hover:text-white transition-all duration-200 active:scale-95">
+          <div className="text-center mt-10 sm:mt-14">
+            <Link href="/products" className="inline-flex items-center gap-2 font-bold px-8 sm:px-10 py-3.5 sm:py-4 text-sm sm:text-base rounded-full border-2 border-[#2A5C32]/30 text-[#2A5C32] hover:border-[#2A5C32] hover:bg-[#2A5C32] hover:text-white transition-all duration-300 active:scale-95">
               View Full Portfolio <ArrowRight size={ 16 } />
             </Link>
           </div>
@@ -426,58 +433,58 @@ export default function Home() {
       </section>
 
       {/* ── Featured Products ── */}
-      <section className="py-14 sm:py-20 md:py-24 bg-white border-t border-gray-100">
+      <section className="py-16 sm:py-24 md:py-32 bg-[#fafcfa] border-t border-gray-100">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6">
-          <div className="flex items-end justify-between mb-8 sm:mb-12">
+          <div className="flex items-end justify-between mb-10 sm:mb-14">
             <div>
-              <span className="text-xs font-bold uppercase tracking-widest" style={ { color: "#6B4226" } }>Our Products</span>
-              <h2 className="mt-3 text-gray-900" style={ { fontFamily: "'Montserrat', sans-serif", fontWeight: 800, fontSize: "clamp(1.4rem, 3.5vw, 2.2rem)" } }>
+              <span className="text-xs font-extrabold uppercase tracking-[0.2em] bg-[#2A5C32]/10 text-[#2A5C32] px-4 py-2 rounded-full">Our Products</span>
+              <h2 className="mt-6 text-gray-900" style={ { fontFamily: "'Montserrat', sans-serif", fontWeight: 800, fontSize: "clamp(1.6rem, 4vw, 2.8rem)", letterSpacing: "-0.02em" } }>
                 Featured Formulations
               </h2>
             </div>
-            <Link href="/products" className="hidden md:flex items-center gap-1 text-sm font-semibold" style={ { color: "#2A5C32" } }>
+            <Link href="/products" className="hidden md:flex items-center gap-1.5 text-sm font-bold hover:gap-3 transition-all duration-300" style={ { color: "#2A5C32" } }>
               View All <ArrowRight size={ 15 } />
             </Link>
           </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
             { allProducts.filter((p) => p.image).slice(0, 4).map((product) => {
               const colors = therapyColorMap[product.therapy] ?? { bg: "#f0f7f1", text: "#2A5C32", dot: "#4caf50" };
               const TherapyIcon = therapyFilters.find((f) => f.id === product.therapy)?.icon;
               const dosageLabel = dosageFilters.find((f) => f.id === product.dosageForm)?.label ?? product.dosageForm;
               return (
-                <div key={ product.id } className="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 flex flex-col">
+                <div key={ product.id } className="group bg-white rounded-3xl border border-gray-100/80 overflow-hidden hover:shadow-2xl hover:shadow-[#2A5C32]/8 transition-all duration-500 flex flex-col">
                   { product.image ? (
-                    <div className="relative h-36 sm:h-40 overflow-hidden shrink-0">
-                      <img loading="lazy" src={ product.image } alt={ product.name } className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
-                      { product.tag && <span className="absolute top-3 left-3 text-[10px] font-bold px-2.5 py-1 rounded-full text-white shadow-sm" style={{ backgroundColor: product.tagColor ?? "#2A5C32" }}>{ product.tag }</span> }
+                    <div className="relative h-40 sm:h-44 overflow-hidden shrink-0">
+                      <img loading="lazy" src={ product.image } alt={ product.name } className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-gray-900/10 to-transparent pointer-events-none" />
+                      { product.tag && <span className="absolute top-3 left-3 text-[10px] font-bold px-3 py-1.5 rounded-xl text-white shadow-sm backdrop-blur-md" style={{ backgroundColor: product.tagColor ?? "#2A5C32" }}>{ product.tag }</span> }
                     </div>
                   ) : (
-                    <div className="h-36 sm:h-40 flex items-center justify-center relative" style={{ backgroundColor: colors.bg }}>
+                    <div className="h-40 sm:h-44 flex items-center justify-center relative" style={{ backgroundColor: colors.bg }}>
                       <div className="w-16 h-16 rounded-2xl flex items-center justify-center shadow-md" style={{ backgroundColor: colors.text + "18" }}>
                         { TherapyIcon && <TherapyIcon size={ 32 } style={{ color: colors.text }} /> }
                       </div>
-                      { product.tag && <span className="absolute top-3 left-3 text-[10px] font-bold px-2.5 py-1 rounded-full text-white" style={{ backgroundColor: product.tagColor ?? "#2A5C32" }}>{ product.tag }</span> }
-                      <span className="absolute top-3 right-3 text-[10px] font-semibold px-2.5 py-1 rounded-full" style={{ backgroundColor: colors.text + "18", color: colors.text }}>
+                      { product.tag && <span className="absolute top-3 left-3 text-[10px] font-bold px-3 py-1.5 rounded-xl text-white" style={{ backgroundColor: product.tagColor ?? "#2A5C32" }}>{ product.tag }</span> }
+                      <span className="absolute top-3 right-3 text-[10px] font-bold px-3 py-1.5 rounded-xl" style={{ backgroundColor: colors.text + "18", color: colors.text }}>
                         { dosageLabel.split("&")[0].trim() }
                       </span>
                     </div>
                   ) }
-                  <div className="p-4 sm:p-5 flex flex-col flex-1">
-                    <h3 className="font-bold text-gray-900 mb-1 leading-snug group-hover:text-[#2A5C32] transition-colors text-sm sm:text-base" style={{ fontFamily: "'Montserrat', sans-serif" }}>{ product.name }</h3>
-                    <div className="text-[11px] text-gray-400 mb-2">{ product.genericName }</div>
-                    <p className="text-xs text-gray-500 leading-relaxed mb-3 flex-1 line-clamp-2">{ product.description }</p>
-                    <div className="flex items-center justify-between mt-auto pt-3 border-t border-gray-100">
-                      <span className="text-[11px] font-medium text-gray-500">Pack: <span className="font-semibold text-gray-700">{ product.packaging }</span></span>
-                      <Link href="/products" className="flex items-center gap-1 text-xs font-semibold" style={{ color: colors.text }}>Details <ArrowRight size={ 12 } /></Link>
+                  <div className="p-5 sm:p-6 flex flex-col flex-1">
+                    <h3 className="font-extrabold text-gray-900 mb-1 leading-snug group-hover:text-[#2A5C32] transition-colors text-sm sm:text-base tracking-tight" style={{ fontFamily: "'Montserrat', sans-serif" }}>{ product.name }</h3>
+                    <div className="text-[11px] text-gray-400 font-medium mb-2">{ product.genericName }</div>
+                    <p className="text-xs text-gray-500 leading-relaxed mb-4 flex-1 line-clamp-2 font-light">{ product.description }</p>
+                    <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-100/80">
+                      <span className="text-[11px] text-gray-400 font-medium">Pack: <span className="font-bold text-gray-700">{ product.packaging }</span></span>
+                      <Link href="/products" className="flex items-center gap-1 text-xs font-bold hover:gap-2 transition-all duration-300" style={{ color: colors.text }}>Details <ArrowRight size={ 12 } /></Link>
                     </div>
                   </div>
                 </div>
               );
             }) }
           </div>
-          <div className="mt-7 text-center md:hidden">
-            <Link href="/products" className="inline-flex items-center gap-1 text-sm font-semibold" style={ { color: "#2A5C32" } }>
+          <div className="mt-8 text-center md:hidden">
+            <Link href="/products" className="inline-flex items-center gap-1 text-sm font-bold" style={ { color: "#2A5C32" } }>
               View All Products <ArrowRight size={ 15 } />
             </Link>
           </div>
@@ -485,34 +492,34 @@ export default function Home() {
       </section>
 
       {/* ── Global Presence ── */}
-      <section className="py-14 sm:py-20 md:py-24 bg-white">
+      <section className="py-16 sm:py-24 md:py-32 bg-white">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6">
-          <div className="grid lg:grid-cols-2 gap-10 sm:gap-12 lg:gap-16 items-center">
+          <div className="grid lg:grid-cols-2 gap-12 sm:gap-16 lg:gap-20 items-center">
             <div>
-              <span className="text-xs font-bold uppercase tracking-widest" style={ { color: "#6B4226" } }>Worldwide Operations</span>
-              <h2 className="mt-3 mb-4 sm:mb-5 text-gray-900 leading-tight" style={ { fontFamily: "'Montserrat', sans-serif", fontWeight: 800, fontSize: "clamp(1.7rem, 4.5vw, 3rem)" } }>
+              <span className="text-xs font-extrabold uppercase tracking-[0.2em] bg-[#2A5C32]/10 text-[#2A5C32] px-4 py-2 rounded-full">Worldwide Operations</span>
+              <h2 className="mt-6 mb-5 sm:mb-6 text-gray-900 leading-[1.1]" style={ { fontFamily: "'Montserrat', sans-serif", fontWeight: 800, fontSize: "clamp(1.8rem, 4.5vw, 3rem)", letterSpacing: "-0.02em" } }>
                 A Truly Global{ " " }
-                <span style={ { color: "#2A5C32" } }>Pharmaceutical Partner</span>
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#2A5C32] to-emerald-600">Pharmaceutical Partner</span>
               </h2>
-              <p className="text-gray-600 leading-relaxed mb-8 sm:mb-10 text-sm sm:text-base lg:text-lg">
+              <p className="text-gray-600 leading-relaxed mb-10 sm:mb-12 text-sm sm:text-base lg:text-lg font-light">
                 With strategic regional offices, a robust distribution network, and regulatory approvals across continents, Natura Health Care delivers quality medicines where they are needed most.
               </p>
 
-              <div className="space-y-3 sm:space-y-4 mb-8 sm:mb-10">
+              <div className="space-y-3 sm:space-y-4 mb-10 sm:mb-12">
                 { [
                   { region: "Asia-Pacific", count: "15+", desc: "India, China, Vietnam, Philippines, Indonesia, Thailand +9" },
                   { region: "Middle East & Africa", count: "20+", desc: "UAE, Saudi Arabia, Kenya, Nigeria, South Africa +15", active: true },
                   { region: "Europe", count: "8+", desc: "Germany, UK, France, Netherlands, Poland +3" },
                   { region: "Americas", count: "10+", desc: "USA, Brazil, Mexico, Colombia, Canada +5" },
                 ].map((item, i) => (
-                  <div key={ i } className={ `flex items-center justify-between p-4 sm:p-5 rounded-2xl border transition-all ${item.active ? 'border-[#2A5C32] bg-[#f0f7f1] shadow-sm' : 'border-gray-100 bg-gray-50 hover:border-gray-200'}` }>
-                    <div className="flex items-center gap-3 sm:gap-4">
-                      <div className={ `w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm shrink-0 ${item.active ? 'bg-[#2A5C32] text-white' : 'bg-[#1a3c22] text-white'}` }>
+                  <div key={ i } className={ `flex items-center justify-between p-5 sm:p-6 rounded-3xl border transition-all duration-300 ${item.active ? 'border-[#2A5C32]/30 bg-[#f0f7f1] shadow-lg shadow-[#2A5C32]/5' : 'border-gray-100 bg-gray-50/50 hover:border-gray-200 hover:shadow-sm'}` }>
+                    <div className="flex items-center gap-4 sm:gap-5">
+                      <div className={ `w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center font-extrabold text-sm sm:text-base shrink-0 ${item.active ? 'bg-[#2A5C32] text-white shadow-md shadow-[#2A5C32]/30' : 'bg-[#1a3c22] text-white'}` }>
                         { item.count }
                       </div>
                       <div>
-                        <h4 className={ `font-bold text-base sm:text-lg ${item.active ? 'text-[#2A5C32]' : 'text-gray-900'}` }>{ item.region }</h4>
-                        <p className="text-[11px] sm:text-xs text-gray-500 mt-0.5 sm:mt-1 leading-snug">{ item.desc }</p>
+                        <h4 className={ `font-extrabold text-base sm:text-lg tracking-tight ${item.active ? 'text-[#2A5C32]' : 'text-gray-900'}` } style={{ fontFamily: "'Montserrat', sans-serif" }}>{ item.region }</h4>
+                        <p className="text-[11px] sm:text-xs text-gray-500 mt-0.5 sm:mt-1 leading-snug font-light">{ item.desc }</p>
                       </div>
                     </div>
                     <MapPin size={ 18 } className={ `shrink-0 ml-2 ${item.active ? 'text-[#2A5C32]' : 'text-gray-300'}` } />
@@ -520,25 +527,26 @@ export default function Home() {
                 )) }
               </div>
 
-              <Link href="/global-presence" className="inline-flex items-center gap-2 text-white font-semibold px-7 sm:px-8 py-3.5 sm:py-4 text-sm sm:text-base rounded-full transition-all duration-200 bg-[#1a3c22] hover:bg-[#234e2a] hover:shadow-lg active:scale-95">
+              <Link href="/global-presence" className="inline-flex items-center gap-2 text-white font-bold px-8 sm:px-10 py-4 sm:py-4.5 text-sm sm:text-base rounded-full transition-all duration-300 bg-[#1a3c22] hover:bg-[#234e2a] hover:shadow-xl hover:shadow-[#2A5C32]/15 active:scale-95">
                 Explore Global Presence <ArrowRight size={ 17 } />
               </Link>
             </div>
 
             {/* DARK MAP CONTAINER */}
-            <div className="relative rounded-3xl overflow-hidden bg-[#1a3c22] p-6 sm:p-8 lg:p-12 text-center shadow-2xl mt-2 lg:mt-0">
-              <div className="text-green-400 text-xs font-bold uppercase tracking-widest mb-1.5">Global Network</div>
-              <div className="text-white text-3xl sm:text-4xl font-bold mb-6 sm:mb-10" style={ { fontFamily: "'Montserrat', sans-serif" } }>50+ Countries</div>
+            <div className="relative rounded-[2.5rem] overflow-hidden bg-[#020b06] p-8 sm:p-10 lg:p-14 text-center shadow-2xl shadow-black/20 mt-2 lg:mt-0 border border-white/5">
+              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#1d522a]/20 via-transparent to-transparent" />
+              <div className="text-green-400/80 text-xs font-extrabold uppercase tracking-[0.2em] mb-2 relative z-10">Global Network</div>
+              <div className="text-white text-4xl sm:text-5xl font-extrabold mb-8 sm:mb-12 tracking-tight relative z-10" style={ { fontFamily: "'Montserrat', sans-serif" } }>50+ Countries</div>
 
-              <div className="relative aspect-[4/3] bg-[#0f2415] rounded-2xl border border-white/10 overflow-hidden mb-5 sm:mb-8 flex items-center justify-center">
-                {/* YAHAN NAYA MAP COMPONENT ADD KIYA GAYA HAI */}
+              <div className="relative aspect-[4/3] bg-[#0a1f0e] rounded-3xl border border-white/5 overflow-hidden mb-6 sm:mb-8 flex items-center justify-center">
+                <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
                 <HomeDarkMap mapDots={activeMapDots} isLoading={loadingDB || loadingShipments} />
               </div>
 
-              <div className="flex flex-wrap justify-center gap-x-4 gap-y-2 text-xs text-green-400 font-medium px-2">
+              <div className="flex flex-wrap justify-center gap-x-5 gap-y-2.5 text-xs text-green-400/70 font-semibold px-2 relative z-10">
                 { ["Americas", "Europe", "Middle East & Africa", "Asia-Pacific"].map((r) => (
-                  <div key={ r } className="flex items-center gap-1">
-                    <div className="w-1.5 h-1.5 rounded-full bg-green-400" />
+                  <div key={ r } className="flex items-center gap-1.5">
+                    <div className="w-2 h-2 rounded-full bg-green-400/60 shadow-sm shadow-green-400/30" />
                     { r }
                   </div>
                 )) }
@@ -549,41 +557,43 @@ export default function Home() {
       </section>
 
       {/* ── Manufacturing Highlight ── */}
-      <section className="py-14 sm:py-20 md:py-24 relative overflow-hidden" style={ { backgroundColor: "#1a3c22" } }>
-        <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-gradient-to-r from-[#1a3c22] via-[#1a3c22]/90 to-transparent" />
-        </div>
+      <section className="py-16 sm:py-24 md:py-32 relative overflow-hidden bg-[#020b06]">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-[#1d522a]/30 via-transparent to-transparent" />
+        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 relative z-10">
-          <div className="grid lg:grid-cols-2 gap-10 sm:gap-12 lg:gap-16 items-center">
+          <div className="grid lg:grid-cols-2 gap-12 sm:gap-16 lg:gap-20 items-center">
             <div className="text-white">
-              <h2 className="mt-3 mb-4 sm:mb-5 leading-tight" style={ { fontFamily: "'Montserrat', sans-serif", fontWeight: 800, fontSize: "clamp(1.7rem, 4.5vw, 3rem)" } }>
+              <span className="text-xs font-extrabold uppercase tracking-[0.2em] bg-emerald-400/10 text-emerald-400 px-4 py-2 rounded-full">Certifications</span>
+              <h2 className="mt-6 mb-5 sm:mb-6 leading-[1.1]" style={ { fontFamily: "'Montserrat', sans-serif", fontWeight: 800, fontSize: "clamp(1.8rem, 4.5vw, 3rem)", letterSpacing: "-0.02em" } }>
                 Globally Certified &amp; <br />Compliance-Ready
               </h2>
-              <p className="text-gray-300 leading-relaxed mb-3 max-w-lg text-sm sm:text-base lg:text-lg">
+              <p className="text-green-100/60 leading-relaxed mb-4 max-w-lg text-sm sm:text-base lg:text-lg font-light">
                 Natura Health Care holds internationally recognised certifications for the trading and export of Herbal Nutra &amp; Food Supplements — issued by{ " " }
                 <span className="text-green-300 font-semibold">IPQ Management System</span>, accredited with{ " " }
                 <span className="text-green-300 font-semibold">UKAF CERT LIMITED</span> (UK).
               </p>
-              <p className="text-green-400/80 text-xs sm:text-sm mb-7 sm:mb-8 max-w-lg">
+              <p className="text-green-400/50 text-xs sm:text-sm mb-8 sm:mb-10 max-w-lg font-light">
                 Issued: 18 Feb 2026 &nbsp;|&nbsp; Valid until: 17 Feb 2029<br />Surveillance audits: Feb 2027 &amp; Feb 2028
               </p>
-              <Link href="/certifications" className="inline-flex items-center gap-2 text-white font-semibold px-7 sm:px-8 py-3.5 sm:py-4 text-sm sm:text-base rounded-full transition-all duration-200 bg-[#2A5C32] hover:bg-[#234e2a] hover:shadow-lg active:scale-95">
+              <Link href="/certifications" className="inline-flex items-center gap-2 text-[#1a3c22] font-bold px-8 sm:px-10 py-4 text-sm sm:text-base rounded-full transition-all duration-300 bg-white hover:bg-green-50 hover:shadow-xl hover:shadow-white/10 active:scale-95">
                 View Our Certifications <ArrowRight size={ 17 } />
               </Link>
             </div>
 
-            <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:gap-6 mt-4 lg:mt-0">
+            <div className="grid grid-cols-2 gap-4 sm:gap-5 lg:gap-6 mt-4 lg:mt-0">
               { [
                 { icon: Shield, label: "HACCP Certified", certNo: "HACCP-26021810", sub: "Hazard Analysis & Critical Control Points" },
                 { icon: Award, label: "U.S. FDA Compliant", certNo: "FDA-26021809", sub: "FDA Regulatory Guideline Compliance" },
                 { icon: FlaskConical, label: "HALAL Certified", certNo: "HALAL-26021811", sub: "Islamic Shariah Law — Lawful for Muslim Consumption" },
                 { icon: Activity, label: "UKAF Accredited", certNo: "UKAF-CB-021", sub: "IPQ Management System, London UK" },
               ].map((item) => (
-                <div key={ item.certNo } className="bg-white/5 backdrop-blur-md rounded-2xl p-4 sm:p-6 border border-white/10 hover:bg-white/10 transition-colors">
-                  <item.icon size={ 22 } className="text-green-400 mb-3 sm:mb-4" />
-                  <div className="text-white font-bold text-sm sm:text-base mb-1 leading-snug" style={ { fontFamily: "'Montserrat', sans-serif" } }>{ item.label }</div>
-                  <div className="text-gray-400 text-[10px] sm:text-xs mb-2 leading-snug">{ item.sub }</div>
-                  <div className="text-green-400 text-[10px] sm:text-xs font-mono tracking-wide">{ item.certNo }</div>
+                <div key={ item.certNo } className="bg-white/[0.03] backdrop-blur-md rounded-3xl p-5 sm:p-7 border border-white/10 hover:bg-white/[0.08] hover:border-white/20 transition-all duration-500 group">
+                  <div className="w-10 h-10 rounded-2xl bg-emerald-400/10 flex items-center justify-center mb-4 sm:mb-5 group-hover:bg-emerald-400/20 transition-colors duration-300">
+                    <item.icon size={ 20 } className="text-green-400" />
+                  </div>
+                  <div className="text-white font-extrabold text-sm sm:text-base mb-1.5 leading-snug tracking-tight" style={ { fontFamily: "'Montserrat', sans-serif" } }>{ item.label }</div>
+                  <div className="text-green-100/40 text-[10px] sm:text-xs mb-3 leading-snug font-light">{ item.sub }</div>
+                  <div className="text-green-400/60 text-[10px] sm:text-xs font-mono tracking-wider">{ item.certNo }</div>
                 </div>
               )) }
             </div>
@@ -592,23 +602,27 @@ export default function Home() {
       </section>
 
       {/* ── Partners Marquee ── */}
-      <section className="py-12 sm:py-16 bg-white overflow-hidden border-y border-gray-100">
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 mb-6 sm:mb-8 text-center">
-          <h3 className="text-xs sm:text-sm font-bold uppercase tracking-widest text-gray-500">Trusted By Global Partners & Investors</h3>
+      <section className="py-14 sm:py-20 bg-[#fafcfa] overflow-hidden border-y border-gray-100/80">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 mb-8 sm:mb-10 text-center">
+          <span className="text-xs font-extrabold uppercase tracking-[0.2em] bg-[#2A5C32]/10 text-[#2A5C32] px-4 py-2 rounded-full">Our Network</span>
+          <h3 className="mt-5 text-lg sm:text-xl font-extrabold text-gray-900 tracking-tight" style={{ fontFamily: "'Montserrat', sans-serif" }}>Trusted By Global Partners & Investors</h3>
         </div>
         {exporters.length > 0 && (
           <div className="relative flex overflow-x-hidden">
+            {/* Fade edges */}
+            <div className="absolute left-0 top-0 bottom-0 w-24 sm:w-40 bg-gradient-to-r from-[#fafcfa] to-transparent z-10 pointer-events-none" />
+            <div className="absolute right-0 top-0 bottom-0 w-24 sm:w-40 bg-gradient-to-l from-[#fafcfa] to-transparent z-10 pointer-events-none" />
             <div className="animate-marquee whitespace-nowrap flex items-center gap-6 sm:gap-8 py-4">
               { [...exporters, ...exporters].map((partner, i) => (
-                <div key={ i } className="w-40 sm:w-56 h-16 sm:h-24 bg-white rounded-xl border border-gray-100 shadow-sm flex items-center justify-center shrink-0 mx-3 sm:mx-4 px-2">
-                  <span className="text-sm font-bold text-gray-400 text-center line-clamp-2 whitespace-normal break-words" style={ { fontFamily: "'Montserrat', sans-serif" } } title={partner}>{ partner }</span>
+                <div key={ i } className="w-44 sm:w-60 h-18 sm:h-24 bg-white rounded-2xl border border-gray-100/80 shadow-sm hover:shadow-lg hover:shadow-[#2A5C32]/5 flex items-center justify-center shrink-0 mx-3 sm:mx-4 px-4 transition-all duration-300">
+                  <span className="text-sm font-bold text-gray-500 text-center line-clamp-2 whitespace-normal break-words" style={ { fontFamily: "'Montserrat', sans-serif" } } title={partner}>{ partner }</span>
                 </div>
               )) }
             </div>
             <div className="absolute top-0 animate-marquee2 whitespace-nowrap flex items-center gap-6 sm:gap-8 py-4">
               { [...exporters, ...exporters].map((partner, i) => (
-                <div key={ i } className="w-40 sm:w-56 h-16 sm:h-24 bg-white rounded-xl border border-gray-100 shadow-sm flex items-center justify-center shrink-0 mx-3 sm:mx-4 px-2">
-                  <span className="text-sm font-bold text-gray-400 text-center line-clamp-2 whitespace-normal break-words" style={ { fontFamily: "'Montserrat', sans-serif" } } title={partner}>{ partner }</span>
+                <div key={ i } className="w-44 sm:w-60 h-18 sm:h-24 bg-white rounded-2xl border border-gray-100/80 shadow-sm hover:shadow-lg hover:shadow-[#2A5C32]/5 flex items-center justify-center shrink-0 mx-3 sm:mx-4 px-4 transition-all duration-300">
+                  <span className="text-sm font-bold text-gray-500 text-center line-clamp-2 whitespace-normal break-words" style={ { fontFamily: "'Montserrat', sans-serif" } } title={partner}>{ partner }</span>
                 </div>
               )) }
             </div>
@@ -679,23 +693,23 @@ export default function Home() {
       </section> */}
 
       {/* ── Purpose Banner ── */}
-      <section className="py-14 sm:py-20 md:py-24 bg-gray-50">
+      <section className="py-16 sm:py-24 md:py-32 bg-white">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6">
-          <div className="grid lg:grid-cols-2 gap-10 sm:gap-12 lg:gap-16 items-center">
-            <div className="relative rounded-3xl overflow-hidden h-64 sm:h-80 md:h-[400px]">
-              <img loading="lazy" decoding="async" src="/media/OurPurpose.webp" alt="Patient care" className="w-full h-full object-cover" />
-              <div className="absolute inset-0" style={ { background: "linear-gradient(0deg, rgba(42,92,50,0.5) 0%, transparent 60%)" } } />
+          <div className="grid lg:grid-cols-2 gap-12 sm:gap-16 lg:gap-20 items-center">
+            <div className="relative rounded-[2.5rem] overflow-hidden h-72 sm:h-96 md:h-[460px] group shadow-2xl shadow-black/10">
+              <img loading="lazy" decoding="async" src="/media/OurPurpose.webp" alt="Patient care" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+              <div className="absolute inset-0" style={ { background: "linear-gradient(0deg, rgba(2,11,6,0.6) 0%, rgba(42,92,50,0.2) 40%, transparent 70%)" } } />
             </div>
             <div>
-              <span className="text-xs font-bold uppercase tracking-widest" style={ { color: "#6B4226" } }>Our Purpose</span>
-              <h2 className="mt-3 mb-4 sm:mb-5 text-gray-900 leading-tight" style={ { fontFamily: "'Montserrat', sans-serif", fontWeight: 800, fontSize: "clamp(1.6rem, 4vw, 2.4rem)" } }>
-                &quot;Improving Lives Through<br /><span style={ { color: "#2A5C32" } }>Accessible Medicine&quot;</span>
+              <span className="text-xs font-extrabold uppercase tracking-[0.2em] bg-[#2A5C32]/10 text-[#2A5C32] px-4 py-2 rounded-full">Our Purpose</span>
+              <h2 className="mt-6 mb-5 sm:mb-6 text-gray-900 leading-[1.1]" style={ { fontFamily: "'Montserrat', sans-serif", fontWeight: 800, fontSize: "clamp(1.8rem, 4.5vw, 3rem)", letterSpacing: "-0.02em" } }>
+                &quot;Improving Lives Through<br /><span className="bg-clip-text text-transparent bg-gradient-to-r from-[#2A5C32] to-emerald-600">Accessible Medicine&quot;</span>
               </h2>
-              <p className="text-gray-600 leading-relaxed mb-5 sm:mb-6 text-sm sm:text-base">At the heart of everything we do is the patient. We believe that high-quality, affordable medicines should be accessible to everyone, regardless of geography or economic status.</p>
-              <p className="text-gray-600 leading-relaxed mb-7 sm:mb-8 text-sm sm:text-base">By maintaining the highest quality standards while optimizing our cost structures, we ensure that our medicines reach the patients who need them most — in both developed and emerging markets.</p>
-              <div className="flex gap-3 sm:gap-4 flex-wrap">
-                <Link href="/contact" className="inline-flex items-center gap-2 text-white font-semibold px-6 sm:px-7 py-3 sm:py-3.5 text-sm sm:text-base rounded-full bg-[#2A5C32] transition-all duration-200 hover:bg-[#234e2a] hover:shadow-lg active:scale-95">Partner With Us <ArrowRight size={ 15 } /></Link>
-                <Link href="/products" className="inline-flex items-center gap-2 font-semibold px-6 sm:px-7 py-3 sm:py-3.5 text-sm sm:text-base rounded-full border-2 border-[#2A5C32] text-[#2A5C32] hover:bg-[#2A5C32] hover:text-white transition-all duration-200 active:scale-95">Our Products</Link>
+              <p className="text-gray-600 leading-relaxed mb-5 sm:mb-6 text-sm sm:text-[16px] font-light">At the heart of everything we do is the patient. We believe that high-quality, affordable medicines should be accessible to everyone, regardless of geography or economic status.</p>
+              <p className="text-gray-500 leading-relaxed mb-8 sm:mb-10 text-sm sm:text-[16px] font-light">By maintaining the highest quality standards while optimizing our cost structures, we ensure that our medicines reach the patients who need them most — in both developed and emerging markets.</p>
+              <div className="flex gap-4 sm:gap-5 flex-wrap">
+                <Link href="/contact" className="inline-flex items-center gap-2 text-white font-bold px-7 sm:px-8 py-3.5 sm:py-4 text-sm sm:text-base rounded-full bg-[#1a3c22] transition-all duration-300 hover:bg-[#234e2a] hover:shadow-xl hover:shadow-[#2A5C32]/15 active:scale-95">Partner With Us <ArrowRight size={ 16 } /></Link>
+                <Link href="/products" className="inline-flex items-center gap-2 font-bold px-7 sm:px-8 py-3.5 sm:py-4 text-sm sm:text-base rounded-full border-2 border-[#2A5C32]/30 text-[#2A5C32] hover:border-[#2A5C32] hover:bg-[#2A5C32] hover:text-white transition-all duration-300 active:scale-95">Our Products</Link>
               </div>
             </div>
           </div>
@@ -703,13 +717,15 @@ export default function Home() {
       </section>
 
       {/* ── CTA Banner ── */}
-      <section className="py-12 sm:py-14 md:py-16" style={ { background: "linear-gradient(135deg, #2A5C32 0%, #1a3c22 100%)" } }>
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 text-center text-white">
-          <h2 className="mb-3 sm:mb-4" style={ { fontFamily: "'Montserrat', sans-serif", fontWeight: 800, fontSize: "clamp(1.35rem, 4vw, 2.2rem)" } }>Ready to Establish a Supply Partnership?</h2>
-          <p className="text-green-200 mb-6 sm:mb-8 max-w-xl mx-auto text-sm sm:text-base px-2">Whether you&apos;re a healthcare distributor, import-export company, or institutional buyer — we have the capacity and portfolio to serve your needs.</p>
-          <div className="flex justify-center gap-3 sm:gap-4 flex-wrap">
-            <Link href="/contact" className="inline-flex items-center gap-2 bg-white text-[#2A5C32] font-bold px-7 sm:px-8 py-3 sm:py-3.5 text-sm sm:text-base rounded-full transition-all duration-200 hover:bg-[#f0f7f1] hover:shadow-lg active:scale-95">Start a Conversation <ArrowRight size={ 15 } /></Link>
-            <Link href="/products" className="inline-flex items-center gap-2 border-2 border-white/50 text-white font-semibold px-7 sm:px-8 py-3 sm:py-3.5 text-sm sm:text-base rounded-full hover:border-white hover:bg-white/10 transition-all active:scale-95">Browse Products</Link>
+      <section className="py-16 sm:py-20 md:py-24 relative overflow-hidden bg-[#020b06]">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,_var(--tw-gradient-stops))] from-[#1d522a]/40 via-transparent to-transparent" />
+        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 text-center text-white relative z-10">
+          <h2 className="mb-4 sm:mb-5" style={ { fontFamily: "'Montserrat', sans-serif", fontWeight: 800, fontSize: "clamp(1.6rem, 4.5vw, 3rem)", letterSpacing: "-0.02em" } }>Ready to Establish a Supply Partnership?</h2>
+          <p className="text-green-100/50 mb-8 sm:mb-10 max-w-2xl mx-auto text-sm sm:text-lg px-2 font-light leading-relaxed">Whether you&apos;re a healthcare distributor, import-export company, or institutional buyer — we have the capacity and portfolio to serve your needs.</p>
+          <div className="flex justify-center gap-4 sm:gap-5 flex-wrap">
+            <Link href="/contact" className="inline-flex items-center gap-2.5 bg-white text-[#1a3c22] font-bold px-8 sm:px-10 py-4 sm:py-4.5 text-sm sm:text-base rounded-full transition-all duration-300 hover:bg-green-50 hover:shadow-xl hover:shadow-white/10 active:scale-95">Start a Conversation <ArrowRight size={ 16 } /></Link>
+            <Link href="/products" className="inline-flex items-center gap-2 border border-white/20 text-white font-semibold px-8 sm:px-10 py-4 sm:py-4.5 text-sm sm:text-base rounded-full hover:border-white/50 hover:bg-white/10 backdrop-blur-sm transition-all duration-300 active:scale-95">Browse Products</Link>
           </div>
         </div>
       </section>

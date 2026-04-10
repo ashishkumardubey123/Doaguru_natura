@@ -8,28 +8,37 @@ export default function Footer() {
   const [email, setEmail] = useState("");
 
   return (
-    <footer style={ { backgroundColor: "#0f2415", fontFamily: "'Inter', sans-serif" } } className="text-white">
-      {/* Top accent bar */ }
-      <div style={ { backgroundColor: "#2A5C32" } } className="h-1" />
+    <footer className="text-white relative overflow-hidden" style={ { backgroundColor: "#020b06", fontFamily: "'Inter', sans-serif" } }>
+      {/* Ambient glow */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-[#1d522a]/15 via-transparent to-transparent pointer-events-none" />
+      <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
 
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 mb-14">
-          {/* Brand */ }
-          <div className="lg:col-span-2 -mt-10  lg:pr-8">
-            <div className="flex items-center  gap-3 mb-">
-              <img src="./Logo/Footerlogo.webp" className="w-[350px] -ml-8   " alt="logo" />
+      {/* Top accent bar */}
+      <div className="h-px bg-gradient-to-r from-transparent via-[#2A5C32] to-transparent" />
+
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-10 relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 mb-16">
+          {/* Brand */}
+          <div className="lg:col-span-2 lg:pr-10">
+            <div className="flex items-center gap-3 mb-1 -mt-8">
+              <img src="./Logo/Footerlogo.webp" className="w-[320px] -ml-6" alt="logo" />
             </div>
-            <p className="text-gray-400 text-sm leading-relaxed mb-6 max-w-sm">
+            <p className="text-green-100/40 text-sm leading-relaxed mb-7 max-w-sm font-light">
               Committed to improving global health through the development, manufacturing, and distribution of high-quality pharmaceutical products across 50+ countries.
             </p>
             <div className="flex gap-3 mb-8">
-              { [Linkedin, Twitter, Facebook, Instagram].map((Icon, i) => (
+              { [
+                { Icon: Linkedin, href: "#" },
+                { Icon: Twitter, href: "#" },
+                { Icon: Facebook, href: "#" },
+                { Icon: Instagram, href: "#" },
+              ].map(({ Icon, href }, i) => (
                 <a
                   key={ i }
-                  href="#"
-                  className="w-9 h-9 rounded-full flex items-center justify-center text-gray-400 hover:text-white hover:bg-[#2A5C32] transition-all border border-gray-700"
+                  href={ href }
+                  className="w-10 h-10 rounded-2xl flex items-center justify-center text-green-100/40 hover:text-white hover:bg-[#2A5C32]/30 transition-all duration-300 border border-white/10 hover:border-[#2A5C32]/40"
                 >
-                  <Icon size={ 15 } />
+                  <Icon size={ 16 } />
                 </a>
               )) }
             </div>
@@ -38,7 +47,7 @@ export default function Footer() {
               { ["WHO-GMP", "ISO 9001:2015", "USFDA", "EU GMP", "ISO 14001"].map((cert) => (
                 <span
                   key={ cert }
-                  className="text-[10px] font-bold px-2.5 py-1 rounded border border-green-800 text-green-400 tracking-wider uppercase"
+                  className="text-[9px] font-bold px-3 py-1.5 rounded-xl border border-white/10 text-green-400/50 tracking-[0.15em] uppercase bg-white/[0.02]"
                 >
                   { cert }
                 </span>
@@ -46,20 +55,20 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Quick Links */ }
+          {/* Quick Links */}
           <div>
-            <h4 className="text-sm font-bold uppercase tracking-widest text-green-400 mb-5">Company</h4>
-            <ul className="space-y-3">
+            <h4 className="text-[11px] font-extrabold uppercase tracking-[0.2em] text-green-400/70 mb-6">Company</h4>
+            <ul className="space-y-3.5">
               { [
                 { label: "About Us", path: "/about" },
                 { label: "Our Products", path: "/products" },
-                { label: "Manufacturing", path: "/manufacturing" },
+                { label: "Services", path: "/services" },
                 { label: "Who We Serve", path: "/who-we-serve" },
                 { label: "Global Presence", path: "/global-presence" },
               ].map((item) => (
                 <li key={ item.label }>
-                  <Link href={ item.path } className="text-sm text-gray-400 hover:text-white transition-colors flex items-center gap-1 group">
-                    <ArrowRight size={ 11 } className="opacity-0 group-hover:opacity-100 transition-opacity text-green-400" />
+                  <Link href={ item.path } className="text-[13px] text-green-100/40 hover:text-white transition-all duration-300 flex items-center gap-1.5 group font-medium">
+                    <ArrowRight size={ 11 } className="opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all duration-300 text-green-400" />
                     { item.label }
                   </Link>
                 </li>
@@ -67,10 +76,10 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Contact Us */ }
+          {/* Contact Us */}
           <div>
-            <h4 className="text-sm font-bold uppercase tracking-widest text-green-400 mb-5">Contact Us</h4>
-            <ul className="space-y-3">
+            <h4 className="text-[11px] font-extrabold uppercase tracking-[0.2em] text-green-400/70 mb-6">Contact Us</h4>
+            <ul className="space-y-3.5">
               { [
                 { label: "General Inquiry", path: "/contact?type=general", color: "#2A5C32" },
                 { label: "Business Partnership", path: "/contact?type=partnership", color: "#1d6fa4" },
@@ -78,8 +87,8 @@ export default function Footer() {
                 { label: "Supplier Registration", path: "/contact?type=supplier", color: "#7c3aed" },
               ].map((item) => (
                 <li key={ item.label }>
-                  <Link href={ item.path } className="text-sm text-gray-400 hover:text-white transition-colors flex items-center gap-2 group">
-                    <span className="w-1.5 h-1.5 rounded-full shrink-0" style={ { backgroundColor: item.color } } />
+                  <Link href={ item.path } className="text-[13px] text-green-100/40 hover:text-white transition-all duration-300 flex items-center gap-2.5 group font-medium">
+                    <span className="w-2 h-2 rounded-full shrink-0 ring-2 ring-black/20" style={ { backgroundColor: item.color } } />
                     { item.label }
                   </Link>
                 </li>
@@ -87,60 +96,47 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Contact + Newsletter */ }
+          {/* Contact + Newsletter */}
           <div>
-            <h4 className="text-sm font-bold uppercase tracking-widest text-green-400 mb-5">Connect With Us</h4>
-            <ul className="space-y-4 mb-7">
+            <h4 className="text-[11px] font-extrabold uppercase tracking-[0.2em] text-green-400/70 mb-6">Connect With Us</h4>
+            <ul className="space-y-4 mb-8">
               <li className="flex gap-3 items-start">
-                <MapPin size={ 15 } className="text-green-500 mt-0.5 shrink-0" />
-                <span className="text-sm text-gray-400 leading-relaxed">
+                <div className="w-8 h-8 rounded-xl bg-white/[0.03] border border-white/10 flex items-center justify-center shrink-0 mt-0.5">
+                  <MapPin size={ 14 } className="text-green-400/60" />
+                </div>
+                <span className="text-[13px] text-green-100/40 leading-relaxed font-light">
                   Life Science Park, Pharma Boulevard,<br />
                   Zurich, Switzerland CH-8000
                 </span>
               </li>
               <li className="flex gap-3 items-center">
-                <Phone size={ 15 } className="text-green-500 shrink-0" />
-                <a
-                  href="tel:+919098140945"
-
-                >
-
-                  <span className="text-sm text-gray-400">+91 9098140945</span>
+                <div className="w-8 h-8 rounded-xl bg-white/[0.03] border border-white/10 flex items-center justify-center shrink-0">
+                  <Phone size={ 14 } className="text-green-400/60" />
+                </div>
+                <a href="tel:+919098140945">
+                  <span className="text-[13px] text-green-100/40 hover:text-white transition-colors font-medium">+91 9098140945</span>
                 </a>
               </li>
               <li className="flex gap-3 items-center">
-                <Mail size={ 15 } className="text-green-500 shrink-0" />
-                <a href="mailto:info@naturahealthcare.com" >
-                  <span className="text-sm text-gray-400">info@naturahealthcare.com</span>
+                <div className="w-8 h-8 rounded-xl bg-white/[0.03] border border-white/10 flex items-center justify-center shrink-0">
+                  <Mail size={ 14 } className="text-green-400/60" />
+                </div>
+                <a href="mailto:info@naturahealthcare.com">
+                  <span className="text-[13px] text-green-100/40 hover:text-white transition-colors font-medium">info@naturahealthcare.com</span>
                 </a>
               </li>
             </ul>
 
-            <h4 className="text-xs font-bold uppercase tracking-widest text-green-400 mb-3">Newsletter</h4>
-            <div className="flex gap-2">
-              <input
-                type="email"
-                value={ email }
-                onChange={ (e) => setEmail(e.target.value) }
-                placeholder="Your email"
-                className="flex-1 min-w-0 bg-white/5 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-[#2A5C32] transition-colors"
-              />
-              <button
-                className="px-4 py-2 rounded-lg text-white text-sm font-semibold transition-all hover:opacity-90"
-                style={ { backgroundColor: "#6B4226" } }
-              >
-                →
-              </button>
-            </div>
+            
           </div>
         </div>
 
-        {/* Bottom Bar */ }
-        <div className="border-t border-gray-800 pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-xs text-gray-500">
-            © { new Date().getFullYear() }  <Link href={ "/admin" } > Natura Health Care. Designed by </Link> <a href="https://doaguru.com/" target="blank"> <span className="font-semibold">DOAGuru InfoSystems</span></a>
+        {/* Bottom Bar */}
+        <div className="border-t border-white/5 pt-7 flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="text-[11px] text-green-100/25 font-light">
+            © { new Date().getFullYear() }  <Link href={ "/admin" }> Natura Health Care. Designed by </Link> <a href="https://doaguru.com/" target="blank"> <span className="font-bold text-green-100/40 hover:text-white transition-colors">DOAGuru InfoSystems</span></a>
           </p>
-          <div className="flex flex-wrap justify-center gap-4">
+          <div className="flex flex-wrap justify-center gap-5">
             { [
               { label: "Privacy Policy", path: "/privacy-policy" },
               { label: "Terms of Use", path: "/terms-conditions" },
@@ -149,7 +145,7 @@ export default function Footer() {
               <Link
                 key={ item.label }
                 href={ item.path }
-                className="text-xs text-gray-500 hover:text-gray-300 transition-colors"
+                className="text-[11px] text-green-100/25 hover:text-green-100/60 transition-colors font-medium"
               >
                 { item.label }
               </Link>

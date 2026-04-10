@@ -17,6 +17,32 @@ import {
 import { useProductContext } from "@/Context/ProductContext";
 
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
+const useScrollAnimation = () => {
+  const elementRef = useRef(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (elementRef.current) {
+      observer.observe(elementRef.current);
+    }
+
+    return () => {
+      if (elementRef.current) observer.unobserve(elementRef.current);
+    };
+  }, []);
+
+  return [elementRef, isVisible];
+};
+
 function getTherapyLabel(id) {
   return therapyFilters.find((f) => f.id === id)?.label ?? id;
 }
@@ -51,28 +77,32 @@ function BrochureButton({ iconOnly = false, fileUrl }) {
 function ProductCardGrid({ product, onShowImage }) {
   const colors = therapyColorMap[product.therapy] ?? { bg: "#f0f7f1", text: "#2A5C32", dot: "#4caf50" };
   const TherapyIcon = therapyFilters.find((f) => f.id === product.therapy)?.icon;
+  const [ref, isVisible] = useScrollAnimation();
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group flex flex-col h-full overflow-hidden relative">
-      {/* top accent bar */}
+    <div 
+      ref={ref}
+      className={`bg-white rounded-3xl border border-gray-100/80 hover:shadow-2xl hover:shadow-[#2A5C32]/10 transition-all duration-500 group flex flex-col h-full overflow-hidden relative ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
+    >
+      {/* top ambient glow bar */}
       <div
-        className="h-1 w-full absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"
-        style={ { backgroundColor: colors.dot } }
+        className="h-1.5 w-full absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10"
+        style={ { background: `linear-gradient(90deg, ${colors.dot}, transparent)` } }
       />
 
       {/* Image OR icon area */}
       { product.image ? (
-        <div className="relative h-44 overflow-hidden shrink-0">
+        <div className="relative h-48 overflow-hidden shrink-0 bg-gray-50/50">
           <img
             src={ product.image }
             alt={ product.name }
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-700"
           />
           {/* gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-gray-900/10 to-transparent pointer-events-none" />
           { product.tag && (
             <span
-              className="absolute top-3 left-3 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full text-white shadow-sm z-10"
+              className="absolute top-4 left-4 text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-xl text-white shadow-sm z-10 backdrop-blur-md"
               style={ { backgroundColor: product.tagColor ?? "#2A5C32" } }
             >
               { product.tag }
@@ -81,21 +111,21 @@ function ProductCardGrid({ product, onShowImage }) {
         </div>
       ) : null }
 
-      <div className="p-5 flex flex-col flex-1 mt-0.5">
+      <div className="p-6 flex flex-col flex-1">
         {/* Header row — only show icon+tag when no image */}
         { !product.image && (
-          <div className="flex items-start justify-between mb-4">
+          <div className="flex items-start justify-between mb-5">
             <div
-              className="w-11 h-11 rounded-xl flex items-center justify-center transition-colors duration-300"
+              className="w-12 h-12 rounded-2xl flex items-center justify-center transition-colors duration-300 ring-4 ring-white shadow-sm"
               style={ { backgroundColor: colors.bg } }
             >
               { TherapyIcon && (
-                <TherapyIcon size={ 18 } style={ { color: colors.text } } className="group-hover:scale-110 transition-transform" />
+                <TherapyIcon size={ 20 } style={ { color: colors.text } } className="group-hover:scale-110 transition-transform duration-500" />
               ) }
             </div>
             { product.tag && (
               <span
-                className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full text-white shadow-sm"
+                className="text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-xl text-white shadow-sm"
                 style={ { backgroundColor: product.tagColor ?? "#2A5C32" } }
               >
                 { product.tag }
@@ -106,49 +136,49 @@ function ProductCardGrid({ product, onShowImage }) {
 
         {/* Name & generic */}
         <h3
-          className="font-bold text-base text-gray-900 mb-0.5 group-hover:text-[#2A5C32] transition-colors leading-snug"
+          className="font-extrabold text-lg text-gray-900 mb-1 group-hover:text-[#2A5C32] transition-colors leading-tight tracking-tight"
           style={ { fontFamily: "'Montserrat', sans-serif" } }
         >
           { product.name }
         </h3>
-        <div className="text-[11px] text-gray-400 font-medium mb-3">{ product.genericName }</div>
+        <div className="text-xs text-gray-400 font-medium mb-4">{ product.genericName }</div>
 
         {/* Description */}
-        <p className="text-[13px] text-gray-500 leading-relaxed mb-5 line-clamp-2 flex-1">
+        <p className="text-[13px] text-gray-500 leading-relaxed mb-6 line-clamp-2 flex-1 font-light">
           { product.description }
         </p>
 
         {/* Info pills */}
-        <div className="flex flex-wrap gap-2 mb-5">
+        <div className="flex flex-wrap gap-2 mb-6">
           <span
-            className="inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-lg"
+            className="inline-flex items-center gap-1.5 text-[11px] font-bold px-3 py-1.5 rounded-xl shadow-sm border border-black/5"
             style={ { backgroundColor: colors.bg, color: colors.text } }
           >
             <span
-              className="w-1.5 h-1.5 rounded-full shrink-0"
+              className="w-1.5 h-1.5 rounded-full shrink-0 shadow-sm"
               style={ { backgroundColor: colors.dot } }
             />
             { getTherapyLabel(product.therapy) }
           </span>
-          <span className="inline-flex items-center gap-1 text-[11px] font-medium px-2.5 py-1 rounded-lg bg-gray-50 text-gray-500 border border-gray-100">
-            <Package size={ 11 } />
+          <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-3 py-1.5 rounded-xl bg-gray-50 border border-gray-200 text-gray-600 shadow-sm">
+            <Package size={ 12 } className="text-gray-400" />
             { product.packaging }
           </span>
         </div>
 
         {/* Dosage badge */}
-        <div className="text-[11px] text-gray-400 mb-5 capitalize">
-          Form: <span className="font-semibold text-gray-700">{ getDosageLabel(product.dosageForm) }</span>
+        <div className="text-[11px] text-gray-400 mb-6 capitalize shrink-0 font-medium">
+          Form: <span className="font-bold text-gray-700 ml-1">{ getDosageLabel(product.dosageForm) }</span>
         </div>
 
         {/* Action Buttons */}
-        <div className="flex gap-2.5 mt-auto pt-4 border-t border-gray-100">
+        <div className="flex gap-3 mt-auto pt-5 border-t border-gray-100/80">
           <button
             onClick={() => onShowImage(product)}
-            className="flex-1 flex items-center justify-center gap-1.5 text-xs font-semibold py-2.5 rounded-xl border-2 border-transparent hover:border-[#2A5C32]/10 bg-[#f0f7f1] hover:bg-[#e4efe5] active:scale-95 transition-all duration-200"
+            className="flex-1 flex items-center justify-center gap-2 text-[13px] font-bold py-3 rounded-xl border border-gray-200/60 bg-gray-50/50 hover:bg-[#f0f7f1] hover:border-[#2A5C32]/20 active:scale-95 transition-all duration-300"
             style={ { color: "#2A5C32" } }
           >
-            <Eye size={ 13 } /> Details
+            <Eye size={ 15 } /> Details
           </button>
           <BrochureButton fileUrl={product.brochure} />
         </div>
@@ -162,66 +192,70 @@ function ProductCardGrid({ product, onShowImage }) {
 function ProductCardList({ product, onShowImage }) {
   const colors = therapyColorMap[product.therapy] ?? { bg: "#f0f7f1", text: "#2A5C32", dot: "#4caf50" };
   const TherapyIcon = therapyFilters.find((f) => f.id === product.therapy)?.icon;
+  const [ref, isVisible] = useScrollAnimation();
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 hover:shadow-lg transition-all duration-300 group flex items-center gap-5 p-5 overflow-hidden relative">
+    <div 
+        ref={ref}
+        className={`bg-white rounded-3xl border border-gray-100/80 hover:shadow-xl hover:shadow-[#2A5C32]/10 transition-all duration-500 group flex items-center gap-6 p-5 overflow-hidden relative ${isVisible ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-8"}`}
+    >
       <div
-        className="w-0.5 self-stretch rounded-full shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
+        className="absolute left-0 top-0 bottom-0 w-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
         style={ { backgroundColor: colors.dot } }
       />
 
-      {/* Icon */ }
+      {/* Icon */}
       <div
-        className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
+        className="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 ring-4 ring-white shadow-sm"
         style={ { backgroundColor: colors.bg } }
       >
-        { TherapyIcon && <TherapyIcon size={ 20 } style={ { color: colors.text } } /> }
+        { TherapyIcon && <TherapyIcon size={ 22 } style={ { color: colors.text } } className="group-hover:scale-110 transition-transform duration-500"/> }
       </div>
 
-      {/* Content */ }
+      {/* Content */}
       <div className="flex-1 min-w-0">
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div>
             <h3
-              className="font-bold text-base text-gray-900 group-hover:text-[#2A5C32] transition-colors"
+              className="font-extrabold text-lg text-gray-900 group-hover:text-[#2A5C32] transition-colors tracking-tight"
               style={ { fontFamily: "'Montserrat', sans-serif" } }
             >
               { product.name }
               { product.tag && (
                 <span
-                  className="ml-2 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full text-white"
+                  className="ml-3 text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-xl text-white shadow-sm align-middle"
                   style={ { backgroundColor: product.tagColor ?? "#2A5C32" } }
                 >
                   { product.tag }
                 </span>
               ) }
             </h3>
-            <div className="text-xs text-gray-400 mb-1">{ product.genericName }</div>
+            <div className="text-xs text-gray-400 font-medium mb-1 pl-[1px]">{ product.genericName }</div>
           </div>
           <div className="flex items-center gap-2 shrink-0">
             <span
-              className="text-[11px] font-semibold px-2.5 py-1 rounded-lg"
+              className="inline-flex items-center text-[11px] font-bold px-3 py-1.5 rounded-xl border border-black/5"
               style={ { backgroundColor: colors.bg, color: colors.text } }
             >
               { getTherapyLabel(product.therapy) }
             </span>
-            <span className="text-[11px] text-gray-400 bg-gray-50 border border-gray-100 px-2.5 py-1 rounded-lg">
+            <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-gray-500 bg-gray-50 border border-gray-200 px-3 py-1.5 rounded-xl">
+               <Package size={ 12 } className="text-gray-400" />
               { product.packaging }
             </span>
           </div>
         </div>
-        <p className="text-[13px] text-gray-500 leading-relaxed line-clamp-1 mt-1">
+        <p className="text-[14px] text-gray-500 leading-relaxed line-clamp-1 mt-2 font-light">
           { product.description }
         </p>
       </div>
 
-      {/* Actions */ }
-      <div className="flex items-center gap-2 shrink-0 ml-2">
-        <button onClick={() => onShowImage(product)} className="p-2.5 rounded-xl bg-[#f0f7f1] hover:bg-[#e4efe5] active:scale-95 transition-all" style={ { color: "#2A5C32" } }>
-          <Eye size={ 16 } />
+      {/* Actions */}
+      <div className="flex items-center gap-3 shrink-0 ml-4 border-l border-gray-100 pl-6 py-2">
+        <button onClick={() => onShowImage(product)} className="p-3 rounded-xl border border-gray-200/60 bg-gray-50 hover:bg-[#f0f7f1] active:scale-95 transition-all shadow-sm" style={ { color: "#2A5C32" } }>
+          <Eye size={ 18 } />
         </button>
         <BrochureButton iconOnly fileUrl={product.brochure} />
-        <ChevronRight size={ 16 } className="text-gray-300 group-hover:text-[#2A5C32] group-hover:translate-x-0.5 transition-all" />
       </div>
     </div>
   );
@@ -230,29 +264,36 @@ function ProductCardList({ product, onShowImage }) {
 // ─── FILTER SIDEBAR CONTENT (reused in both desktop & mobile) ─────────────────
 function FilterContent({ selectedTherapy, selectedDosage, toggleFilter, clearAll, hasFilters, therapyExpanded, setTherapyExpanded, dosageExpanded, setDosageExpanded }) {
   return (
-    <>
+    <div className="flex flex-col gap-5">
       { hasFilters && (
         <button
           onClick={ clearAll }
-          className="w-full flex items-center justify-center gap-2 text-xs font-bold py-3 rounded-xl mb-5 bg-red-50 hover:bg-red-100 text-red-500 transition-colors active:scale-95"
+          className="w-full flex items-center justify-center gap-2 text-xs font-bold py-3 rounded-2xl bg-red-50 hover:bg-red-100 text-red-500 transition-colors active:scale-95 shadow-sm border border-red-100"
         >
           <X size={ 14 } /> Clear All Filters
         </button>
       ) }
 
-      {/* Therapy Filter */ }
-      <div className="bg-white rounded-2xl border border-gray-100 p-4 mb-4 shadow-sm">
+      {/* Therapy Filter */}
+      <div className="bg-white/90 backdrop-blur-3xl rounded-3xl border border-gray-100 p-5 shadow-[0_8px_30px_rgba(0,0,0,0.02)]">
         <button
           onClick={ () => setTherapyExpanded(!therapyExpanded) }
-          className="flex items-center justify-between w-full mb-3 group"
+          className="flex items-center justify-between w-full mb-3 group outline-none"
         >
-          <span className="text-[11px] font-bold uppercase tracking-widest text-gray-700 group-hover:text-[#2A5C32] transition-colors">
+          <span className="text-xs font-extrabold uppercase tracking-widest text-gray-800 group-hover:text-[#2A5C32] transition-colors" style={{ fontFamily: "'Montserrat', sans-serif" }}>
             Wellness Area
           </span>
-          <ChevronDown size={ 15 } className={ `text-gray-400 transition-transform duration-200 ${therapyExpanded ? "rotate-180" : ""}` } />
+          <div className={`p-1 rounded-full transition-colors ${therapyExpanded ? "bg-[#2A5C32]/10 text-[#2A5C32]" : "bg-gray-50 text-gray-400 group-hover:bg-gray-100"}`}>
+            <ChevronDown size={ 14 } className={ `transition-transform duration-300 ${therapyExpanded ? "rotate-180" : ""}` } />
+          </div>
         </button>
         { therapyExpanded && (
-          <div className="space-y-0.5 max-h-[220px] overflow-y-auto pr-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+           <div className="space-y-1 max-h-[250px] overflow-y-auto pr-2 mt-2
+              [&::-webkit-scrollbar]:w-1
+              [&::-webkit-scrollbar-track]:bg-transparent
+              [&::-webkit-scrollbar-thumb]:rounded-full
+              [&::-webkit-scrollbar-thumb]:bg-gray-200
+              hover:[&::-webkit-scrollbar-thumb]:bg-[#2A5C32]/30">
             { therapyFilters.map((f) => {
               const active = selectedTherapy.includes(f.id);
               const colors = therapyColorMap[f.id] ?? { bg: "#f0f7f1", text: "#2A5C32", dot: "#4caf50" };
@@ -260,25 +301,29 @@ function FilterContent({ selectedTherapy, selectedDosage, toggleFilter, clearAll
                 <label
                   key={ f.id }
                   id={ f.id }
-                  className={ `flex items-center justify-between gap-3 px-2.5 py-2 rounded-xl cursor-pointer transition-all ${active ? "bg-[#f0f7f1]" : "hover:bg-gray-50"}` }
+                  className={ `flex items-center justify-between gap-3 px-3 py-2.5 rounded-2xl cursor-pointer transition-all ${active ? "bg-white shadow-sm ring-1 ring-black/5" : "hover:bg-gray-50/80 hover:shadow-sm"}` }
                   onClick={ () => toggleFilter(f.id, "therapy") }
+                  style={active ? { backgroundColor: colors.bg } : {}}
                 >
-                  <div className="flex items-center gap-2.5">
+                  <div className="flex items-center gap-3">
                     <div
-                      className={ `w-4 h-4 rounded-md flex items-center justify-center border-2 transition-all duration-200 shrink-0 ${active ? "border-[#2A5C32] bg-[#2A5C32]" : "border-gray-200 bg-white hover:border-[#2A5C32]"}` }
+                      className={ `w-4 h-4 rounded-md flex items-center justify-center border-2 transition-all duration-300 shrink-0 ${active ? "border-transparent" : "border-gray-200 bg-white hover:border-[#2A5C32]/50"}` }
+                      style={active ? { backgroundColor: colors.text } : {}}
                     >
                       { active && (
-                        <svg viewBox="0 0 10 8" className="w-2.5 fill-none stroke-white" strokeWidth="1.8" strokeLinecap="round">
-                          <path d="M1 4L4 7L9 1" />
+                        <svg viewBox="0 0 10 8" className="w-2.5 fill-none stroke-white" strokeWidth="2" strokeLinecap="round">
+                          <path d="M1 4L4 7L9 1" strokeDasharray="12" strokeDashoffset="0" className="animate-[dash_0.3s_ease-out_forwards]" />
                         </svg>
                       ) }
                     </div>
-                    <f.icon size={ 13 } style={ { color: active ? colors.text : "#9ca3af" } } className="transition-colors shrink-0" />
-                    <span className={ `text-[13px] ${active ? "font-semibold" : "text-gray-600"}` } style={ active ? { color: colors.text } : {} }>
+                    <div className={`p-1.5 rounded-xl transition-colors ${active ? "bg-white/50" : "bg-white shadow-sm border border-gray-100"}`}>
+                       <f.icon size={ 14 } style={ { color: active ? colors.text : "#9ca3af" } } className="transition-colors shrink-0" />
+                    </div>
+                    <span className={ `text-[13px] ${active ? "font-bold" : "text-gray-600 font-medium"}` } style={ active ? { color: colors.text } : {} }>
                       { f.label }
                     </span>
                   </div>
-                  <span className="text-[11px] text-gray-400 bg-gray-50 border border-gray-100 px-1.5 py-0.5 rounded-md shrink-0">
+                  <span className="text-[10px] font-bold text-gray-400 bg-white shadow-sm border border-gray-100/50 px-2 py-0.5 rounded-lg shrink-0">
                     { f.count }
                   </span>
                 </label>
@@ -288,44 +333,53 @@ function FilterContent({ selectedTherapy, selectedDosage, toggleFilter, clearAll
         ) }
       </div>
 
-      {/* Dosage Form Filter */ }
-      <div className="bg-white rounded-2xl border border-gray-100 p-4 mb-5 shadow-sm">
+      {/* Dosage Form Filter */}
+      <div className="bg-white/90 backdrop-blur-3xl rounded-3xl border border-gray-100 p-5 shadow-[0_8px_30px_rgba(0,0,0,0.02)]">
         <button
           onClick={ () => setDosageExpanded(!dosageExpanded) }
-          className="flex items-center justify-between w-full mb-3 group"
+          className="flex items-center justify-between w-full mb-3 group outline-none"
         >
-          <span className="text-[11px] font-bold uppercase tracking-widest text-gray-700 group-hover:text-[#2A5C32] transition-colors">
+          <span className="text-xs font-extrabold uppercase tracking-widest text-gray-800 group-hover:text-blue-600 transition-colors" style={{ fontFamily: "'Montserrat', sans-serif" }}>
             Product Form
           </span>
-          <ChevronDown size={ 15 } className={ `text-gray-400 transition-transform duration-200 ${dosageExpanded ? "rotate-180" : ""}` } />
+          <div className={`p-1 rounded-full transition-colors ${dosageExpanded ? "bg-blue-50 text-blue-600" : "bg-gray-50 text-gray-400 group-hover:bg-gray-100"}`}>
+            <ChevronDown size={ 14 } className={ `transition-transform duration-300 ${dosageExpanded ? "rotate-180" : ""}` } />
+          </div>
         </button>
         { dosageExpanded && (
-          <div className="space-y-0.5 max-h-[220px] overflow-y-auto pr-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+           <div className="space-y-1 max-h-[250px] overflow-y-auto pr-2 mt-2
+              [&::-webkit-scrollbar]:w-1
+              [&::-webkit-scrollbar-track]:bg-transparent
+              [&::-webkit-scrollbar-thumb]:rounded-full
+              [&::-webkit-scrollbar-thumb]:bg-gray-200
+              hover:[&::-webkit-scrollbar-thumb]:bg-blue-200">
             { dosageFilters.map((f) => {
               const active = selectedDosage.includes(f.id);
               return (
                 <label
                   key={ f.id }
                   id={ f.id }
-                  className={ `flex items-center justify-between gap-3 px-2.5 py-2 rounded-xl cursor-pointer transition-all ${active ? "bg-blue-50" : "hover:bg-gray-50"}` }
+                  className={ `flex items-center justify-between gap-3 px-3 py-2.5 rounded-2xl cursor-pointer transition-all ${active ? "bg-blue-50 shadow-sm ring-1 ring-blue-100" : "hover:bg-gray-50/80 hover:shadow-sm"}` }
                   onClick={ () => toggleFilter(f.id, "dosage") }
                 >
-                  <div className="flex items-center gap-2.5">
+                  <div className="flex items-center gap-3">
                     <div
-                      className={ `w-4 h-4 rounded-md flex items-center justify-center border-2 transition-all duration-200 shrink-0 ${active ? "border-blue-600 bg-blue-600" : "border-gray-200 bg-white hover:border-blue-400"}` }
+                      className={ `w-4 h-4 rounded-md flex items-center justify-center border-2 transition-all duration-300 shrink-0 ${active ? "border-blue-600 bg-blue-600" : "border-gray-200 bg-white hover:border-blue-400"}` }
                     >
                       { active && (
-                        <svg viewBox="0 0 10 8" className="w-2.5 fill-none stroke-white" strokeWidth="1.8" strokeLinecap="round">
-                          <path d="M1 4L4 7L9 1" />
+                        <svg viewBox="0 0 10 8" className="w-2.5 fill-none stroke-white" strokeWidth="2" strokeLinecap="round">
+                          <path d="M1 4L4 7L9 1" strokeDasharray="12" strokeDashoffset="0" className="animate-[dash_0.3s_ease-out_forwards]" />
                         </svg>
                       ) }
                     </div>
-                    <f.icon size={ 13 } className={ `${active ? "text-blue-600" : "text-gray-400"} shrink-0 transition-colors` } />
-                    <span className={ `text-[13px] ${active ? "font-semibold text-blue-700" : "text-gray-600"}` }>
+                    <div className={`p-1.5 rounded-xl transition-colors ${active ? "bg-white/60 text-blue-600" : "bg-white text-gray-400 shadow-sm border border-gray-100"}`}>
+                       <f.icon size={ 14 } className="transition-colors shrink-0" />
+                    </div>
+                    <span className={ `text-[13px] ${active ? "font-bold text-blue-700" : "font-medium text-gray-600"}` }>
                       { f.label }
                     </span>
                   </div>
-                  <span className="text-[11px] text-gray-400 bg-gray-50 border border-gray-100 px-1.5 py-0.5 rounded-md shrink-0">
+                  <span className="text-[10px] font-bold text-gray-400 bg-white shadow-sm border border-gray-100/50 px-2 py-0.5 rounded-lg shrink-0">
                     { f.count }
                   </span>
                 </label>
@@ -335,30 +389,9 @@ function FilterContent({ selectedTherapy, selectedDosage, toggleFilter, clearAll
         ) }
       </div>
 
-      {/* Download CTA */ }
-      {/* <div
-        className="rounded-2xl p-5 text-white shadow-lg relative overflow-hidden"
-        style={ { background: "linear-gradient(135deg, #2A5C32 0%, #0f2415 100%)" } }
-      >
-        <div className="absolute -top-8 -right-8 w-28 h-28 bg-white/10 rounded-full blur-xl" />
-        <div className="absolute bottom-0 -left-6 w-20 h-20 bg-white/5 rounded-full blur-lg" />
-        <Package size={ 24 } className="text-green-300 mb-3 relative z-10" />
-        <div className="font-bold text-base mb-1.5 relative z-10" style={ { fontFamily: "'Montserrat', sans-serif" } }>
-          Export Catalogue
-        </div>
-        <p className="text-green-200/80 text-xs leading-relaxed mb-4 relative z-10">
-          Complete product list with latest pricing and formulation details.
-        </p>
-        <a
-          href="/product/products.pdf"
-          download="Natura_Product_Catalogue.pdf"
-          className="w-full bg-white text-sm font-bold py-2.5 rounded-xl hover:bg-green-50 active:scale-95 transition-all flex items-center justify-center gap-2 relative z-10"
-          style={ { color: "#2A5C32" } }
-        >
-          <Download size={ 14 } /> Download PDF
-        </a>
-      </div> */}
-    </>
+      {/* Download CTA */}
+    
+    </div>
   );
 }
 
@@ -472,122 +505,133 @@ export default function Products() {
   return (
     <div className="bg-[#f7f9f7] min-h-screen" style={ { fontFamily: "'Inter', sans-serif" } }>
 
-      {/* ── HERO ─────────────────────────────────────────────────── */ }
-      <div className="relative bg-[#1a3c22] text-white py-16 md:py-24 overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          <img
-            loading="lazy"
-            src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1440"
-            className="w-full h-full object-cover opacity-15 mix-blend-overlay"
-            alt="Natura Health Care Products Background"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#1a3c22] via-[#1a3c22]/95 to-[#1a3c22]/40" />
-          {/* decorative dots */ }
-          <div className="absolute inset-0 opacity-10" style={ {
-            backgroundImage: "radial-gradient(circle, #4caf50 1px, transparent 1px)",
-            backgroundSize: "28px 28px",
-          } } />
+      {/* ── HERO ─────────────────────────────────────────────────── */}
+      <div className="relative bg-[#020b06] text-white py-24 md:py-32 overflow-hidden">
+        {/* Deep Green Ambient Background */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#1d522a]/40 via-[#0a1f0e]/80 to-[#020b06] z-0" />
+        <div 
+          className="absolute inset-0 opacity-[0.05] z-0 pointer-events-none" 
+          style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '40px 40px' }} 
+        />
+        {/* Dynamic Glowing Orbs */}
+        <div className="absolute inset-0 z-0 opacity-40 mix-blend-screen pointer-events-none">
+          <div className="absolute top-1/4 left-1/4 w-[30rem] h-[30rem] bg-emerald-500/20 rounded-full blur-[100px] animate-pulse"></div>
+          <div className="absolute bottom-1/4 right-1/4 w-[40rem] h-[40rem] bg-[#1a3c22]/40 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: "2s" }}></div>
         </div>
-        <div className="max-w-[1440px] mx-auto px-6 relative z-10">
-          <div className="flex items-center gap-1.5 text-sm text-green-300/80 mb-6 font-medium">
-            <Link href="/" className="hover:text-white transition-colors">Home</Link>
-            <ChevronRight size={ 14 } className="text-green-500/60" />
-            <span className="text-white">Products</span>
+
+        <div className="max-w-[1440px] mx-auto px-6 relative z-10 flex flex-col md:flex-row items-start md:items-end justify-between gap-10">
+          <div className="max-w-3xl">
+            <div className="flex items-center gap-1.5 text-sm text-green-300/80 mb-8 font-medium">
+              <Link href="/" className="hover:text-amber-400 transition-colors tracking-wide">Home</Link>
+              <ChevronRight size={ 14 } className="text-green-500/60" />
+              <span className="text-white/80 tracking-wide">Products</span>
+            </div>
+            <h1
+              className="text-5xl md:text-6xl lg:text-7xl font-extrabold mb-6 tracking-tight"
+              style={ { fontFamily: "'Montserrat', sans-serif" } }
+            >
+              Natura Health Care
+              <br/>
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-green-300 via-emerald-100 to-white">
+                Portfolio
+              </span>
+            </h1>
+            <p className="text-green-100/70 text-lg md:text-xl leading-relaxed font-light mb-10 max-w-2xl">
+              Over 300 authentic formulations — Asavas, Arishtas, Vatis, and Churnas. Crafted with absolute precision for holistic clinical wellness.
+            </p>
+            {/* sleek stat chips */}
+            <div className="flex flex-wrap gap-4">
+              { [
+                { label: "Products", value: "300+" },
+                { label: "Therapy Areas", value: "12" },
+                { label: "Product Forms", value: "9" },
+                { label: "Years of Trust", value: "25+" },
+              ].map((s) => (
+                <div key={ s.label } className="bg-white/5 backdrop-blur-md rounded-2xl px-5 py-3 border border-white/10 shadow-lg shadow-black/20 flex flex-col items-start gap-1">
+                  <span className="text-2xl font-extrabold text-white" style={ { fontFamily: "'Montserrat', sans-serif" } }>{ s.value }</span>
+                  <span className="text-[11px] uppercase tracking-wider text-green-200/60 font-semibold">{ s.label }</span>
+                </div>
+              )) }
+            </div>
           </div>
-          <h1
-            className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-5 tracking-tight"
-            style={ { fontFamily: "'Montserrat', sans-serif" } }
-          >
-            Natura Health Care
-            <span className="block text-green-300">Portfolio</span>
-          </h1>
-          <p className="text-green-100/80 max-w-xl text-base md:text-lg leading-relaxed font-light mb-8">
-            300+ authentic Ayurvedic formulations — Asavas, Arishtas, Vatis, Churnas & more,
-            crafted for holistic wellness.
-          </p>
-          {/* stat chips */ }
-          <div className="flex flex-wrap gap-3">
-            { [
-              { label: "Products", value: "300+" },
-              { label: "Therapy Areas", value: "12" },
-              { label: "Product Forms", value: "9" },
-              { label: "Years of Trust", value: "25+" },
-            ].map((s) => (
-              <div key={ s.label } className="bg-white/10 backdrop-blur-sm rounded-xl px-4 py-2.5 flex items-center gap-2.5 border border-white/10">
-                <span className="text-lg font-extrabold text-white" style={ { fontFamily: "'Montserrat', sans-serif" } }>{ s.value }</span>
-                <span className="text-xs text-green-200/70 font-medium">{ s.label }</span>
+          
+          <div className="shrink-0 hidden lg:block">
+            <div className="relative w-40 h-40">
+              <div className="absolute inset-0 bg-[#2A5C32] rounded-full blur-[80px] opacity-50 animate-pulse"></div>
+              <div className="relative w-full h-full rounded-3xl border border-white/10 bg-white/5 backdrop-blur-lg flex items-center justify-center shadow-2xl">
+                 <Package size={ 48 } className="text-green-300/80" />
               </div>
-            )) }
+            </div>
           </div>
         </div>
       </div>
 
       {/* ── MAIN CONTENT ──────────────────────────────────────────── */ }
       {/* ── STICKY SEARCH BAR ──────────────────────────────────────── */}
-<div className="sticky top-[108px] z-30 bg-[#f7f9f7] border-b border-gray-200 shadow-sm">
-  <div className="max-w-[1440px] mx-auto px-4 sm:px-6 py-3">
-    <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
-      
-      {/* search */}
-      <div className="relative flex-1 max-w-xl group">
-        <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#2A5C32] transition-colors pointer-events-none" />
-        <input
-          ref={searchRef}
-          type="text"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder='Search products, herbs… (press "/" to focus)'
-          className="w-full pl-11 pr-10 py-3.5 border-2 border-gray-200 rounded-2xl text-sm focus:outline-none focus:border-[#2A5C32] focus:ring-4 focus:ring-[#2A5C32]/10 transition-all bg-white shadow-sm placeholder:text-gray-400"
-        />
-        {searchQuery && (
-          <button
-            onClick={() => setSearchQuery("")}
-            className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors"
-          >
-            <X size={13} />
-          </button>
-        )}
-      </div>
+      <div className="sticky top-[108px] z-30 bg-white/70 backdrop-blur-3xl border-b border-[#2A5C32]/10 shadow-[0_4px_30px_rgba(0,0,0,0.03)] transition-all duration-300">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 py-4">
+          <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center justify-between">
+            {/* search */}
+            <div className="relative flex-1 max-w-2xl group">
+              <Search size={18} className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#2A5C32] transition-colors pointer-events-none" />
+              <input
+                ref={searchRef}
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder='Search products, wellness areas… (press "/" to focus)'
+                className="w-full pl-12 pr-12 py-4 border border-gray-200 rounded-full text-sm font-medium focus:outline-none focus:border-[#2A5C32] focus:ring-4 focus:ring-[#2A5C32]/10 transition-all bg-white shadow-[0_4px_20px_rgba(0,0,0,0.03)] placeholder:text-gray-400 hover:border-gray-300"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 p-1.5 text-gray-400 hover:text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors"
+                >
+                  <X size={14} />
+                </button>
+              )}
+            </div>
 
-      {/* Grid / List toggle */}
-      <div className="hidden sm:flex items-center bg-white rounded-2xl border-2 border-gray-200 p-1 gap-1 shadow-sm">
-        <div className={`rounded-xl transition-all overflow-hidden ${viewMode === "grid" ? "bg-[#2A5C32] text-white shadow-sm" : "text-gray-400 hover:text-gray-700 hover:bg-gray-50"}`}>
-          <button
-            onClick={() => setViewMode("grid")}
-            className="w-full h-full p-2.5 flex items-center justify-center bg-transparent outline-none"
-          >
-            <LayoutGrid size={16} />
-          </button>
+            <div className="flex items-center gap-3 w-full sm:w-auto">
+              {/* Grid / List toggle */}
+              <div className="hidden sm:flex items-center bg-white rounded-full border border-gray-200 p-1.5 gap-1 shadow-[0_4px_15px_rgba(0,0,0,0.02)]">
+                <div className={`rounded-full transition-all overflow-hidden ${viewMode === "grid" ? "bg-[#2A5C32] text-white shadow-md shadow-[#2A5C32]/30" : "text-gray-400 hover:text-gray-700 hover:bg-gray-50"}`}>
+                  <button
+                    onClick={() => setViewMode("grid")}
+                    className="px-5 py-2.5 flex items-center justify-center gap-2 bg-transparent outline-none font-semibold text-xs tracking-wide"
+                  >
+                    <LayoutGrid size={15} /> Grid
+                  </button>
+                </div>
+                <div className={`rounded-full transition-all overflow-hidden ${viewMode === "list" ? "bg-[#2A5C32] text-white shadow-md shadow-[#2A5C32]/30" : "text-gray-400 hover:text-gray-700 hover:bg-gray-50"}`}>
+                  <button
+                    onClick={() => setViewMode("list")}
+                    className="px-5 py-2.5 flex items-center justify-center gap-2 bg-transparent outline-none font-semibold text-xs tracking-wide"
+                  >
+                    <List size={15} /> List
+                  </button>
+                </div>
+              </div>
+
+              {/* mobile filter toggle */}
+              <div className="md:hidden flex-1 bg-white border border-gray-200 text-gray-700 rounded-full font-bold shadow-[0_4px_15px_rgba(0,0,0,0.02)] active:scale-95 transition-all relative">
+                <button
+                  onClick={() => setIsMobileFiltersOpen(true)}
+                  className="w-full h-full flex items-center justify-center gap-2 px-6 py-4 bg-transparent outline-none text-sm"
+                >
+                  <SlidersHorizontal size={18} className="text-[#2A5C32]" />
+                  Filters
+                  {activeFilterCount > 0 && (
+                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-[#2A5C32] text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow-md">
+                      {activeFilterCount}
+                    </span>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
-        <div className={`rounded-xl transition-all overflow-hidden ${viewMode === "list" ? "bg-[#2A5C32] text-white shadow-sm" : "text-gray-400 hover:text-gray-700 hover:bg-gray-50"}`}>
-          <button
-            onClick={() => setViewMode("list")}
-            className="w-full h-full p-2.5 flex items-center justify-center bg-transparent outline-none"
-          >
-            <List size={16} />
-          </button>
-        </div>
       </div>
-
-      {/* mobile filter toggle */}
-      <div className="md:hidden bg-white border-2 border-gray-200 text-gray-700 rounded-2xl font-semibold shadow-sm active:scale-95 transition-all relative">
-        <button
-          onClick={() => setIsMobileFiltersOpen(true)}
-          className="w-full h-full flex items-center justify-center gap-2 px-5 py-3.5 bg-transparent outline-none"
-        >
-          <SlidersHorizontal size={17} className="text-[#2A5C32]" />
-          Filters
-          {activeFilterCount > 0 && (
-            <span className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-[#2A5C32] text-white text-[10px] font-bold rounded-full flex items-center justify-center">
-              {activeFilterCount}
-            </span>
-          )}
-        </button>
-      </div>
-
-    </div>
-  </div>
-</div>
 
 {/* ── MAIN CONTENT ──────────────────────────────────────────── */}
 <div className="max-w-[1440px] mx-auto px-4 sm:px-6 py-10 md:py-14">
@@ -637,15 +681,15 @@ export default function Products() {
     )}
 
     {/* ── DESKTOP SIDEBAR ──────────────────────────────────── */}
-    <aside className="hidden md:flex flex-col w-64 shrink-0">
+    <aside className="hidden md:flex flex-col w-[280px] shrink-0">
       <div
-       className="sticky top-[173px] overflow-y-auto space-y-0
+       className="sticky top-[200px] overflow-y-auto space-y-0
           [&::-webkit-scrollbar]:w-1.5
           [&::-webkit-scrollbar-track]:bg-transparent
           [&::-webkit-scrollbar-thumb]:rounded-full
           [&::-webkit-scrollbar-thumb]:bg-gray-300
           hover:[&::-webkit-scrollbar-thumb]:bg-[#2A5C32]/40"
-       style={{ maxHeight: "calc(100vh - 173px)", paddingBottom: "2rem" }}
+       style={{ maxHeight: "calc(100vh - 200px)", paddingBottom: "2rem" }}
       >
         <FilterContent {...sidebarProps} />
       </div>
@@ -796,38 +840,68 @@ export default function Products() {
       {/* ── IMAGE MODAL ──────────────────────────────────────────── */}
       {selectedProductImage && (
         <div 
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-[#020b06]/80 backdrop-blur-xl p-4 md:p-10 transition-all duration-500"
           onClick={() => setSelectedProductImage(null)}
         >
           <div 
-            className="relative max-w-3xl w-full flex flex-col items-center"
+            className="relative max-w-4xl w-full flex flex-col md:flex-row items-center gap-8 bg-white/5 backdrop-blur-2xl border border-white/10 p-8 rounded-[2.5rem] shadow-[0_40px_100px_rgba(0,0,0,0.5)] transform translate-y-0 opacity-100 transition-all"
             onClick={(e) => e.stopPropagation()}
+            style={{ animation: "fadeInUp 0.4s ease-out forwards" }}
           >
             <button 
               onClick={() => setSelectedProductImage(null)}
-              className="absolute -top-12 right-0 md:-right-12 p-2 bg-white/10 hover:bg-white/20 text-white rounded-full transition-all"
+              className="absolute top-6 right-6 p-2 bg-white/10 hover:bg-white/20 text-white rounded-full transition-all duration-300 z-10"
             >
               <X size={24} />
             </button>
             
-            {selectedProductImage.image ? (
-              <img 
-                src={selectedProductImage.image} 
-                alt={selectedProductImage.name}
-                className="w-full max-h-[80vh] object-contain rounded-2xl shadow-2xl"
-              />
-            ) : (
-              <div className="w-full h-64 md:h-96 bg-white rounded-2xl flex flex-col items-center justify-center text-gray-400">
-                <Package size={64} className="mb-4 opacity-50" />
-                <p className="text-lg font-medium">No image available</p>
-              </div>
-            )}
-            
-            <div className="mt-4 text-center">
-              <h3 className="text-2xl font-bold text-white mb-1" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+            <div className="flex-1 w-full bg-white/5 rounded-3xl p-6 flex items-center justify-center min-h-[300px]">
+              {selectedProductImage.image ? (
+                <img 
+                  src={selectedProductImage.image} 
+                  alt={selectedProductImage.name}
+                  className="w-full max-h-[60vh] object-contain drop-shadow-2xl hover:scale-105 transition-transform duration-500"
+                />
+              ) : (
+                <div className="flex flex-col items-center justify-center text-white/30">
+                  <Package size={80} className="mb-4 opacity-50 stroke-[1]" />
+                  <p className="text-xl font-light">Image temporarily unavailable</p>
+                </div>
+              )}
+            </div>
+
+            <div className="flex-1 w-full text-left md:pr-4">
+               <span
+                className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full mb-4 shadow-lg shadow-black/20"
+                style={ { backgroundColor: selectedProductImage.tagColor ?? "#2A5C32", color: "white" } }
+              >
+                {selectedProductImage.tag || "Natura Certified"}
+              </span>
+              <h3 className="text-3xl md:text-5xl font-extrabold text-white mb-2 leading-tight tracking-tight" style={{ fontFamily: "'Montserrat', sans-serif" }}>
                 {selectedProductImage.name}
               </h3>
-              <p className="text-green-200/80">{selectedProductImage.genericName}</p>
+              <p className="text-lg text-green-300/80 font-medium mb-6 tracking-wide">{selectedProductImage.genericName}</p>
+              
+              <div className="h-px bg-white/10 w-full mb-6 relative">
+                 <div className="absolute top-0 left-0 h-px bg-gradient-to-r from-emerald-500 to-transparent w-1/3"></div>
+              </div>
+
+              <p className="text-green-100/60 leading-relaxed font-light mb-8">
+                {selectedProductImage.description}
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-4 mb-4">
+                <div className="flex-1 bg-white/5 border border-white/10 rounded-2xl p-4 hover:bg-white/10 transition-colors">
+                   <div className="text-[10px] text-green-200/50 uppercase tracking-widest font-semibold mb-1.5">Wellness Area</div>
+                   <div className="text-white font-bold text-sm">{getTherapyLabel(selectedProductImage.therapy)}</div>
+                </div>
+                <div className="flex-1 bg-white/5 border border-white/10 rounded-2xl p-4 hover:bg-white/10 transition-colors">
+                   <div className="text-[10px] text-green-200/50 uppercase tracking-widest font-semibold mb-1.5">Packaging</div>
+                   <div className="text-white font-bold text-sm">
+                      {selectedProductImage.packaging} &bull; {getDosageLabel(selectedProductImage.dosageForm)}
+                   </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

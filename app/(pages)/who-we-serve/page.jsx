@@ -1,285 +1,263 @@
-'use client';
+"use client";
 
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { ChevronRight, Building2, Truck, FlaskConical, Landmark, Clock, ShieldCheck, Award, PhoneCall, CheckCircle2, ArrowRight, Globe, Package, Users, TrendingUp } from "lucide-react";
+import { 
+  ChevronRight, Building2, Truck, FlaskConical, 
+  Clock, ShieldCheck, Award, CheckCircle2, 
+  ArrowRight, Globe, Users, TrendingUp, Store, Factory, 
+  ShoppingCart, Briefcase
+} from "lucide-react";
+
+// Custom hook for scroll animations
+const useScrollAnimation = () => {
+  const elementRef = useRef(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (elementRef.current) {
+      observer.observe(elementRef.current);
+    }
+
+    return () => {
+      if (elementRef.current) observer.unobserve(elementRef.current);
+    };
+  }, []);
+
+  return [elementRef, isVisible];
+};
 
 export default function WhoWeServe() {
+  const [heroRef, heroVisible] = useScrollAnimation();
+  const [distRef, distVisible] = useScrollAnimation();
+  const [b2bRef, b2bVisible] = useScrollAnimation();
+  const [retailRef, retailVisible] = useScrollAnimation();
+
   return (
-    <div style={{ fontFamily: "'Inter', sans-serif" }}>
-      {/* Hero */}
-      <div className="relative bg-[#0f2415] text-white py-20 overflow-hidden">
-        <div className="absolute inset-0 z-0 opacity-30 mix-blend-overlay">
+    <div style={{ fontFamily: "'Inter', sans-serif" }} className="bg-white">
+      {/* Hero Section */}
+      <div className="relative bg-gradient-to-br from-[#1a3c22] via-[#2A5C32] to-[#1a3c22] text-white py-20 md:py-32 overflow-hidden">
+        {/* Animated Background Elements */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-green-400/10 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-teal-400/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
         </div>
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0f2415] to-[#2A5C32]/80 z-0"></div>
-        <div className="relative z-10 max-w-[1440px] mx-auto px-6">
-          <div className="flex items-center gap-2 text-sm text-green-300 mb-4">
-            <Link href="/" className="hover:text-white">Home</Link>
-            <ChevronRight size={14} />
-            <span>Who We Serve</span>
+
+        {/* Grid Pattern Overlay */}
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS1vcGFjaXR5PSIwLjAzIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-30"></div>
+
+        <div ref={heroRef} className="max-w-[1440px] mx-auto px-4 md:px-6 relative z-10">
+          <div className={`transition-all duration-1000 ${heroVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+            <div className="flex items-center gap-2 text-xs sm:text-sm text-green-200 mb-6 font-medium tracking-wide">
+              <Link href="/" className="hover:text-white transition-colors hover:underline">Home</Link>
+              <ChevronRight size={14} />
+              <span className="text-white">Who We Serve</span>
+            </div>
+            
+            <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold mb-6 tracking-tight bg-gradient-to-r from-white via-green-50 to-green-100 bg-clip-text text-transparent" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+              Serving Diverse Global Markets
+            </h1>
+            
+            <p className="text-green-100 max-w-2xl text-lg md:text-xl leading-relaxed mb-8">
+              Reliable supply chain solutions and high-quality product sourcing tailored to meet the demands of international trading partners across multiple industries.
+            </p>
+
+            <div className="flex flex-wrap gap-4">
+              <Link href="#distributors" className="group px-8 py-4 bg-white text-[#2A5C32] rounded-full font-bold hover:bg-green-50 transition-all duration-300 hover:shadow-2xl hover:shadow-white/20 inline-flex items-center gap-2">
+                Explore Our Partners
+                <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </div>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4" style={{ fontFamily: "'Montserrat', sans-serif" }}>
-            Serving Diverse Healthcare Stakeholders
-          </h1>
-          <p className="text-green-100 max-w-2xl text-lg">
-            Tailored pharmaceutical supply solutions for every segment of the healthcare ecosystem.
-          </p>
         </div>
+        
+        {/* Floating shapes */}
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white to-transparent"></div>
       </div>
 
-      {/* Hospitals & Pharmacies */}
-      <section id="hospitals" className="py-20 bg-white scroll-mt-20">
-        <div className="max-w-[1440px] mx-auto px-6">
-          <div className="grid lg:grid-cols-2 gap-12 items-center lg:items-stretch">
-            <div>
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 rounded-xl bg-green-100 flex items-center justify-center text-[#2A5C32]">
-                  <Building2 size={24} />
-                </div>
-                <div>
-                  <div className="text-xs font-bold uppercase tracking-widest text-gray-500">Healthcare Providers</div>
-                  <h2 className="text-3xl font-bold text-gray-900" style={{ fontFamily: "'Montserrat', sans-serif" }}>Hospitals & Pharmacies</h2>
+      {/* Distributors & Wholesalers */}
+      <section ref={distRef} id="distributors" className="py-20 md:py-32 bg-white scroll-mt-20 overflow-hidden relative">
+        <div className={`transition-all duration-1000 ${distVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-16'}`}>
+          <div className="max-w-[1440px] mx-auto px-4 md:px-6 relative z-10">
+            <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+              <div className="order-2 lg:order-1 relative group">
+                <div className="absolute inset-0 bg-blue-100/50 rounded-3xl -rotate-3 scale-105 group-hover:-rotate-6 transition-transform duration-500"></div>
+                <div className="relative rounded-3xl overflow-hidden shadow-2xl h-[400px] sm:h-[500px]">
+                  <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 to-transparent z-10 group-hover:opacity-0 transition-opacity duration-500"></div>
+                  <img loading="lazy" decoding="async" src="/media/Distributors.webp" alt="Global Distributors" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                 </div>
               </div>
-              <p className="text-gray-600 mb-8 leading-relaxed">
-                We supply directly to public and private hospital networks, retail pharmacy chains, and institutional buying groups worldwide. Our hospital supply programme ensures critical medicines are always available â€” from oncology injectables to cardiac generics â€” with all regulatory documentation in order.
-              </p>
-              
-              <div className="space-y-4 mb-8">
-                <div className="bg-gray-50 rounded-xl p-4 flex gap-4">
-                  <Clock className="text-[#2A5C32] shrink-0 mt-1" size={20} />
-                  <div>
-                    <h4 className="font-bold text-gray-900 text-sm">Emergency Supply</h4>
-                    <p className="text-xs text-gray-500 mt-1">48â€“72 hour dispatch for urgent hospital procurement with temperature-controlled delivery</p>
-                  </div>
+
+              <div className="order-1 lg:order-2">
+                <div className="inline-flex items-center gap-3 px-4 py-2 bg-blue-50 text-blue-700 rounded-full mb-6 font-bold text-sm tracking-wide uppercase">
+                  <Globe size={16} /> Global Trade Partners
                 </div>
-                <div className="bg-gray-50 rounded-xl p-4 flex gap-4">
-                  <ShieldCheck className="text-[#2A5C32] shrink-0 mt-1" size={20} />
-                  <div>
-                    <h4 className="font-bold text-gray-900 text-sm">Direct Import Support</h4>
-                    <p className="text-xs text-gray-500 mt-1">Country-specific import permit assistance and customs clearance coordination</p>
-                  </div>
+                
+                <h2 className="text-3xl md:text-5xl font-extrabold text-gray-900 mb-6" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+                  International Distributors
+                </h2>
+                
+                <p className="text-gray-600 text-lg leading-relaxed mb-8">
+                  Natura Health Care actively partners with international distributors and wholesalers. We provide seamless access to multi-category goodsâ€”from pharmaceuticals to consumer productsâ€”ensuring continuous supply on competitive terms.
+                </p>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+                  {[
+                    "Multi-category product sourcing", "Competitive volume pricing",
+                    "Dedicated shipping & logistics", "Regulatory & export documentation",
+                    "Reliable long-term supply agreements", "Market entry support"
+                  ].map((item, i) => (
+                    <div key={i} className="flex items-start gap-3 bg-gray-50 p-3 rounded-lg border border-gray-100">
+                      <CheckCircle2 size={20} className="text-[#2A5C32] shrink-0 mt-0.5" />
+                      <span className="text-sm font-medium text-gray-700">{item}</span>
+                    </div>
+                  ))}
                 </div>
-                <div className="bg-gray-50 rounded-xl p-4 flex gap-4">
-                  <Award className="text-[#2A5C32] shrink-0 mt-1" size={20} />
-                  <div>
-                    <h4 className="font-bold text-gray-900 text-sm">Quality Guarantee</h4>
-                    <p className="text-xs text-gray-500 mt-1">Every product supplied with full batch documentation, COA, and shelf-life assurance</p>
-                  </div>
-                </div>
-                <div className="bg-gray-50 rounded-xl p-4 flex gap-4">
-                  <PhoneCall className="text-[#2A5C32] shrink-0 mt-1" size={20} />
-                  <div>
-                    <h4 className="font-bold text-gray-900 text-sm">Dedicated Account Manager</h4>
-                    <p className="text-xs text-gray-500 mt-1">Single point of contact for all hospital procurement queries and emergency requests</p>
-                  </div>
-                </div>
+
+                <Link href="/contact" className="group inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold px-8 py-4 rounded-full shadow-lg hover:shadow-blue-500/30 transition-all duration-300 hover:-translate-y-1">
+                  Partner with Us <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                </Link>
               </div>
-              <Link href="/contact" className="inline-flex items-center gap-2 bg-[#0f7a3c] text-white font-semibold px-6 py-3 rounded-lg hover:bg-[#0c6330] transition-colors">
-                Partner with Us <ArrowRight size={16} />
-              </Link>
-            </div>
-            <div className="relative rounded-3xl overflow-hidden shadow-xl min-h-[320px] sm:min-h-[420px] lg:min-h-0 lg:self-stretch">
-              <img loading="lazy" decoding="async" src="/media/hospital.webp" alt="Hospital" className="absolute inset-0 w-full h-full object-cover" />
             </div>
           </div>
         </div>
       </section>
 
-      {/* Distributors */}
-      <section id="distributors" className="py-20 bg-[#fdfbf7] scroll-mt-20">
-        <div className="max-w-[1440px] mx-auto px-6">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="order-2 lg:order-1 rounded-3xl overflow-hidden shadow-xl">
-              <img loading="lazy" decoding="async" src="/media/Distributors.webp" alt="Warehouse" className="w-full h-full object-cover" />
-            </div>
-            <div className="order-1 lg:order-2">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600">
-                  <Truck size={24} />
+      {/* B2B Enterprises & Manufacturers */}
+      <section ref={b2bRef} id="b2b-enterprises" className="py-20 md:py-32 bg-gradient-to-br from-gray-50 to-green-50/50 scroll-mt-20 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-green-100/40 rounded-full blur-3xl opacity-50 pointer-events-none"></div>
+        <div className={`transition-all duration-1000 ${b2bVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-16'}`}>
+          <div className="max-w-[1440px] mx-auto px-4 md:px-6 relative z-10">
+            <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+              <div>
+                <div className="inline-flex items-center gap-3 px-4 py-2 bg-green-100 text-[#2A5C32] rounded-full mb-6 font-bold text-sm tracking-wide uppercase shadow-sm">
+                  <Factory size={16} /> B2B Sourcing
                 </div>
-                <div>
-                  <div className="text-xs font-bold uppercase tracking-widest text-gray-500">Trade Partners</div>
-                  <h2 className="text-3xl font-bold text-gray-900" style={{ fontFamily: "'Montserrat', sans-serif" }}>Distributors</h2>
-                </div>
-              </div>
-              <p className="text-gray-600 mb-8 leading-relaxed">
-                Natura Health Care actively seeks exclusive and non-exclusive distribution partnerships across our 50+ target markets. Distributors benefit from competitive pricing, strong brand equity, regulatory support, and dedicated field marketing resources.
-              </p>
-              
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-                {[
-                  "Exclusive territory agreements", "Competitive ex-works pricing",
-                  "Marketing and promotional materials", "Product training and MedEd support",
-                  "Regulatory registration assistance", "Co-branding opportunities",
-                  "Annual business review meetings", "Flexible payment terms"
-                ].map((item, i) => (
-                  <div key={i} className="flex items-start gap-2">
-                    <CheckCircle2 size={18} className="text-[#0f7a3c] shrink-0 mt-0.5" />
-                    <span className="text-sm text-gray-700">{item}</span>
-                  </div>
-                ))}
-              </div>
-
-              <div className="grid grid-cols-3 gap-4 mb-8">
-                <div className="bg-white rounded-xl p-4 text-center border border-gray-100 shadow-sm">
-                  <div className="text-xl font-bold text-[#0f7a3c]">500+</div>
-                  <div className="text-[10px] text-gray-500 uppercase tracking-wider mt-1">SKUs Available</div>
-                </div>
-                <div className="bg-white rounded-xl p-4 text-center border border-gray-100 shadow-sm">
-                  <div className="text-xl font-bold text-[#0f7a3c]">$50K</div>
-                  <div className="text-[10px] text-gray-500 uppercase tracking-wider mt-1">Min. Order Value</div>
-                </div>
-                <div className="bg-white rounded-xl p-4 text-center border border-gray-100 shadow-sm">
-                  <div className="text-xl font-bold text-[#0f7a3c]">30</div>
-                  <div className="text-[10px] text-gray-500 uppercase tracking-wider mt-1">Payment Days (NET)</div>
-                </div>
-              </div>
-
-              <Link href="/contact" className="inline-flex items-center gap-2 bg-[#0f7a3c] text-white font-semibold px-6 py-3 rounded-lg hover:bg-[#0c6330] transition-colors">
-                Become a Distributor <ArrowRight size={16} />
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Pharma Companies */}
-      <section id="pharma" className="py-20 bg-white scroll-mt-20">
-        <div className="max-w-[1440px] mx-auto px-6">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center text-purple-600">
-                  <FlaskConical size={24} />
-                </div>
-                <div>
-                  <div className="text-xs font-bold uppercase tracking-widest text-gray-500">B2B Pharma</div>
-                  <h2 className="text-3xl font-bold text-gray-900" style={{ fontFamily: "'Montserrat', sans-serif" }}>Pharma Companies</h2>
-                </div>
-              </div>
-              <p className="text-gray-600 mb-8 leading-relaxed">
-                We provide specialized B2B pharmaceutical services to innovator and generic companies including comparator product sourcing for clinical trials, contract manufacturing, technology licensing, and parallel import services for market entry.
-              </p>
-              
-              <div className="space-y-3 mb-8">
-                {[
-                  "Reference & comparator products for Phase Iâ€“IV clinical trials",
-                  "Contract manufacturing for generic & specialty products",
-                  "API sourcing and supply agreements",
-                  "Technology transfer and in-licensing arrangements",
-                  "Market entry via parallel import in EU, UK, Switzerland",
-                  "Dossier preparation and regulatory filing support"
-                ].map((item, i) => (
-                  <div key={i} className="flex items-start gap-2">
-                    <CheckCircle2 size={18} className="text-[#0f7a3c] shrink-0 mt-0.5" />
-                    <span className="text-sm text-gray-700">{item}</span>
-                  </div>
-                ))}
-              </div>
-
-              <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
-                <div className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-4">Partnership Process</div>
-                <div className="flex flex-wrap items-center gap-2 text-sm font-medium">
-                  <span className="bg-green-50 text-[#0f7a3c] px-3 py-1.5 rounded-full">Initial Discussion</span>
-                  <ArrowRight size={14} className="text-gray-300" />
-                  <span className="bg-green-50 text-[#0f7a3c] px-3 py-1.5 rounded-full">NDA/CDA</span>
-                  <ArrowRight size={14} className="text-gray-300" />
-                  <span className="bg-green-50 text-[#0f7a3c] px-3 py-1.5 rounded-full">Technical Review</span>
-                  <ArrowRight size={14} className="text-gray-300" />
-                  <span className="bg-green-50 text-[#0f7a3c] px-3 py-1.5 rounded-full">Quality Agreement</span>
-                  <ArrowRight size={14} className="text-gray-300" />
-                  <span className="bg-green-50 text-[#0f7a3c] px-3 py-1.5 rounded-full">Commercial Terms</span>
-                  <ArrowRight size={14} className="text-gray-300" />
-                  <span className="bg-green-50 text-[#0f7a3c] px-3 py-1.5 rounded-full">Launch</span>
-                </div>
-              </div>
-            </div>
-            <div className="rounded-3xl overflow-hidden shadow-xl">
-              <img loading="lazy" decoding="async" src="/media/aboutpageBanner.webp" alt="Scientist" className="w-full h-full object-cover" />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Government & Public Health */}
-      <section id="government" className="py-20 bg-[#fdfbf7] scroll-mt-20">
-        <div className="max-w-[1440px] mx-auto px-6">
-          <div className="grid lg:grid-cols-2 gap-12 items-start">
-            <div>
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center text-orange-600">
-                  <Landmark size={24} />
-                </div>
-                <div>
-                  <div className="text-xs font-bold uppercase tracking-widest text-gray-500">Public Sector</div>
-                  <h2 className="text-3xl font-bold text-gray-900" style={{ fontFamily: "'Montserrat', sans-serif" }}>Government & Public Health</h2>
-                </div>
-              </div>
-              <p className="text-gray-600 mb-8 leading-relaxed">
-                Natura Health Care actively participates in government health ministry tenders, national health insurance supply programmes, UNICEF and WHO procurement, and emergency health stockpiling contracts across 30+ countries.
-              </p>
-              
-              <h3 className="font-bold text-gray-900 mb-4">Tender Participation Process</h3>
-              <div className="space-y-4">
-                {[
-                  { title: "Tender Identification", desc: "Active monitoring of government and international agency tenders across all target markets" },
-                  { title: "Eligibility Assessment", desc: "Verification of product registration, GMP status, and local regulatory approvals" },
-                  { title: "Dossier Submission", desc: "Complete tender package: technical dossiers, price schedules, certificates, samples" },
-                  { title: "Evaluation Support", desc: "Response to technical queries, factory inspections, and compliance reviews" },
-                  { title: "Contract Execution", desc: "Supply agreement signing, performance bond, and delivery schedule confirmation" },
-                  { title: "Delivery & Reporting", desc: "On-time delivery with all required documentation and periodic progress reporting" }
-                ].map((step, i) => (
-                  <div key={i} className="flex gap-4">
-                    <div className="w-6 h-6 rounded-full bg-[#0f7a3c] text-white flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
-                      {i + 1}
+                
+                <h2 className="text-3xl md:text-5xl font-extrabold text-gray-900 mb-6" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+                  Manufacturers & Enterprises
+                </h2>
+                
+                <p className="text-gray-600 text-lg leading-relaxed mb-8">
+                  We supply critical raw materials, chemicals, APIs, and agricultural goods to manufacturing plants and large-scale enterprises. Our robust sourcing network guarantees quality materials for your uninterrupted production cycles.
+                </p>
+                
+                <div className="space-y-4 mb-10">
+                  <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex gap-5 hover:shadow-md transition-shadow">
+                    <div className="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center shrink-0">
+                      <Truck className="text-orange-600" size={24} />
                     </div>
                     <div>
-                      <h4 className="font-bold text-gray-900 text-sm">{step.title}</h4>
-                      <p className="text-xs text-gray-500 mt-0.5">{step.desc}</p>
+                      <h4 className="font-bold text-gray-900 text-lg">Bulk Procurement</h4>
+                      <p className="text-gray-500 mt-1">Efficient fulfillment of large-volume orders across multiple industrial categories.</p>
                     </div>
                   </div>
-                ))}
-              </div>
-            </div>
+                  
+                  <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex gap-5 hover:shadow-md transition-shadow">
+                    <div className="w-12 h-12 rounded-xl bg-purple-50 flex items-center justify-center shrink-0">
+                      <ShieldCheck className="text-purple-600" size={24} />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-gray-900 text-lg">Quality Assurance</h4>
+                      <p className="text-gray-500 mt-1">Verified suppliers ensuring all materials meet strict international industry standards.</p>
+                    </div>
+                  </div>
+                </div>
 
-            <div className="space-y-6">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-white rounded-2xl p-6 text-center border border-gray-100 shadow-sm">
-                  <Globe className="mx-auto text-[#0f7a3c] mb-2" size={24} />
-                  <div className="text-2xl font-bold text-gray-900">30+</div>
-                  <div className="text-xs text-gray-500 mt-1">Government Tender Markets</div>
-                </div>
-                <div className="bg-white rounded-2xl p-6 text-center border border-gray-100 shadow-sm">
-                  <Package className="mx-auto text-[#0f7a3c] mb-2" size={24} />
-                  <div className="text-2xl font-bold text-gray-900">150+</div>
-                  <div className="text-xs text-gray-500 mt-1">Tender SKUs Available</div>
-                </div>
-                <div className="bg-white rounded-2xl p-6 text-center border border-gray-100 shadow-sm">
-                  <Award className="mx-auto text-[#0f7a3c] mb-2" size={24} />
-                  <div className="text-2xl font-bold text-gray-900">95%</div>
-                  <div className="text-xs text-gray-500 mt-1">On-Time Delivery Rate</div>
-                </div>
-                <div className="bg-white rounded-2xl p-6 text-center border border-gray-100 shadow-sm">
-                  <Users className="mx-auto text-[#0f7a3c] mb-2" size={24} />
-                  <div className="text-2xl font-bold text-gray-900">12</div>
-                  <div className="text-xs text-gray-500 mt-1">UN Agency Partnerships</div>
-                </div>
-                <div className="bg-white rounded-2xl p-6 text-center border border-gray-100 shadow-sm">
-                  <TrendingUp className="mx-auto text-[#0f7a3c] mb-2" size={24} />
-                  <div className="text-2xl font-bold text-gray-900">USD 85M+</div>
-                  <div className="text-xs text-gray-500 mt-1">Govt. Contracts FY24</div>
-                </div>
-                <div className="bg-white rounded-2xl p-6 text-center border border-gray-100 shadow-sm">
-                  <ShieldCheck className="mx-auto text-[#0f7a3c] mb-2" size={24} />
-                  <div className="text-2xl font-bold text-gray-900">WHO PQ</div>
-                  <div className="text-xs text-gray-500 mt-1">Pre-Qualified Products</div>
+                <Link href="/contact" className="group inline-flex items-center gap-2 bg-gradient-to-r from-[#2A5C32] to-[#1a3c22] text-white font-bold px-8 py-4 rounded-full shadow-lg hover:shadow-green-900/30 transition-all duration-300 hover:-translate-y-1">
+                  Request a Quote <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </div>
+              
+              <div className="relative group">
+                <div className="absolute inset-0 bg-green-200/50 rounded-3xl rotate-3 scale-105 group-hover:rotate-6 transition-transform duration-500"></div>
+                <div className="relative rounded-3xl overflow-hidden shadow-2xl h-[400px] sm:h-[500px]">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent z-10"></div>
+                  <img loading="lazy" decoding="async" src="/media/aboutPage2.webp" alt="Manufacturing Enterprise" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                 </div>
               </div>
-              <Link href="/contact" className="w-full flex items-center justify-center gap-2 bg-[#0f7a3c] text-white font-semibold px-6 py-4 rounded-xl hover:bg-[#0c6330] transition-colors">
-                Submit Tender Inquiry <ArrowRight size={16} />
-              </Link>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Retailers & Commercial Buyers */}
+      <section ref={retailRef} id="commercial-retail" className="py-20 md:py-32 bg-white scroll-mt-20">
+        <div className={`transition-all duration-1000 ${retailVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-16'}`}>
+          <div className="max-w-[1440px] mx-auto px-4 md:px-6">
+            <div className="text-center max-w-3xl mx-auto mb-16">
+              <div className="inline-flex items-center gap-3 px-4 py-2 bg-rose-50 text-rose-700 rounded-full mb-6 font-bold text-sm tracking-wide uppercase">
+                <Store size={16} /> Commercial Supply
+              </div>
+              <h2 className="text-3xl md:text-5xl font-extrabold text-gray-900 mb-6" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+                Retailers & Commercial Buyers
+              </h2>
+              <p className="text-gray-600 text-lg leading-relaxed">
+                From textiles to leather goods and sports equipment, we supply premium consumer products to retail chains, e-commerce platforms, and institutional buyers seeking consistent quality.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-8">
+              {[
+                {
+                  icon: ShoppingCart,
+                  title: "Retail Chains & E-Commerce",
+                  desc: "Sourcing fast-moving consumer goods, apparel, and lifestyle products tailored for retail environments.",
+                  color: "text-rose-600",
+                  bg: "bg-rose-50"
+                },
+                {
+                  icon: Building2,
+                  title: "Healthcare Institutions",
+                  desc: "Supplying hospitals, clinics, and pharmacies with vital medical instruments, surgical items, and pharmaceuticals.",
+                  color: "text-blue-600",
+                  bg: "bg-blue-50"
+                },
+                {
+                  icon: Briefcase,
+                  title: "Institutional Buyers",
+                  desc: "Fulfilling commercial contracts for food products, handicrafts, and bulk commodities.",
+                  color: "text-amber-600",
+                  bg: "bg-amber-50"
+                }
+              ].map((item, i) => (
+                <div key={i} className="bg-white rounded-3xl p-8 border border-gray-100 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 group">
+                  <div className={`w-16 h-16 rounded-2xl ${item.bg} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
+                    <item.icon size={32} className={item.color} />
+                  </div>
+                  <h3 className="font-bold text-2xl text-gray-900 mb-4" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+                    {item.title}
+                  </h3>
+                  <p className="text-gray-600 leading-relaxed">
+                    {item.desc}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Final CTA Strip */}
+      <section className="py-20 bg-gradient-to-r from-[#2A5C32] to-[#1a3c22] relative overflow-hidden">
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS1vcGFjaXR5PSIwLjAzIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-10"></div>
+        <div className="max-w-[1440px] mx-auto px-4 md:px-6 relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+          <div>
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-2" style={{ fontFamily: "'Montserrat', sans-serif" }}>Ready to scale your business?</h2>
+            <p className="text-green-200 text-lg">Join our network of international trading partners today.</p>
+          </div>
+          <Link href="/contact" className="shrink-0 bg-white text-[#2A5C32] font-bold px-10 py-4 rounded-full shadow-lg hover:bg-green-50 hover:scale-105 transition-all duration-300 flex items-center gap-2">
+            Let's Collaborate <ArrowRight size={20} />
+          </Link>
         </div>
       </section>
     </div>
