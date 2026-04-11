@@ -17,6 +17,7 @@ import {
 import { useProductContext } from "@/Context/ProductContext";
 
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
+// Custom hook to trigger fade-up animations when elements scroll into the viewport
 const useScrollAnimation = () => {
   const elementRef = useRef(null);
   const [isVisible, setIsVisible] = useState(false);
@@ -43,15 +44,18 @@ const useScrollAnimation = () => {
   return [elementRef, isVisible];
 };
 
+// Helper: Retrieves the human-readable label for a given Therapy ID from utils configuration
 function getTherapyLabel(id) {
   return therapyFilters.find((f) => f.id === id)?.label ?? id;
 }
 
+// Helper: Retrieves the human-readable label for a given Dosage form ID
 function getDosageLabel(id) {
   return dosageFilters.find((f) => f.id === id)?.label ?? id;
 }
 
 // ─── BROCHURE BUTTON ─────────────────────────────────────────────────────────
+// Reusable component that renders a direct download link for the product's PDF brochure
 function BrochureButton({ iconOnly = false, fileUrl }) {
   return (
     <a
@@ -74,6 +78,7 @@ function BrochureButton({ iconOnly = false, fileUrl }) {
 
  
 // ─── PRODUCT CARD (for GRID view) ──────────────────────────────────────────────────────
+// Card component optimized for a multi-column grid layout on larger screens
 function ProductCardGrid({ product, onShowImage }) {
   const colors = therapyColorMap[product.therapy] ?? { bg: "#f0f7f1", text: "#2A5C32", dot: "#4caf50" };
   const TherapyIcon = therapyFilters.find((f) => f.id === product.therapy)?.icon;
@@ -189,6 +194,7 @@ function ProductCardGrid({ product, onShowImage }) {
 
 
 // ─── PRODUCT CARD (For LIST View) ──────────────────────────────────────────────────────
+// Card component optimized for a wide, horizontal list-style layout
 function ProductCardList({ product, onShowImage }) {
   const colors = therapyColorMap[product.therapy] ?? { bg: "#f0f7f1", text: "#2A5C32", dot: "#4caf50" };
   const TherapyIcon = therapyFilters.find((f) => f.id === product.therapy)?.icon;
@@ -396,19 +402,32 @@ function FilterContent({ selectedTherapy, selectedDosage, toggleFilter, clearAll
 }
 
 // ─── PAGE ─────────────────────────────────────────────────────────────────────
+// Main entry point for the Products catalog page.
 export default function Products() {
+  // --- STATE DECLARATIONS ---
+  // Global products data and loading state fetched from Context API
   const { productsData: allProducts, loading } = useProductContext();
+  
+  // Active filter states for wellness area, product form, and text search
   const [selectedTherapy, setSelectedTherapy] = useState([]);
   const [selectedDosage, setSelectedDosage] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  
+  // Sidebar accordion toggle states
   const [therapyExpanded, setTherapyExpanded] = useState(true);
   const [dosageExpanded, setDosageExpanded] = useState(true);
+  
+  // Sorting and Display layout states
   const [sortBy, setSortBy] = useState("name");
   const [viewMode, setViewMode] = useState("grid");   // "grid" | "list"
+  
+  // Mobile overlay and Popup modal states
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
   const [selectedProductImage, setSelectedProductImage] = useState(null);
   
+  // --- INFINITE SCROLL LOGIC ---
   // Infinite Scroll State - mapped to filter combinations
+  // The resetKey ensures that infinite scroll resets its count when filters/search changes
   const ITEMS_PER_PAGE = 12;
   const resetKey = `${selectedTherapy.join()}-${selectedDosage.join()}-${searchQuery}-${sortBy}`;
   const [visibleCountMap, setVisibleCountMap] = useState({});
@@ -417,7 +436,8 @@ export default function Products() {
 
   const searchRef = useRef(null);
 
-  // hash-based filter
+  // --- LIFECYCLE / EFFECTS ---
+  // hash-based filter: Allows linking directly to a specific filter category via URL (e.g. #tablets)
   useEffect(() => {
     const applyHash = () => {
       const hash = window.location.hash.replace("#", "");
@@ -454,6 +474,7 @@ export default function Products() {
   }, []);
 
 
+  // Pagination handler to load the next chunk of products
   const fetchMoreProducts = () => {
     setVisibleCountMap((prev) => ({
       ...prev,
@@ -461,6 +482,8 @@ export default function Products() {
     }));
   };
 
+  // --- FILTER & SORT LOGIC ---
+  // Toggles the selection of a specific filter category (Therapy or Dosage)
   const toggleFilter = (id, type) => {
     if (type === "therapy") {
       setSelectedTherapy((p) => p.includes(id) ? p.filter((x) => x !== id) : [...p, id]);
@@ -475,11 +498,14 @@ export default function Products() {
     setSearchQuery("");
   };
 
+  // Derived state to quickly check if any filters are currently active/applied
   const hasFilters = selectedTherapy.length > 0 || selectedDosage.length > 0 || searchQuery.length > 0;
   const activeFilterCount = selectedTherapy.length + selectedDosage.length;
 
   const normalizedQuery = searchQuery.toLowerCase().replace(/\s+/g, "");
 
+  // Client-side filtering logic: applies text search, therapy, and dosage form filters
+  // A product is included in the 'filtered' list only if it matches ALL active criteria
   const filtered = (allProducts || []).filter((p) => {
     const matchTherapy = selectedTherapy.length === 0 || selectedTherapy.includes(p.therapy);
     const matchDosage = selectedDosage.length === 0 || selectedDosage.includes(p.dosageForm);
@@ -490,6 +516,7 @@ export default function Products() {
     return matchTherapy && matchDosage && matchSearch;
   });
 
+  // Client-side sorting logic: sorts the remaining filtered items
   const sorted = [...filtered].sort((a, b) => {
     if (sortBy === "name") return a.name.localeCompare(b.name);
     if (sortBy === "therapy") return a.therapy.localeCompare(b.therapy);
@@ -497,6 +524,7 @@ export default function Products() {
     return 0;
   });
 
+  // Consolidating props object for the Filter Sidebar component to keep JSX cleaner
   const sidebarProps = {
     selectedTherapy, selectedDosage, toggleFilter, clearAll, hasFilters,
     therapyExpanded, setTherapyExpanded, dosageExpanded, setDosageExpanded,
@@ -802,6 +830,7 @@ export default function Products() {
           }
           className="overflow-hidden"
         >
+          {/* Main List/Grid View Rendering: checks 'viewMode' state to decide which Card component to use */}
           {viewMode === "grid" ? (
             <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-5">
               {sorted.slice(0, visibleCount).map((p) => (
@@ -819,6 +848,7 @@ export default function Products() {
       )}
 
       {/* Footer CTA */}
+      {/* Provides a clear next step (contacting sales) after browsing the catalog */}
       {sorted.length > 0 && (
         <div className="text-center mt-14 pb-6">
           <p className="text-sm text-gray-400 mb-6">

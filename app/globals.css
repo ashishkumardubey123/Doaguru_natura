@@ -106,11 +106,11 @@ button:disabled {
 }
 
 .animate-marquee {
-  animation: marquee 75s linear infinite;
+  animation: marquee 195s linear infinite;
 }
 
 .animate-marquee2 {
-  animation: marquee2 75s linear infinite;
+  animation: marquee2 195s linear infinite;
 }
 
 .hero-slide-media {

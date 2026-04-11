@@ -107,7 +107,10 @@ export default function Contact() {
                       <button
                         key={type.value}
                         type="button"
-                        onClick={() => setSelectedType(type.value)}
+                        onClick={() => {
+                          setSelectedType(type.value);
+                          setSubmitted(false);
+                        }}
                         className={`flex flex-col items-center justify-center gap-2 md:gap-3 p-4 md:p-5 rounded-2xl border-2 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg active:scale-95 ${
                           isSelected
                             ? "bg-white shadow-md scale-105 hover:scale-105"
@@ -146,7 +149,7 @@ export default function Contact() {
                     </p>
                   </div>
                 ) : (
-                  <div className="animate-in slide-in-from-bottom-4 fade-in duration-500">
+                  <div className="animate-in fade-in duration-200">
                     <div className="flex items-start md:items-center gap-3 mb-6 md:mb-8 p-3 md:p-4 rounded-xl border"
                          style={{ backgroundColor: `${selectedTypeData.color}08`, borderColor: `${selectedTypeData.color}20` }}>
                       <CheckCircle size={18} className="mt-0.5 md:mt-0 shrink-0 md:w-[20px] md:h-[20px]"
@@ -166,7 +169,7 @@ export default function Contact() {
                           Thank you for reaching out. Our team has received your inquiry and will respond within 1–2 business days.
                         </p>
                         <button
-                          onClick={() => { setSubmitted(false); setSelectedType(""); }}
+                          onClick={() => setSubmitted(false)}
                           className="inline-flex items-center justify-center gap-2 font-bold px-6 py-3 md:px-8 md:py-4 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-xl active:scale-95 w-full sm:w-auto text-sm md:text-base"
                           style={{ backgroundColor: selectedTypeData.color, color: "#ffffff" }}
                         >

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useContext } from "react";
-import { ArrowRight, AlertCircle } from "lucide-react";
+import { ArrowRight, AlertCircle, Loader2 } from "lucide-react";
 import { FormsContext } from "@/Context/FormsContext";
 
 const isValidEmail = (val) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(val.trim());
@@ -21,6 +21,7 @@ export default function BusinessPartnership({ setSubmitted }) {
   });
   const [touched, setTouched] = useState({});
   const [submitAttempted, setSubmitAttempted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
   const handleBlur = (e) => setTouched({ ...touched, [e.target.name]: true });
@@ -45,10 +46,15 @@ export default function BusinessPartnership({ setSubmitted }) {
     setSubmitAttempted(true);
     if ((form.email && !isValidEmail(form.email)) || !isValidPhone(form.phone)) return;
 
-    const payload = { ...form, phone: form.phone ? `${form.countryCode} ${form.phone}` : "" };
-    const result = await submitForm("Business Partnership", payload);
-    if (result.success) setSubmitted(true);
-    else alert(result.message || "Failed to submit form");
+    setIsSubmitting(true);
+    try {
+      const payload = { ...form, phone: form.phone ? `${form.countryCode} ${form.phone}` : "" };
+      const result = await submitForm("Business Partnership", payload);
+      if (result.success) setSubmitted(true);
+      else alert(result.message || "Failed to submit form");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const base = "w-full bg-white border-2 rounded-xl px-4 py-3 text-base sm:text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-4 transition-all duration-200 shadow-sm min-h-[48px]";
@@ -139,11 +145,20 @@ export default function BusinessPartnership({ setSubmitted }) {
 
       {/* Submit */}
       <div className="pt-1">
-        <button type="submit"
-          className="w-full group flex items-center justify-center gap-2 font-semibold py-4 min-h-[52px] rounded-xl transition-all duration-300 hover:shadow-xl hover:shadow-[#1d6fa4]/20 active:scale-[0.98] cursor-pointer"
+        <button type="submit" disabled={isSubmitting}
+          className={`w-full group flex items-center justify-center gap-2 font-semibold py-4 min-h-[52px] rounded-xl transition-all duration-300 hover:shadow-xl hover:shadow-[#1d6fa4]/20 active:scale-[0.98] cursor-pointer ${isSubmitting ? 'opacity-70 pointer-events-none' : ''}`}
           style={{ backgroundColor: "#1d6fa4" }}>
-          <span style={{ color: "#ffffff" }}>Submit Proposal</span>
-          <ArrowRight size={18} style={{ color: "#ffffff" }} className="group-hover:translate-x-1 transition-transform" />
+          {isSubmitting ? (
+            <>
+              <Loader2 className="animate-spin text-white" size={18} />
+              <span style={{ color: "#ffffff" }}>Sending...</span>
+            </>
+          ) : (
+            <>
+              <span style={{ color: "#ffffff" }}>Submit Proposal</span>
+              <ArrowRight size={18} style={{ color: "#ffffff" }} className="group-hover:translate-x-1 transition-transform" />
+            </>
+          )}
         </button>
       </div>
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useContext } from "react";
-import { ArrowRight, User, Mail, MessageSquare, AlertCircle } from "lucide-react";
+import { ArrowRight, User, Mail, MessageSquare, AlertCircle, Loader2 } from "lucide-react";
 import { FormsContext } from "@/Context/FormsContext";
 
 const isValidEmail = (val) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(val.trim());
@@ -21,6 +21,7 @@ export default function GeneralInquiry({ setSubmitted }) {
   });
   const [touched, setTouched] = useState({});
   const [submitAttempted, setSubmitAttempted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
   const handleBlur = (e) => setTouched({ ...touched, [e.target.name]: true });
@@ -45,10 +46,15 @@ export default function GeneralInquiry({ setSubmitted }) {
     setSubmitAttempted(true);
     if ((form.email && !isValidEmail(form.email)) || !isValidPhone(form.phone)) return;
 
-    const payload = { ...form, phone: form.phone ? `${form.countryCode} ${form.phone}` : "" };
-    const result = await submitForm("General Inquiry", payload);
-    if (result.success) setSubmitted(true);
-    else alert(result.message || "Failed to submit form");
+    setIsSubmitting(true);
+    try {
+      const payload = { ...form, phone: form.phone ? `${form.countryCode} ${form.phone}` : "" };
+      const result = await submitForm("General Inquiry", payload);
+      if (result.success) setSubmitted(true);
+      else alert(result.message || "Failed to submit form");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const base = "w-full bg-gray-50/50 border text-gray-900 rounded-xl px-4 py-3 text-base sm:text-sm focus:outline-none focus:ring-4 focus:bg-white transition-all duration-500 ease-out placeholder:text-gray-400 shadow-sm min-h-[48px]";
@@ -133,11 +139,20 @@ export default function GeneralInquiry({ setSubmitted }) {
 
       {/* Submit */}
       <div>
-        <button type="submit"
-          className="group w-full flex items-center justify-center gap-2 font-bold py-4 min-h-[52px] rounded-xl transition-all duration-300 ease-out hover:shadow-xl hover:shadow-[#2A5C32]/25 active:scale-[0.98] cursor-pointer"
+        <button type="submit" disabled={isSubmitting}
+          className={`group w-full flex items-center justify-center gap-2 font-bold py-4 min-h-[52px] rounded-xl transition-all duration-300 ease-out hover:shadow-xl hover:shadow-[#2A5C32]/25 active:scale-[0.98] cursor-pointer ${isSubmitting ? 'opacity-70 pointer-events-none' : ''}`}
           style={{ backgroundColor: "#2A5C32" }}>
-          <span style={{ color: "#ffffff" }}>Send Message</span>
-          <ArrowRight size={18} style={{ color: "#ffffff" }} className="transition-transform duration-500 ease-out group-hover:translate-x-2" />
+          {isSubmitting ? (
+            <>
+              <Loader2 className="animate-spin text-white" size={18} />
+              <span style={{ color: "#ffffff" }}>Sending...</span>
+            </>
+          ) : (
+            <>
+              <span style={{ color: "#ffffff" }}>Send Message</span>
+              <ArrowRight size={18} style={{ color: "#ffffff" }} className="transition-transform duration-500 ease-out group-hover:translate-x-2" />
+            </>
+          )}
         </button>
       </div>
     </form>

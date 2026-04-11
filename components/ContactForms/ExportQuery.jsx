@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useContext } from "react";
-import { ArrowRight, User, Mail, Phone, Building2, Globe, MessageSquare, AlertCircle } from "lucide-react";
+import { ArrowRight, User, Mail, Phone, Building2, Globe, MessageSquare, AlertCircle, Loader2 } from "lucide-react";
 import { FormsContext } from "@/Context/FormsContext";
 import { therapyFilters, dosageFilters } from "@/utils/utils";
 
@@ -50,6 +50,7 @@ export default function ExportQuery({ setSubmitted }) {
   const [otherText, setOtherText] = useState("");
   const [touched, setTouched] = useState({});
   const [submitAttempted, setSubmitAttempted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
   const handleBlur = (e) => setTouched({ ...touched, [e.target.name]: true });
@@ -81,21 +82,27 @@ export default function ExportQuery({ setSubmitted }) {
     if ((form.email && !isValidEmail(form.email)) || !isValidPhone(form.phone)) return;
     if (selectedCategories.length === 0) return;
 
-    const allCategories = [...selectedCategories];
-    if (selectedCategories.includes("Other") && otherText.trim()) {
-      allCategories.splice(allCategories.indexOf("Other"), 1, `Other: ${otherText.trim()}`);
+    setIsSubmitting(true);
+    try {
+      const allCategories = [...selectedCategories];
+      if (selectedCategories.includes("Other") && otherText.trim()) {
+        allCategories.splice(allCategories.indexOf("Other"), 1, `Other: ${otherText.trim()}`);
+      }
+      const payload = {
+        ...form,
+        phone: form.phone ? `${form.countryCode} ${form.phone}` : "",
+        products: allCategories.join(", "),
+      };
+      const result = await submitForm("Export Query", payload);
+      if (result.success) setSubmitted(true);
+      else alert(result.message || "Failed to submit form");
+    } finally {
+      setIsSubmitting(false);
     }
-    const payload = {
-      ...form,
-      phone: form.phone ? `${form.countryCode} ${form.phone}` : "",
-      products: allCategories.join(", "),
-    };
-    const result = await submitForm("Export Query", payload);
-    if (result.success) setSubmitted(true);
-    else alert(result.message || "Failed to submit form");
   };
 
   const handleDivSubmit = (e) => {
+    if (isSubmitting) return;
     const formElement = e.currentTarget.closest("form");
     if (formElement && formElement.checkValidity()) handleSubmit(e);
     else if (formElement) formElement.reportValidity();
@@ -247,10 +254,19 @@ export default function ExportQuery({ setSubmitted }) {
         <div role="button" tabIndex={0}
           onClick={handleDivSubmit}
           onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleDivSubmit(e); } }}
-          className="w-full group flex items-center justify-center gap-2 font-semibold py-4 min-h-[52px] rounded-xl transition-all duration-300 hover:shadow-xl hover:shadow-[#6B4226]/20 active:scale-[0.98] cursor-pointer select-none"
+          className={`w-full group flex items-center justify-center gap-2 font-semibold py-4 min-h-[52px] rounded-xl transition-all duration-300 hover:shadow-xl hover:shadow-[#6B4226]/20 active:scale-[0.98] cursor-pointer select-none ${isSubmitting ? 'opacity-70 pointer-events-none' : ''}`}
           style={{ backgroundColor: "#6B4226" }}>
-          <span style={{ color: "#ffffff" }}>Submit Export Query</span>
-          <ArrowRight size={18} style={{ color: "#ffffff" }} className="group-hover:translate-x-1 transition-transform duration-300" />
+          {isSubmitting ? (
+            <>
+              <Loader2 className="animate-spin text-white" size={18} />
+              <span style={{ color: "#ffffff" }}>Sending...</span>
+            </>
+          ) : (
+            <>
+              <span style={{ color: "#ffffff" }}>Submit Export Query</span>
+              <ArrowRight size={18} style={{ color: "#ffffff" }} className="group-hover:translate-x-1 transition-transform duration-300" />
+            </>
+          )}
         </div>
       </form>
     </div>
