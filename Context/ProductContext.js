@@ -1,7 +1,7 @@
 "use client";
 import React, { createContext, useState, useEffect, useContext } from "react";
 import { fetchProducts, fetchProductFilters, uploadProduct } from "@/app/api/ProductApi";
-import { therapyFilters as defaultTherapyFilters, dosageFilters as defaultDosageFilters } from "@/utils/utils";
+import { withTherapyIcons, withDosageIcons } from "@/utils/utils";
 
 export const ProductContext = createContext();
 
@@ -9,8 +9,8 @@ export const useProductContext = () => useContext(ProductContext);
 
 export const ProductProvider = ({ children }) => {
     const [productsData, setProductsData] = useState([]);
-    const [therapyFilters, setTherapyFilters] = useState(defaultTherapyFilters);
-    const [dosageFilters, setDosageFilters] = useState(defaultDosageFilters);
+    const [therapyFilters, setTherapyFilters] = useState([]);
+    const [dosageFilters, setDosageFilters] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -20,16 +20,18 @@ export const ProductProvider = ({ children }) => {
                     fetchProducts(),
                     fetchProductFilters(),
                 ]);
+                let normalizedProducts = [];
 
                 if (productsResult.status === "fulfilled") {
                     const data = productsResult.value;
                     if (Array.isArray(data) && Array.isArray(data[0])) {
-                        setProductsData(data[0]);
+                        normalizedProducts = data[0];
                     } else if (Array.isArray(data)) {
-                        setProductsData(data);
+                        normalizedProducts = data;
                     } else {
-                        setProductsData([]);
+                        normalizedProducts = [];
                     }
+                    setProductsData(normalizedProducts);
                 } else {
                     console.error("Failed to fetch products for context", productsResult.reason);
                     setProductsData([]);
@@ -37,20 +39,19 @@ export const ProductProvider = ({ children }) => {
 
                 if (filtersResult.status === "fulfilled") {
                     const filters = filtersResult.value;
-                    if (filters?.therapyFilters && Array.isArray(filters.therapyFilters)) {
-                        setTherapyFilters(filters.therapyFilters);
-                    }
-                    if (filters?.dosageFilters && Array.isArray(filters.dosageFilters)) {
-                        setDosageFilters(filters.dosageFilters);
-                    }
+                    setTherapyFilters(withTherapyIcons(filters?.therapyFilters, normalizedProducts));
+                    setDosageFilters(withDosageIcons(filters?.dosageFilters, normalizedProducts));
                 } else {
                     console.error("Failed to fetch filter values", filtersResult.reason);
+                    // Fallback: derive filters from products if filters endpoint fails.
+                    setTherapyFilters(withTherapyIcons([], normalizedProducts));
+                    setDosageFilters(withDosageIcons([], normalizedProducts));
                 }
             } catch (error) {
                 console.error("Context initialization error:", error);
                 setProductsData([]);
-                setTherapyFilters(defaultTherapyFilters);
-                setDosageFilters(defaultDosageFilters);
+                setTherapyFilters([]);
+                setDosageFilters([]);
             } finally {
                 setLoading(false);
             }

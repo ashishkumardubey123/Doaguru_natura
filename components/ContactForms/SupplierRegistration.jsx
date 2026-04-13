@@ -3,7 +3,7 @@
 import { useState, useContext } from "react";
 import { ArrowRight, AlertCircle, Loader2 } from "lucide-react";
 import { FormsContext } from "@/Context/FormsContext";
-import { therapyFilters, dosageFilters } from "@/utils/utils";
+import { useProductContext } from "@/Context/ProductContext";
 
 const isValidEmail = (val) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(val.trim());
 const isValidPhone = (val) => val.length === 0 || val.length === 10;
@@ -43,6 +43,9 @@ function CategoryChip({ label, selected, onToggle }) {
 
 export default function SupplierRegistration({ setSubmitted }) {
   const { submitForm } = useContext(FormsContext);
+  const { therapyFilters: contextTherapyFilters, dosageFilters: contextDosageFilters } = useProductContext();
+  const therapyFilters = contextTherapyFilters;
+  const dosageFilters = contextDosageFilters;
   const [form, setForm] = useState({
     company: "", contactPerson: "", email: "", countryCode: "+91", phone: "", message: "",
   });

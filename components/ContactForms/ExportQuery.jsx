@@ -3,7 +3,7 @@
 import { useState, useContext } from "react";
 import { ArrowRight, User, Mail, Phone, Building2, Globe, MessageSquare, AlertCircle, Loader2 } from "lucide-react";
 import { FormsContext } from "@/Context/FormsContext";
-import { therapyFilters, dosageFilters } from "@/utils/utils";
+import { useProductContext } from "@/Context/ProductContext";
 
 const isValidEmail = (val) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(val.trim());
 const isValidPhone = (val) => val.length === 0 || val.length === 10;
@@ -43,6 +43,9 @@ function CategoryChip({ label, selected, onToggle, color = "#6B4226", hoverBg = 
 
 export default function ExportQuery({ setSubmitted }) {
   const { submitForm } = useContext(FormsContext);
+  const { therapyFilters: contextTherapyFilters, dosageFilters: contextDosageFilters } = useProductContext();
+  const therapyFilters = contextTherapyFilters;
+  const dosageFilters = contextDosageFilters;
   const [form, setForm] = useState({
     name: "", email: "", countryCode: "+91", phone: "", company: "", country: "", message: "",
   });

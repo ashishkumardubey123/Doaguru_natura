@@ -10,8 +10,6 @@ import {
 } from "lucide-react";
 
 import {
-  therapyFilters as defaultTherapyFilters,
-  dosageFilters as defaultDosageFilters,
   therapyColorMap,
 } from "@/utils/utils";
 import { useProductContext } from "@/Context/ProductContext";
@@ -312,12 +310,12 @@ function FilterContent({ selectedTherapy, selectedDosage, toggleFilter, clearAll
               [&::-webkit-scrollbar-thumb]:rounded-full
               [&::-webkit-scrollbar-thumb]:bg-gray-200
               hover:[&::-webkit-scrollbar-thumb]:bg-[#2A5C32]/30">
-            { therapyFilters.map((f) => {
+            { therapyFilters.map((f, index) => {
               const active = selectedTherapy.includes(f.id);
               const colors = therapyColorMap[f.id] ?? { bg: "#f0f7f1", text: "#2A5C32", dot: "#4caf50" };
               return (
                 <label
-                  key={ f.id }
+                  key={ `therapy-${f.id || `fallback-${index}`}` }
                   id={ f.id }
                   className={ `flex items-center justify-between gap-3 px-3 py-2.5 rounded-2xl cursor-pointer transition-all ${active ? "bg-white shadow-sm ring-1 ring-black/5" : "hover:bg-gray-50/80 hover:shadow-sm"}` }
                   onClick={ () => toggleFilter(f.id, "therapy") }
@@ -371,11 +369,11 @@ function FilterContent({ selectedTherapy, selectedDosage, toggleFilter, clearAll
               [&::-webkit-scrollbar-thumb]:rounded-full
               [&::-webkit-scrollbar-thumb]:bg-gray-200
               hover:[&::-webkit-scrollbar-thumb]:bg-blue-200">
-            { dosageFilters.map((f) => {
+            { dosageFilters.map((f, index) => {
               const active = selectedDosage.includes(f.id);
               return (
                 <label
-                  key={ f.id }
+                  key={ `dosage-${f.id || `fallback-${index}`}` }
                   id={ f.id }
                   className={ `flex items-center justify-between gap-3 px-3 py-2.5 rounded-2xl cursor-pointer transition-all ${active ? "bg-blue-50 shadow-sm ring-1 ring-blue-100" : "hover:bg-gray-50/80 hover:shadow-sm"}` }
                   onClick={ () => toggleFilter(f.id, "dosage") }
@@ -425,8 +423,8 @@ export default function Products() {
     dosageFilters: contextDosageFilters,
   } = useProductContext();
 
-  const therapyFilters = contextTherapyFilters?.length ? contextTherapyFilters : defaultTherapyFilters;
-  const dosageFilters = contextDosageFilters?.length ? contextDosageFilters : defaultDosageFilters;
+  const therapyFilters = contextTherapyFilters;
+  const dosageFilters = contextDosageFilters;
 
   // Active filter states for wellness area, product form, and text search
   const [selectedTherapy, setSelectedTherapy] = useState([]);
@@ -460,7 +458,7 @@ export default function Products() {
   // hash-based filter: Allows linking directly to a specific filter category via URL (e.g. #tablets)
   useEffect(() => {
     const applyHash = () => {
-      const hash = window.location.hash.replace("#", "");
+      const hash = decodeURIComponent(window.location.hash.replace("#", ""));
       if (!hash) return;
       if (therapyFilters.some((f) => f.id === hash)) {
         setSelectedTherapy([hash]);

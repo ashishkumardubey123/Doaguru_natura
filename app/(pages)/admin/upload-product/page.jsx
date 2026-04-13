@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useProductContext } from '@/Context/ProductContext';
-import { therapyFilters, dosageFilters } from '@/utils/utils';
 import { 
   ArrowLeft, Upload, Package, Image as ImageIcon, CheckCircle, 
   AlertTriangle, Loader2, X
@@ -12,7 +11,9 @@ import Link from 'next/link';
 
 export default function UploadProductPage() {
   const router = useRouter();
-  const { uploadNewProduct } = useProductContext();
+  const { uploadNewProduct, therapyFilters: contextTherapyFilters, dosageFilters: contextDosageFilters } = useProductContext();
+  const therapyFilters = contextTherapyFilters;
+  const dosageFilters = contextDosageFilters;
 
   const [formData, setFormData] = useState({
     name: '',

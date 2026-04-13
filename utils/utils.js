@@ -17,18 +17,13 @@ import {
   Stethoscope,
 } from "lucide-react";
 
-// ─── THERAPY FILTERS ────────────────────────────────────────────────────────
+// Static fallback filter lists
 export const therapyFilters = [
   { id: "immunity", label: "Immunity & Wellness", icon: ShieldPlus, count: 22 },
   { id: "digestion", label: "Digestive Health", icon: Activity, count: 14 },
   { id: "joint-care", label: "Joint & Muscle Care", icon: Zap, count: 8 },
   { id: "respiratory", label: "Respiratory Care", icon: Wind, count: 5 },
-  {
-    id: "womens-health",
-    label: "Women's Health",
-    icon: PersonStanding,
-    count: 5,
-  },
+  { id: "womens-health", label: "Women's Health", icon: PersonStanding, count: 5 },
   { id: "hair-skin", label: "Hair & Skin Care", icon: Sparkles, count: 5 },
   { id: "cardiac", label: "Cardiac & BP", icon: Heart, count: 3 },
   { id: "diabetic", label: "Sugar Care", icon: Leaf, count: 8 },
@@ -38,14 +33,8 @@ export const therapyFilters = [
   { id: "mental", label: "Mental Wellness", icon: Brain, count: 4 },
 ];
 
-// ─── DOSAGE FORM FILTERS ─────────────────────────────────────────────────────
 export const dosageFilters = [
-  {
-    id: "churna",
-    label: "Churna, Powder & Granules",
-    icon: Package,
-    count: 18,
-  },
+  { id: "churna", label: "Churna, Powder & Granules", icon: Package, count: 18 },
   { id: "syrup", label: "Syrups, Kadha & Ras", icon: FlaskConical, count: 22 },
   { id: "vati", label: "Vati & Guggulu", icon: Pill, count: 10 },
   { id: "asava", label: "Asava & Arishta", icon: Droplets, count: 8 },
@@ -56,7 +45,7 @@ export const dosageFilters = [
   { id: "bhasma", label: "Bhasma & Pishti", icon: TestTube, count: 4 },
 ];
 
-// ─── THERAPY COLOR MAP (used in page for badges) ──────────────────────────────
+// Color palette map used for therapy badges/cards
 export const therapyColorMap = {
   immunity: { bg: "#e8f5e9", text: "#2A5C32", dot: "#4caf50" },
   digestion: { bg: "#fff8e1", text: "#e65100", dot: "#ffa726" },
@@ -72,3 +61,142 @@ export const therapyColorMap = {
   mental: { bg: "#ede7f6", text: "#4527a0", dot: "#9575cd" },
 };
 
+const normalizeKey = (value) =>
+  String(value ?? "")
+    .toLowerCase()
+    .trim()
+    .replace(/&/g, " and ")
+    .replace(/['\u2019]/g, "")
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+
+const getDistinctValues = (rawFilters = [], fieldName) => {
+  const fromFilters = (rawFilters || [])
+    .map((item) => {
+      if (typeof item === "string") return item.trim();
+      if (!item || typeof item !== "object") return "";
+      return String(item.id ?? item.label ?? item.value ?? item[fieldName] ?? "").trim();
+    })
+    .filter(Boolean);
+
+  return [...new Set(fromFilters)];
+};
+
+const getCountMap = (products = [], fieldName) =>
+  (products || []).reduce((acc, product) => {
+    const value = String(product?.[fieldName] ?? "").trim();
+    if (!value) return acc;
+    acc[value] = (acc[value] ?? 0) + 1;
+    return acc;
+  }, {});
+
+const therapyIconByKey = {
+  immunity: ShieldPlus,
+  "immunity wellness": ShieldPlus,
+  digestion: Activity,
+  "digestive health": Activity,
+  "joint care": Zap,
+  "joint muscle care": Zap,
+  respiratory: Wind,
+  "respiratory care": Wind,
+  "womens health": PersonStanding,
+  "women health": PersonStanding,
+  "hair skin": Sparkles,
+  "hair skin care": Sparkles,
+  "skin care": Sparkles,
+  cardiac: Heart,
+  "cardiac bp": Heart,
+  diabetic: Leaf,
+  "sugar care": Leaf,
+  "diabetes care": Leaf,
+  liver: Stethoscope,
+  "liver detox": Stethoscope,
+  "bone health": Activity,
+  "oral care": Smile,
+  mental: Brain,
+  "mental wellness": Brain,
+  "neuro mental health": Brain,
+  "neurological care": Brain,
+  urology: Droplets,
+  "kidney care": Droplets,
+  "weight management": Activity,
+};
+
+const dosageIconByKey = {
+  syrup: FlaskConical,
+  "syrups kadha ras": FlaskConical,
+  kadha: FlaskConical,
+  liquid: FlaskConical,
+  "juice ras": Droplets,
+  "juices ras": Droplets,
+  oil: Droplets,
+  "oil gel": Droplets,
+  "oils gels": Droplets,
+  gel: Droplets,
+  cream: Droplets,
+  tablet: Pill,
+  tablets: Pill,
+  capsule: Pill,
+  capsules: Pill,
+  "capsules tablets": Pill,
+  vati: Pill,
+  asava: Droplets,
+  avaleh: Leaf,
+  churna: Package,
+  powder: Package,
+  granules: Package,
+  "churna powder granules": Package,
+  granuels: Package,
+  bhasma: TestTube,
+  pishti: TestTube,
+};
+
+export const getTherapyIcon = (value) =>
+  therapyIconByKey[normalizeKey(value)] ?? Stethoscope;
+
+export const getDosageIcon = (value) =>
+  dosageIconByKey[normalizeKey(value)] ?? Package;
+
+export const withTherapyIcons = (rawFilters = [], products = []) => {
+  const countMap = getCountMap(products, "therapy");
+  const values = getDistinctValues(rawFilters, "therapy");
+  const sourceValues = values.length > 0 ? values : Object.keys(countMap);
+
+  return sourceValues.map((value) => {
+    const source =
+      rawFilters.find((item) => {
+        if (!item || typeof item !== "object") return false;
+        const rawId = String(item.id ?? item.label ?? item.value ?? item.therapy ?? "").trim();
+        return rawId === value;
+      }) ?? {};
+
+    return {
+      id: value,
+      label: typeof source.label === "string" && source.label.trim() ? source.label : value,
+      icon: typeof source.icon === "function" ? source.icon : getTherapyIcon(value),
+      count: typeof source.count === "number" ? source.count : countMap[value] ?? 0,
+    };
+  });
+};
+
+export const withDosageIcons = (rawFilters = [], products = []) => {
+  const countMap = getCountMap(products, "dosageForm");
+  const values = getDistinctValues(rawFilters, "dosageForm");
+  const sourceValues = values.length > 0 ? values : Object.keys(countMap);
+
+  return sourceValues.map((value) => {
+    const source =
+      rawFilters.find((item) => {
+        if (!item || typeof item !== "object") return false;
+        const rawId = String(item.id ?? item.label ?? item.value ?? item.dosageForm ?? "").trim();
+        return rawId === value;
+      }) ?? {};
+
+    return {
+      id: value,
+      label: typeof source.label === "string" && source.label.trim() ? source.label : value,
+      icon: typeof source.icon === "function" ? source.icon : getDosageIcon(value),
+      count: typeof source.count === "number" ? source.count : countMap[value] ?? 0,
+    };
+  });
+};

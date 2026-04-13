@@ -8,7 +8,7 @@ import {
   Shield, Award, Users, TrendingUp, Calendar, ExternalLink, MapPin, Loader2
 } from "lucide-react";
 import { mediaNewsArticles } from "../data/mediaNews";
-import { therapyFilters, dosageFilters, therapyColorMap } from "@/utils/utils";
+import { therapyColorMap } from "@/utils/utils";
 import { useProductContext } from "@/Context/ProductContext";
 
 // API Imports (Aapke backend ke liye)
@@ -268,8 +268,10 @@ function HomeDarkMap({ mapDots = [], isLoading }) {
 
 // ─── MAIN PAGE ────────────────────────────────────────────────────────────────
 export default function Home() {
-  const { productsData } = useProductContext();
+  const { productsData, therapyFilters: contextTherapyFilters, dosageFilters: contextDosageFilters } = useProductContext();
   const allProducts = productsData || [];
+  const therapyFilters = contextTherapyFilters;
+  const dosageFilters = contextDosageFilters;
 
 
   // --- MAP DATA LOGIC ---
@@ -321,6 +323,32 @@ export default function Home() {
       coordinates: [parseFloat(country.longitude), parseFloat(country.latitude)]
     }));
   }, [dbCountries]);
+
+  const therapyCards = therapyFilters?.length > 0 ? therapyFilters.map((f, index) => {
+    const colors = therapyColorMap[f.id] ?? { bg: "#f0f7f1", text: "#2A5C32", dot: "#4caf50" };
+    const count = allProducts.filter((p) => p.therapy === f.id).length;
+    const desc = therapyDescriptions[f.id] ?? "";
+    return (
+      <div key={ `therapy-${f.id || `fallback-${index}`}` } className="rounded-3xl p-5 sm:p-6 border border-gray-100/80 hover:shadow-2xl hover:shadow-[#2A5C32]/8 transition-all duration-500 group bg-white">
+        <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center mb-4 sm:mb-5 transition-all duration-300 ring-4 ring-white shadow-sm group-hover:shadow-md" style={ { backgroundColor: colors.bg } }>
+          <f.icon size={ 20 } style={ { color: colors.text } } className="group-hover:scale-110 transition-transform duration-500" />
+        </div>
+        <h3 className="font-extrabold text-gray-900 mb-2 leading-snug tracking-tight" style={ { fontFamily: "'Montserrat', sans-serif", fontSize: "0.95rem" } }>{ f.label }</h3>
+        <p className="text-xs text-gray-500 leading-relaxed mb-5 line-clamp-3 font-light">{ desc }</p>
+        <div className="flex items-center justify-between">
+          <span className="text-[11px] font-bold px-3 py-1.5 rounded-xl shadow-sm border border-black/5" style={ { backgroundColor: colors.bg, color: colors.text } }>{ count } Products</span>
+          <Link href={ `/products#${f.id}` } className="text-[11px] font-bold flex items-center gap-1 hover:gap-2 transition-all duration-300" style={ { color: colors.text } }>
+            Browse <ArrowRight size={ 12 } />
+          </Link>
+        </div>
+      </div>
+    );
+  }) : (
+    <div key="loading" className="col-span-full text-center py-12">
+      <div className="w-8 h-8 border-4 border-[#2A5C32]/20 border-t-[#2A5C32] rounded-full animate-spin mx-auto mb-4" />
+      <p className="text-gray-500 font-medium">Loading therapy areas...</p>
+    </div>
+  );
 
   return (
     <div>
@@ -403,26 +431,7 @@ export default function Home() {
             </p>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
-            { therapyFilters.map((f) => {
-              const colors = therapyColorMap[f.id] ?? { bg: "#f0f7f1", text: "#2A5C32", dot: "#4caf50" };
-              const count = allProducts.filter((p) => p.therapy === f.id).length;
-              const desc = therapyDescriptions[f.id] ?? "";
-              return (
-                <div key={ f.id } className="rounded-3xl p-5 sm:p-6 border border-gray-100/80 hover:shadow-2xl hover:shadow-[#2A5C32]/8 transition-all duration-500 group bg-white">
-                  <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center mb-4 sm:mb-5 transition-all duration-300 ring-4 ring-white shadow-sm group-hover:shadow-md" style={ { backgroundColor: colors.bg } }>
-                    <f.icon size={ 20 } style={ { color: colors.text } } className="group-hover:scale-110 transition-transform duration-500" />
-                  </div>
-                  <h3 className="font-extrabold text-gray-900 mb-2 leading-snug tracking-tight" style={ { fontFamily: "'Montserrat', sans-serif", fontSize: "0.95rem" } }>{ f.label }</h3>
-                  <p className="text-xs text-gray-500 leading-relaxed mb-5 line-clamp-3 font-light">{ desc }</p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-bold px-3 py-1.5 rounded-xl shadow-sm border border-black/5" style={ { backgroundColor: colors.bg, color: colors.text } }>{ count } Products</span>
-                    <Link href={ `/products#${f.id}` } className="text-[11px] font-bold flex items-center gap-1 hover:gap-2 transition-all duration-300" style={ { color: colors.text } }>
-                      Browse <ArrowRight size={ 12 } />
-                    </Link>
-                  </div>
-                </div>
-              );
-            }) }
+            { therapyCards }
           </div>
           <div className="text-center mt-10 sm:mt-14">
             <Link href="/products" className="inline-flex items-center gap-2 font-bold px-8 sm:px-10 py-3.5 sm:py-4 text-sm sm:text-base rounded-full border-2 border-[#2A5C32]/30 text-[#2A5C32] hover:border-[#2A5C32] hover:bg-[#2A5C32] hover:text-white transition-all duration-300 active:scale-95">
@@ -449,8 +458,8 @@ export default function Home() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
             { allProducts.filter((p) => p.image).slice(0, 4).map((product) => {
               const colors = therapyColorMap[product.therapy] ?? { bg: "#f0f7f1", text: "#2A5C32", dot: "#4caf50" };
-              const TherapyIcon = therapyFilters.find((f) => f.id === product.therapy)?.icon;
-              const dosageLabel = dosageFilters.find((f) => f.id === product.dosageForm)?.label ?? product.dosageForm;
+              const TherapyIcon = therapyFilters?.find((f) => f.id === product.therapy)?.icon;
+              const dosageLabel = dosageFilters?.find((f) => f.id === product.dosageForm)?.label ?? product.dosageForm;
               return (
                 <div key={ product.id } className="group bg-white rounded-3xl border border-gray-100/80 overflow-hidden hover:shadow-2xl hover:shadow-[#2A5C32]/8 transition-all duration-500 flex flex-col">
                   { product.image ? (
