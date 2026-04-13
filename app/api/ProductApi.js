@@ -5,7 +5,6 @@ const API_BASE_URL = "http://localhost:5000";
 
 const getAuthConfig = (token) => ({
   withCredentials: true,
- 
 });
 
 export const fetchProducts = async () => {
@@ -16,7 +15,17 @@ export const fetchProducts = async () => {
         console.error("Error fetching products:", error);
         throw error;
     }
-}
+};
+
+export const fetchProductFilters = async () => {
+    try {
+        const response = await axios.get(`${API_BASE_URL}/api/product/filters`);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching product filters:", error);
+        throw error;
+    }
+};
 
 export const uploadProduct = async (formData) => {
     try {
@@ -31,4 +40,4 @@ export const uploadProduct = async (formData) => {
         console.error("Error uploading product:", error);
         throw error;
     }
-}
+};

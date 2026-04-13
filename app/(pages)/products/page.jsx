@@ -10,8 +10,8 @@ import {
 } from "lucide-react";
 
 import {
-  therapyFilters,
-  dosageFilters,
+  therapyFilters as defaultTherapyFilters,
+  dosageFilters as defaultDosageFilters,
   therapyColorMap,
 } from "@/utils/utils";
 import { useProductContext } from "@/Context/ProductContext";
@@ -44,14 +44,14 @@ const useScrollAnimation = () => {
   return [elementRef, isVisible];
 };
 
-// Helper: Retrieves the human-readable label for a given Therapy ID from utils configuration
-function getTherapyLabel(id) {
-  return therapyFilters.find((f) => f.id === id)?.label ?? id;
+// Helper: Retrieves the human-readable label for a given Therapy ID from dynamic filter data
+function getTherapyLabel(filters, id) {
+  return filters?.find((f) => f.id === id)?.label ?? id;
 }
 
-// Helper: Retrieves the human-readable label for a given Dosage form ID
-function getDosageLabel(id) {
-  return dosageFilters.find((f) => f.id === id)?.label ?? id;
+// Helper: Retrieves the human-readable label for a given Dosage form ID from dynamic filter data
+function getDosageLabel(filters, id) {
+  return filters?.find((f) => f.id === id)?.label ?? id;
 }
 
 // ─── BROCHURE BUTTON ─────────────────────────────────────────────────────────
@@ -79,9 +79,9 @@ function BrochureButton({ iconOnly = false, fileUrl }) {
  
 // ─── PRODUCT CARD (for GRID view) ──────────────────────────────────────────────────────
 // Card component optimized for a multi-column grid layout on larger screens
-function ProductCardGrid({ product, onShowImage }) {
+function ProductCardGrid({ product, onShowImage, therapyFilters, dosageFilters }) {
   const colors = therapyColorMap[product.therapy] ?? { bg: "#f0f7f1", text: "#2A5C32", dot: "#4caf50" };
-  const TherapyIcon = therapyFilters.find((f) => f.id === product.therapy)?.icon;
+  const TherapyIcon = therapyFilters?.find((f) => f.id === product.therapy)?.icon;
   const [ref, isVisible] = useScrollAnimation();
 
   return (
@@ -97,14 +97,15 @@ function ProductCardGrid({ product, onShowImage }) {
 
       {/* Image OR icon area */}
       { product.image ? (
-        <div className="relative h-48 overflow-hidden shrink-0 bg-gray-50/50">
+        <div className="relative h-52 overflow-hidden shrink-0 bg-gray-50/50">
           <img
             src={ product.image }
             alt={ product.name }
-            className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-700"
+            loading="lazy"
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
           />
           {/* gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-gray-900/10 to-transparent pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent pointer-events-none" />
           { product.tag && (
             <span
               className="absolute top-4 left-4 text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-xl text-white shadow-sm z-10 backdrop-blur-md"
@@ -163,7 +164,7 @@ function ProductCardGrid({ product, onShowImage }) {
               className="w-1.5 h-1.5 rounded-full shrink-0 shadow-sm"
               style={ { backgroundColor: colors.dot } }
             />
-            { getTherapyLabel(product.therapy) }
+            { getTherapyLabel(therapyFilters, product.therapy) }
           </span>
           <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-3 py-1.5 rounded-xl bg-gray-50 border border-gray-200 text-gray-600 shadow-sm">
             <Package size={ 12 } className="text-gray-400" />
@@ -173,7 +174,7 @@ function ProductCardGrid({ product, onShowImage }) {
 
         {/* Dosage badge */}
         <div className="text-[11px] text-gray-400 mb-6 capitalize shrink-0 font-medium">
-          Form: <span className="font-bold text-gray-700 ml-1">{ getDosageLabel(product.dosageForm) }</span>
+          Form: <span className="font-bold text-gray-700 ml-1">{ getDosageLabel(dosageFilters, product.dosageForm) }</span>
         </div>
 
         {/* Action Buttons */}
@@ -195,9 +196,9 @@ function ProductCardGrid({ product, onShowImage }) {
 
 // ─── PRODUCT CARD (For LIST View) ──────────────────────────────────────────────────────
 // Card component optimized for a wide, horizontal list-style layout
-function ProductCardList({ product, onShowImage }) {
+function ProductCardList({ product, onShowImage, therapyFilters }) {
   const colors = therapyColorMap[product.therapy] ?? { bg: "#f0f7f1", text: "#2A5C32", dot: "#4caf50" };
-  const TherapyIcon = therapyFilters.find((f) => f.id === product.therapy)?.icon;
+  const TherapyIcon = therapyFilters?.find((f) => f.id === product.therapy)?.icon;
   const [ref, isVisible] = useScrollAnimation();
 
   return (
@@ -211,12 +212,23 @@ function ProductCardList({ product, onShowImage }) {
       />
 
       {/* Icon */}
-      <div
-        className="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 ring-4 ring-white shadow-sm"
-        style={ { backgroundColor: colors.bg } }
-      >
-        { TherapyIcon && <TherapyIcon size={ 22 } style={ { color: colors.text } } className="group-hover:scale-110 transition-transform duration-500"/> }
-      </div>
+      { product.image ? (
+        <div className="w-24 h-24 rounded-[28px] overflow-hidden shrink-0 ring-4 ring-white shadow-sm bg-gray-50">
+          <img
+            src={ product.image }
+            alt={ product.name }
+            loading="lazy"
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+          />
+        </div>
+      ) : (
+        <div
+          className="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 ring-4 ring-white shadow-sm"
+          style={ { backgroundColor: colors.bg } }
+        >
+          { TherapyIcon && <TherapyIcon size={ 22 } style={ { color: colors.text } } className="group-hover:scale-110 transition-transform duration-500"/> }
+        </div>
+      ) }
 
       {/* Content */}
       <div className="flex-1 min-w-0">
@@ -243,7 +255,7 @@ function ProductCardList({ product, onShowImage }) {
               className="inline-flex items-center text-[11px] font-bold px-3 py-1.5 rounded-xl border border-black/5"
               style={ { backgroundColor: colors.bg, color: colors.text } }
             >
-              { getTherapyLabel(product.therapy) }
+              { getTherapyLabel(therapyFilters, product.therapy) }
             </span>
             <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-gray-500 bg-gray-50 border border-gray-200 px-3 py-1.5 rounded-xl">
                <Package size={ 12 } className="text-gray-400" />
@@ -268,7 +280,7 @@ function ProductCardList({ product, onShowImage }) {
 }
 
 // ─── FILTER SIDEBAR CONTENT (reused in both desktop & mobile) ─────────────────
-function FilterContent({ selectedTherapy, selectedDosage, toggleFilter, clearAll, hasFilters, therapyExpanded, setTherapyExpanded, dosageExpanded, setDosageExpanded }) {
+function FilterContent({ selectedTherapy, selectedDosage, toggleFilter, clearAll, hasFilters, therapyExpanded, setTherapyExpanded, dosageExpanded, setDosageExpanded, therapyFilters, dosageFilters }) {
   return (
     <div className="flex flex-col gap-5">
       { hasFilters && (
@@ -406,8 +418,16 @@ function FilterContent({ selectedTherapy, selectedDosage, toggleFilter, clearAll
 export default function Products() {
   // --- STATE DECLARATIONS ---
   // Global products data and loading state fetched from Context API
-  const { productsData: allProducts, loading } = useProductContext();
-  
+  const {
+    productsData: allProducts,
+    loading,
+    therapyFilters: contextTherapyFilters,
+    dosageFilters: contextDosageFilters,
+  } = useProductContext();
+
+  const therapyFilters = contextTherapyFilters?.length ? contextTherapyFilters : defaultTherapyFilters;
+  const dosageFilters = contextDosageFilters?.length ? contextDosageFilters : defaultDosageFilters;
+
   // Active filter states for wellness area, product form, and text search
   const [selectedTherapy, setSelectedTherapy] = useState([]);
   const [selectedDosage, setSelectedDosage] = useState([]);
@@ -453,7 +473,7 @@ export default function Products() {
     applyHash();
     window.addEventListener("hashchange", applyHash);
     return () => window.removeEventListener("hashchange", applyHash);
-  }, []);
+  }, [therapyFilters, dosageFilters]);
 
   // body scroll lock when mobile filter open
   useEffect(() => {
@@ -526,8 +546,17 @@ export default function Products() {
 
   // Consolidating props object for the Filter Sidebar component to keep JSX cleaner
   const sidebarProps = {
-    selectedTherapy, selectedDosage, toggleFilter, clearAll, hasFilters,
-    therapyExpanded, setTherapyExpanded, dosageExpanded, setDosageExpanded,
+    selectedTherapy,
+    selectedDosage,
+    toggleFilter,
+    clearAll,
+    hasFilters,
+    therapyExpanded,
+    setTherapyExpanded,
+    dosageExpanded,
+    setDosageExpanded,
+    therapyFilters,
+    dosageFilters,
   };
 
   return (
@@ -834,13 +863,24 @@ export default function Products() {
           {viewMode === "grid" ? (
             <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-5">
               {sorted.slice(0, visibleCount).map((p) => (
-                <ProductCardGrid key={p.id} product={p} onShowImage={setSelectedProductImage} />
+                <ProductCardGrid
+                  key={p.id}
+                  product={p}
+                  therapyFilters={therapyFilters}
+                  dosageFilters={dosageFilters}
+                  onShowImage={setSelectedProductImage}
+                />
               ))}
             </div>
           ) : (
             <div className="flex flex-col gap-3">
               {sorted.slice(0, visibleCount).map((p) => (
-                <ProductCardList key={p.id} product={p} onShowImage={setSelectedProductImage} />
+                <ProductCardList
+                  key={p.id}
+                  product={p}
+                  therapyFilters={therapyFilters}
+                  onShowImage={setSelectedProductImage}
+                />
               ))}
             </div>
           )}
@@ -923,12 +963,12 @@ export default function Products() {
               <div className="flex flex-col sm:flex-row gap-4 mb-4">
                 <div className="flex-1 bg-white/5 border border-white/10 rounded-2xl p-4 hover:bg-white/10 transition-colors">
                    <div className="text-[10px] text-green-200/50 uppercase tracking-widest font-semibold mb-1.5">Wellness Area</div>
-                   <div className="text-white font-bold text-sm">{getTherapyLabel(selectedProductImage.therapy)}</div>
+                   <div className="text-white font-bold text-sm">{getTherapyLabel(therapyFilters, selectedProductImage.therapy)}</div>
                 </div>
                 <div className="flex-1 bg-white/5 border border-white/10 rounded-2xl p-4 hover:bg-white/10 transition-colors">
                    <div className="text-[10px] text-green-200/50 uppercase tracking-widest font-semibold mb-1.5">Packaging</div>
                    <div className="text-white font-bold text-sm">
-                      {selectedProductImage.packaging} &bull; {getDosageLabel(selectedProductImage.dosageForm)}
+                      {selectedProductImage.packaging} &bull; {getDosageLabel(dosageFilters, selectedProductImage.dosageForm)}
                    </div>
                 </div>
               </div>
