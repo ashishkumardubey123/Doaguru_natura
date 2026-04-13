@@ -93,7 +93,7 @@ export default function WhoWeServe() {
                 <div className="absolute inset-0 bg-blue-100/50 rounded-3xl -rotate-3 scale-105 group-hover:-rotate-6 transition-transform duration-500"></div>
                 <div className="relative rounded-3xl overflow-hidden shadow-2xl h-[400px] sm:h-[500px]">
                   <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 to-transparent z-10 group-hover:opacity-0 transition-opacity duration-500"></div>
-                  <img loading="lazy" decoding="async" src="/media/Distributors.webp" alt="Global Distributors" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                  <img loading="lazy" decoding="async" src="/media/whoweserve1.jpeg" alt="Global Distributors" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                 </div>
               </div>
 
@@ -182,7 +182,7 @@ export default function WhoWeServe() {
                 <div className="absolute inset-0 bg-green-200/50 rounded-3xl rotate-3 scale-105 group-hover:rotate-6 transition-transform duration-500"></div>
                 <div className="relative rounded-3xl overflow-hidden shadow-2xl h-[400px] sm:h-[500px]">
                   <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent z-10"></div>
-                  <img loading="lazy" decoding="async" src="/media/aboutPage2.webp" alt="Manufacturing Enterprise" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                  <img loading="lazy" decoding="async" src="/media/whoweserve2.jpeg" alt="Manufacturing Enterprise" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                 </div>
               </div>
             </div>
