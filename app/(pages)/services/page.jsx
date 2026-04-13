@@ -51,7 +51,7 @@ const services = [
       "API and raw material procurement",
       "Competitive pricing and bulk discounts",
     ],
-    image: "https://images.unsplash.com/photo-1587854692152-cbe660dbde88?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1200",
+    image: "/media/service1.jpeg",
   },
   {
     id: "export-import",
@@ -68,7 +68,7 @@ const services = [
       "Multi-country regulatory compliance",
       "Freight forwarding and shipping coordination",
     ],
-    image: "https://images.unsplash.com/photo-1578575437130-527eed3abbec?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1200",
+    image: "/media/service2.jpeg",
   },
  
   
@@ -87,7 +87,7 @@ const services = [
       "Sample procurement and evaluation",
       "Long-term supplier partnerships",
     ],
-    image: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1200",
+    image: "/media/service3.jpeg",
   },
   {
     id: "documentation-support",
@@ -104,7 +104,7 @@ const services = [
       "Product registration assistance",
       "Invoice and shipping documentation",
     ],
-    image: "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1200",
+    image: "/media/service4.jpeg",
   },
 ];
 

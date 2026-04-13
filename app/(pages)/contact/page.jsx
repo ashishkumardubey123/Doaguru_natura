@@ -61,7 +61,7 @@ export default function Contact() {
       <div className="relative bg-[#1a3c22] text-white py-12 md:py-24 overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img loading="lazy" decoding="async"
-            src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1440"
+            src="/media/contactus.jpeg"
             className="w-full h-full object-cover opacity-20 mix-blend-overlay"
             alt="Contact Us Background"
           />
