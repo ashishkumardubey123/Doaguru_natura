@@ -41,7 +41,7 @@ export default function PopupBanner() {
           <img 
             loading="lazy" 
             decoding="async"
-            src="https://images.unsplash.com/photo-1581056771085-3ce30d907416?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=600"
+                src="https://images.unsplash.com/photo-1581056771085-3ce30d907416?auto=format&fit=crop&w=800&q=80"
             alt="New Facility"
             className="w-full h-full object-cover opacity-70 mix-blend-overlay group-hover:scale-105 transition-transform duration-700"
           />

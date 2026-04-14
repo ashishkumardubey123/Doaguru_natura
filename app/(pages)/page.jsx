@@ -636,7 +636,7 @@ function HomeDarkMap({ mapDots = [], isLoading }) {
           <p className="text-sm font-medium">Syncing Global Data...</p>
         </div>
       ) : (
-        <ComposableMap projectionConfig={{ scale: 140 }} className="w-full h-full p-2 z-10">
+        <ComposableMap projectionConfig={{ scale: 155 }} className="w-full h-full p-1 sm:p-2 z-10">
           <Geographies geography={geoUrl}>
             {({ geographies }) => geographies.map((geo) => (
               <Geography 
@@ -931,7 +931,7 @@ export default function Home() {
               <div className="text-green-400/80 text-xs font-extrabold uppercase tracking-[0.2em] mb-2 relative z-10">Global Network</div>
               <div className="text-white text-4xl sm:text-5xl font-extrabold mb-8 sm:mb-12 tracking-tight relative z-10" style={ { fontFamily: "'Montserrat', sans-serif" } }>50+ Countries</div>
 
-              <div className="relative aspect-[4/3] bg-[#0a1f0e] rounded-3xl border border-white/5 overflow-hidden mb-6 sm:mb-8 flex items-center justify-center">
+              <div className="relative aspect-[5/4] bg-[#0a1f0e] rounded-3xl border border-white/5 overflow-hidden mb-6 sm:mb-8 flex items-center justify-center">
                 <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
                 <HomeDarkMap mapDots={activeMapDots} isLoading={loadingDB || loadingShipments} />
               </div>
