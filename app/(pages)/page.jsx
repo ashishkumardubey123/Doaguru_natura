@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import Link from "next/link";
+
 import {
-  ArrowRight, ChevronLeft, ChevronRight,
+  ArrowRight, ArrowUpRight, ChevronLeft, ChevronRight, // <-- ArrowUpRight add kiya
   Heart, Brain, Activity, Pill, Globe2, FlaskConical,
   Shield, Award, Users, TrendingUp, Calendar, ExternalLink, MapPin, Loader2
 } from "lucide-react";
@@ -17,6 +18,428 @@ import { fetchAllCountryCoordinates } from "@/app/utils/countryCoordinates";
 import { ComposableMap, Geographies, Geography, Marker } from "react-simple-maps";
 
 const geoUrl = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
+
+   
+
+/* ─── Utility: animate count up ───────────────────────────────────── */
+function useCountUp(target, duration = 1200, active = false) {
+  const [value, setValue] = useState(0);
+  useEffect(() => {
+    if (!active || target === 0) return;
+    let start = null;
+    const step = (ts) => {
+      if (!start) start = ts;
+      const progress = Math.min((ts - start) / duration, 1);
+      setValue(Math.floor(progress * target));
+      if (progress < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }, [active, target, duration]);
+  return active ? value : target;
+}
+
+ function TherapyCard({ filter, count, desc, colorMap, index, featured = false }) {
+  const [hovered, setHovered] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const ref = useRef(null);
+  const animCount = useCountUp(count, 900, hovered);
+ 
+  const colors = colorMap[filter.id] ?? { bg: "#1a3d22", text: "#86efac", dot: "#4ade80", glow: "#22c55e" };
+ 
+  useEffect(() => {
+    const obs = new IntersectionObserver(
+      ([e]) => { if (e.isIntersecting) setVisible(true); },
+      { threshold: 0.15 }
+    );
+    if (ref.current) obs.observe(ref.current);
+    return () => obs.disconnect();
+  }, []);
+ 
+  return (
+    <article
+      ref={ref}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      className={`group relative rounded-[28px] overflow-hidden cursor-pointer
+        transition-all duration-700 ease-out
+        ${featured ? "sm:col-span-2 sm:row-span-1" : ""}
+        ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}
+      `}
+      style={{
+        transitionDelay: `${index * 80}ms`,
+        background: "linear-gradient(145deg, rgba(255,255,255,0.055) 0%, rgba(255,255,255,0.02) 100%)",
+        border: hovered
+          ? `1px solid ${colors.glow}55`
+          : "1px solid rgba(255,255,255,0.08)",
+        backdropFilter: "blur(20px)",
+        boxShadow: hovered
+          ? `0 0 0 1px ${colors.glow}22, 0 32px 64px -16px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.12)`
+          : "0 8px 32px -8px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.06)",
+        transform: hovered ? "translateY(-6px) scale(1.005)" : "translateY(0) scale(1)",
+        padding: featured ? "2rem 2rem" : "1.5rem",
+      }}
+    >
+      {/* Ambient glow blob */}
+      <div
+        className="absolute pointer-events-none transition-all duration-700"
+        style={{
+          top: "-40%", right: "-20%",
+          width: "70%", height: "70%",
+          borderRadius: "50%",
+          background: colors.glow,
+          opacity: hovered ? 0.12 : 0.05,
+          filter: "blur(48px)",
+        }}
+      />
+ 
+      {/* Top shimmer line */}
+      <div className="absolute inset-x-0 top-0 h-px"
+        style={{ background: `linear-gradient(90deg, transparent, ${colors.glow}66, transparent)`, opacity: hovered ? 1 : 0.4, transition: "opacity 0.5s" }} />
+ 
+      {/* Decorative oversized background letter */}
+      <div className="absolute right-3 bottom-2 select-none pointer-events-none leading-none font-black"
+        style={{
+          fontSize: featured ? "7rem" : "5.5rem",
+          color: colors.glow,
+          opacity: hovered ? 0.06 : 0.035,
+          fontFamily: "'Montserrat', sans-serif",
+          transition: "opacity 0.5s, transform 0.5s",
+          transform: hovered ? "scale(1.08) rotate(-4deg)" : "scale(1) rotate(0deg)",
+        }}
+      >
+        {filter.label?.[0] ?? "T"}
+      </div>
+ 
+      {/* Header row */}
+      <div className="relative flex items-start justify-between mb-5 gap-3">
+        {/* Icon box */}
+        <div
+          className="flex items-center justify-center rounded-2xl transition-all duration-500 ring-1"
+          style={{
+            width: featured ? 52 : 44,
+            height: featured ? 52 : 44,
+            background: `linear-gradient(135deg, ${colors.bg}dd, ${colors.bg}88)`,
+            ringColor: `${colors.glow}33`,
+            boxShadow: hovered ? `0 0 20px ${colors.glow}44` : "none",
+            transition: "box-shadow 0.5s",
+          }}
+        >
+          <filter.icon
+            size={featured ? 22 : 18}
+            style={{ color: colors.text, transition: "transform 0.4s", transform: hovered ? "scale(1.15) rotate(-6deg)" : "scale(1)" }}
+          />
+        </div>
+ 
+        {/* Count badge */}
+        <div
+          className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] font-black tracking-wide"
+          style={{
+            background: `${colors.bg}99`,
+            color: colors.text,
+            border: `1px solid ${colors.glow}33`,
+            backdropFilter: "blur(8px)",
+          }}
+        >
+          <span
+            className="w-1.5 h-1.5 rounded-full"
+            style={{ background: colors.dot, boxShadow: `0 0 6px ${colors.dot}` }}
+          />
+          {animCount} Products
+        </div>
+      </div>
+ 
+      {/* Title */}
+      <h3
+        className="font-black text-white leading-tight mb-2.5 tracking-tight"
+        style={{
+          fontFamily: "'Montserrat', sans-serif",
+          fontSize: featured ? "1.2rem" : "1rem",
+        }}
+      >
+        {filter.label}
+      </h3>
+ 
+      {/* Description */}
+      <p
+        className="leading-relaxed font-light mb-6"
+        style={{
+          color: "rgba(187, 247, 208, 0.65)",
+          fontSize: "0.78rem",
+          lineHeight: 1.7,
+          display: "-webkit-box",
+          WebkitLineClamp: featured ? 3 : 2,
+          WebkitBoxOrient: "vertical",
+          overflow: "hidden",
+        }}
+      >
+        {desc}
+      </p>
+ 
+      {/* CTA link */}
+      <Link
+        href={`/products#${filter.id}`}
+        className="inline-flex items-center gap-1.5 text-xs font-bold rounded-full transition-all duration-300"
+        style={{
+          color: hovered ? "#fff" : colors.text,
+          gap: hovered ? "8px" : "6px",
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        Explore Range
+        <span
+          className="inline-flex items-center justify-center rounded-full"
+          style={{
+            width: 22, height: 22,
+            background: hovered ? colors.glow : `${colors.glow}33`,
+            color: hovered ? "#072112" : colors.text,
+            transition: "all 0.3s",
+          }}
+        >
+          <ArrowRight size={11} />
+        </span>
+      </Link>
+    </article>
+  );
+}
+
+//  TherapySection component with enhanced visuals, animations and responsive design, showcasing therapy areas with dynamic data from context. 
+ function TherapySection({ therapyFilters, allProducts, therapyColorMap, therapyDescriptions }) {
+  const [sectionVisible, setSectionVisible] = useState(false);
+  const sectionRef = useRef(null);
+ 
+  useEffect(() => {
+    const obs = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) setSectionVisible(true);
+    }, { threshold: 0.05 });
+    if (sectionRef.current) obs.observe(sectionRef.current);
+    return () => obs.disconnect();
+  }, []);
+ 
+  const totalProducts = allProducts?.length ?? 0;
+  const totalTherapies = therapyFilters?.length ?? 0;
+ 
+  return (
+    <section
+      ref={sectionRef}
+      className="relative overflow-hidden"
+      style={{
+        background: "linear-gradient(180deg, #020d06 0%, #04150d 40%, #021008 100%)",
+        padding: "6rem 0 7rem",
+      }}
+    >
+      {/* ── Background canvas ── */}
+      <div className="absolute inset-0 pointer-events-none">
+        {/* Radial gradient overlay */}
+        <div className="absolute inset-0"
+          style={{ background: "radial-gradient(ellipse 80% 60% at 50% 0%, rgba(42,92,50,0.4) 0%, transparent 70%)" }} />
+ 
+        {/* Dot grid */}
+        <div className="absolute inset-0"
+          style={{
+            backgroundImage: "radial-gradient(rgba(134,239,172,0.12) 1px, transparent 1px)",
+            backgroundSize: "32px 32px",
+          }}
+        />
+ 
+        {/* Floating ambient orbs */}
+        <div className="absolute animate-pulse"
+          style={{ top: "-5%", left: "-8%", width: 400, height: 400, borderRadius: "50%", background: "rgba(34,197,94,0.12)", filter: "blur(80px)", animationDuration: "6s" }} />
+        <div className="absolute animate-pulse"
+          style={{ bottom: "-8%", right: "-5%", width: 500, height: 500, borderRadius: "50%", background: "rgba(42,92,50,0.18)", filter: "blur(100px)", animationDuration: "8s", animationDelay: "2s" }} />
+        <div className="absolute animate-pulse"
+          style={{ top: "40%", left: "60%", width: 250, height: 250, borderRadius: "50%", background: "rgba(74,222,128,0.07)", filter: "blur(60px)", animationDuration: "10s", animationDelay: "1s" }} />
+ 
+        {/* Decorative oversized text watermark */}
+        <div className="absolute inset-0 flex items-center justify-center select-none"
+          style={{
+            fontSize: "clamp(6rem, 20vw, 18rem)",
+            fontFamily: "'Montserrat', sans-serif",
+            fontWeight: 900,
+            color: "rgba(134,239,172,0.018)",
+            letterSpacing: "-0.05em",
+            userSelect: "none",
+          }}
+        >
+          HEALTH
+        </div>
+      </div>
+ 
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10 relative z-10">
+ 
+        {/* ── Section Header ── */}
+        <div
+          className="mb-14 sm:mb-20"
+          style={{
+            opacity: sectionVisible ? 1 : 0,
+            transform: sectionVisible ? "translateY(0)" : "translateY(24px)",
+            transition: "opacity 0.8s ease, transform 0.8s ease",
+          }}
+        >
+          {/* Label pill */}
+          <div className="flex justify-center mb-6">
+            <span
+              className="inline-flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.22em] rounded-full"
+              style={{
+                background: "rgba(134,239,172,0.08)",
+                border: "1px solid rgba(134,239,172,0.18)",
+                color: "#86efac",
+                padding: "8px 20px",
+              }}
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" style={{ boxShadow: "0 0 8px #4ade80" }} />
+              Our Portfolio
+            </span>
+          </div>
+ 
+          {/* Heading */}
+          <h2
+            className="text-center text-white mb-5 leading-none tracking-tight"
+            style={{
+              fontFamily: "'Montserrat', sans-serif",
+              fontWeight: 900,
+              fontSize: "clamp(2rem, 5vw, 3.5rem)",
+              letterSpacing: "-0.03em",
+            }}
+          >
+            Therapy Areas{" "}
+            <span
+              className="relative inline-block"
+              style={{
+                background: "linear-gradient(135deg, #4ade80 0%, #86efac 40%, #34d399 100%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+              }}
+            >
+              We Excel In
+            </span>
+          </h2>
+ 
+          {/* Subtitle */}
+          <p
+            className="text-center mx-auto max-w-xl leading-relaxed font-light"
+            style={{ color: "rgba(187,247,208,0.6)", fontSize: "clamp(0.85rem, 2vw, 1rem)" }}
+          >
+            A diverse therapeutic portfolio addressing critical healthcare needs across multiple disease areas worldwide.
+          </p>
+ 
+          {/* Stats row */}
+          <div className="flex flex-wrap items-center justify-center gap-3 mt-8">
+            {[
+              { label: `${totalTherapies} Therapy Segments`, dot: "#4ade80" },
+              { label: `${totalProducts} Portfolio Products`, dot: "#86efac" },
+              { label: "Global Reach", dot: "#34d399" },
+            ].map((stat, i) => (
+              <div
+                key={i}
+                className="inline-flex items-center gap-2 text-[11px] font-bold rounded-full"
+                style={{
+                  background: "rgba(255,255,255,0.04)",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                  color: "#bbf7d0",
+                  padding: "8px 16px",
+                  backdropFilter: "blur(12px)",
+                  opacity: sectionVisible ? 1 : 0,
+                  transform: sectionVisible ? "translateY(0)" : "translateY(12px)",
+                  transition: `opacity 0.6s ${0.3 + i * 0.1}s, transform 0.6s ${0.3 + i * 0.1}s`,
+                }}
+              >
+                <span className="w-2 h-2 rounded-full flex-shrink-0"
+                  style={{ background: stat.dot, boxShadow: `0 0 6px ${stat.dot}88` }} />
+                {stat.label}
+              </div>
+            ))}
+          </div>
+        </div>
+ 
+        {/* ── Cards Grid ── */}
+        {therapyFilters?.length > 0 ? (
+          <div
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5"
+            style={{ gridAutoRows: "1fr" }}
+          >
+            {therapyFilters.map((f, index) => {
+              const count = allProducts?.filter((p) => p.therapy === f.id).length ?? 0;
+              const desc = therapyDescriptions?.[f.id] ?? "";
+              return (
+                <TherapyCard
+                  key={`therapy-${f.id || `fallback-${index}`}`}
+                  filter={f}
+                  count={count}
+                  desc={desc}
+                  colorMap={therapyColorMap}
+                  index={index}
+                  featured={index === 0}
+                />
+              );
+            })}
+          </div>
+        ) : (
+          /* ── Loading skeleton ── */
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+            {[...Array(4)].map((_, i) => (
+              <div
+                key={i}
+                className="rounded-[28px] h-56 animate-pulse"
+                style={{
+                  background: "rgba(255,255,255,0.04)",
+                  border: "1px solid rgba(255,255,255,0.07)",
+                  animationDelay: `${i * 150}ms`,
+                }}
+              />
+            ))}
+          </div>
+        )}
+ 
+        {/* ── CTA button ── */}
+        <div
+          className="flex justify-center mt-14 sm:mt-16"
+          style={{
+            opacity: sectionVisible ? 1 : 0,
+            transform: sectionVisible ? "translateY(0)" : "translateY(16px)",
+            transition: "opacity 0.8s 0.5s, transform 0.8s 0.5s",
+          }}
+        >
+          <Link
+            href="/products"
+            className="group inline-flex items-center gap-3 font-black rounded-full transition-all duration-300 active:scale-95"
+            style={{
+              background: "#fff",
+              color: "#072112",
+              padding: "16px 36px",
+              fontSize: "0.9rem",
+              letterSpacing: "-0.01em",
+              boxShadow: "0 0 0 0 rgba(74,222,128,0)",
+              transition: "box-shadow 0.3s, background 0.3s",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = "#f0fdf4";
+              e.currentTarget.style.boxShadow = "0 0 40px rgba(74,222,128,0.25), 0 16px 40px rgba(0,0,0,0.25)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = "#fff";
+              e.currentTarget.style.boxShadow = "0 0 0 0 rgba(74,222,128,0)";
+            }}
+          >
+            View Full Portfolio
+            <span
+              className="inline-flex items-center justify-center rounded-full transition-all duration-300"
+              style={{
+                width: 30, height: 30,
+                background: "#072112",
+                color: "#4ade80",
+              }}
+            >
+              <ArrowUpRight size={15} />
+            </span>
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+
+
 
 // ─── DATA ────────────────────────────────────────────────────────────────────
 const heroSlides = [
@@ -324,31 +747,7 @@ export default function Home() {
     }));
   }, [dbCountries]);
 
-  const therapyCards = therapyFilters?.length > 0 ? therapyFilters.map((f, index) => {
-    const colors = therapyColorMap[f.id] ?? { bg: "#f0f7f1", text: "#2A5C32", dot: "#4caf50" };
-    const count = allProducts.filter((p) => p.therapy === f.id).length;
-    const desc = therapyDescriptions[f.id] ?? "";
-    return (
-      <div key={ `therapy-${f.id || `fallback-${index}`}` } className="rounded-3xl p-5 sm:p-6 border border-gray-100/80 hover:shadow-2xl hover:shadow-[#2A5C32]/8 transition-all duration-500 group bg-white">
-        <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center mb-4 sm:mb-5 transition-all duration-300 ring-4 ring-white shadow-sm group-hover:shadow-md" style={ { backgroundColor: colors.bg } }>
-          <f.icon size={ 20 } style={ { color: colors.text } } className="group-hover:scale-110 transition-transform duration-500" />
-        </div>
-        <h3 className="font-extrabold text-gray-900 mb-2 leading-snug tracking-tight" style={ { fontFamily: "'Montserrat', sans-serif", fontSize: "0.95rem" } }>{ f.label }</h3>
-        <p className="text-xs text-gray-500 leading-relaxed mb-5 line-clamp-3 font-light">{ desc }</p>
-        <div className="flex items-center justify-between">
-          <span className="text-[11px] font-bold px-3 py-1.5 rounded-xl shadow-sm border border-black/5" style={ { backgroundColor: colors.bg, color: colors.text } }>{ count } Products</span>
-          <Link href={ `/products#${f.id}` } className="text-[11px] font-bold flex items-center gap-1 hover:gap-2 transition-all duration-300" style={ { color: colors.text } }>
-            Browse <ArrowRight size={ 12 } />
-          </Link>
-        </div>
-      </div>
-    );
-  }) : (
-    <div key="loading" className="col-span-full text-center py-12">
-      <div className="w-8 h-8 border-4 border-[#2A5C32]/20 border-t-[#2A5C32] rounded-full animate-spin mx-auto mb-4" />
-      <p className="text-gray-500 font-medium">Loading therapy areas...</p>
-    </div>
-  );
+  
 
   return (
     <div>
@@ -375,7 +774,7 @@ export default function Home() {
       </div>
 
       {/* ── Company Intro ── */}
-      <section className="py-16 sm:py-24 md:py-32 bg-[#fafcfa]">
+      <section className="py-16 sm:py-24 md:py-17 bg-[#fafcfa]">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6">
           <div className="grid lg:grid-cols-2 gap-12 sm:gap-16 lg:gap-20 items-center">
             <div>
@@ -418,31 +817,16 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Therapy Areas ── */}
-      <section className="py-16 sm:py-24 md:py-32 bg-white">
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-6">
-          <div className="text-center mb-12 sm:mb-16">
-            <span className="text-xs font-extrabold uppercase tracking-[0.2em] bg-[#2A5C32]/10 text-[#2A5C32] px-4 py-2 rounded-full">Our Portfolio</span>
-            <h2 className="mt-6 text-gray-900" style={ { fontFamily: "'Montserrat', sans-serif", fontWeight: 800, fontSize: "clamp(1.6rem, 4vw, 2.8rem)", letterSpacing: "-0.02em" } }>
-              Therapy Areas We Excel In
-            </h2>
-            <p className="mt-4 text-gray-500 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed px-2 font-light">
-              Our diverse therapeutic portfolio ensures we can address the most critical healthcare needs across multiple disease areas worldwide.
-            </p>
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
-            { therapyCards }
-          </div>
-          <div className="text-center mt-10 sm:mt-14">
-            <Link href="/products" className="inline-flex items-center gap-2 font-bold px-8 sm:px-10 py-3.5 sm:py-4 text-sm sm:text-base rounded-full border-2 border-[#2A5C32]/30 text-[#2A5C32] hover:border-[#2A5C32] hover:bg-[#2A5C32] hover:text-white transition-all duration-300 active:scale-95">
-              View Full Portfolio <ArrowRight size={ 16 } />
-            </Link>
-          </div>
-        </div>
-      </section>
+    {/* ── NEW Animated Therapy Areas ── */}
+      <TherapySection 
+        therapyFilters={therapyFilters} 
+        allProducts={allProducts} 
+        therapyColorMap={therapyColorMap} 
+        therapyDescriptions={therapyDescriptions} 
+      />
 
       {/* ── Featured Products ── */}
-      <section className="py-16 sm:py-24 md:py-32 bg-[#fafcfa] border-t border-gray-100">
+      <section className="py-16 sm:py-24 md:pt-10 bg-[#fafcfa] border-t border-gray-100">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6">
           <div className="flex items-end justify-between mb-10 sm:mb-14">
             <div>
@@ -501,7 +885,7 @@ export default function Home() {
       </section>
 
       {/* ── Global Presence ── */}
-      <section className="py-16 sm:py-24 md:py-32 bg-white">
+      <section className="py-16 sm:py-24 md:py-17 bg-white">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6">
           <div className="grid lg:grid-cols-2 gap-12 sm:gap-16 lg:gap-20 items-center">
             <div>
@@ -566,7 +950,7 @@ export default function Home() {
       </section>
 
       {/* ── Manufacturing Highlight ── */}
-      <section className="py-16 sm:py-24 md:py-32 relative overflow-hidden bg-[#020b06]">
+      <section className="py-16 sm:py-24 md:py-30 relative overflow-hidden bg-[#020b06]">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-[#1d522a]/30 via-transparent to-transparent" />
         <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 relative z-10">
@@ -611,10 +995,14 @@ export default function Home() {
       </section>
 
       {/* ── Partners Marquee ── */}
-      <section className="py-14 sm:py-20 bg-[#fafcfa] overflow-hidden border-y border-gray-100/80">
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 mb-8 sm:mb-10 text-center">
-          <span className="text-xs font-extrabold uppercase tracking-[0.2em] bg-[#2A5C32]/10 text-[#2A5C32] px-4 py-2 rounded-full">Our Network</span>
-          <h3 className="mt-5 text-lg sm:text-xl font-extrabold text-gray-900 tracking-tight" style={{ fontFamily: "'Montserrat', sans-serif" }}>Trusted By Global Partners & Investors</h3>
+      <section className="py-14 sm:py-20 bg-gradient-to-b from-[#fafcfa] via-white to-[#fafcfa] overflow-hidden border-y border-gray-100/80 relative">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-0 left-1/4 w-32 h-32 rounded-full bg-[#2A5C32]/5 blur-3xl animate-float" />
+          <div className="absolute bottom-0 right-1/4 w-40 h-40 rounded-full bg-emerald-100/40 blur-3xl animate-float" style={{ animationDelay: '1s' }} />
+        </div>
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 mb-8 sm:mb-10 text-center relative z-10">
+          <span className="text-xs font-extrabold uppercase tracking-[0.2em] bg-[#2A5C32]/10 text-[#2A5C32] px-4 py-2 rounded-full animate-fadeInUp">Our Network</span>
+          <h3 className="mt-5 text-lg sm:text-xl font-extrabold text-gray-900 tracking-tight animate-fadeInUp" style={{ fontFamily: "'Montserrat', sans-serif", animationDelay: '0.2s' }}>Trusted By Global Partners & Investors</h3>
         </div>
         {exporters.length > 0 && (
           <div className="relative flex overflow-x-hidden">
@@ -623,15 +1011,23 @@ export default function Home() {
             <div className="absolute right-0 top-0 bottom-0 w-24 sm:w-40 bg-gradient-to-l from-[#fafcfa] to-transparent z-10 pointer-events-none" />
             <div className="animate-marquee whitespace-nowrap flex items-center gap-6 sm:gap-8 py-4">
               { [...exporters, ...exporters].map((partner, i) => (
-                <div key={ i } className="w-44 sm:w-60 h-18 sm:h-24 bg-white rounded-2xl border border-gray-100/80 shadow-sm hover:shadow-lg hover:shadow-[#2A5C32]/5 flex items-center justify-center shrink-0 mx-3 sm:mx-4 px-4 transition-all duration-300">
-                  <span className="text-sm font-bold text-gray-500 text-center line-clamp-2 whitespace-normal break-words" style={ { fontFamily: "'Montserrat', sans-serif" } } title={partner}>{ partner }</span>
+                <div key={ i } className="group w-44 sm:w-60 h-18 sm:h-24 bg-gradient-to-br from-white to-gray-50/50 rounded-2xl border border-gray-100/80 shadow-sm hover:shadow-xl hover:shadow-[#2A5C32]/10 hover:border-[#2A5C32]/20 flex items-center justify-center shrink-0 mx-3 sm:mx-4 px-4 transition-all duration-500 hover:scale-105 hover:-translate-y-1 relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#2A5C32]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-[#2A5C32]/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                    <span className="text-xs text-[#2A5C32] font-bold">✓</span>
+                  </div>
+                  <span className="text-sm font-bold text-gray-600 group-hover:text-[#2A5C32] text-center line-clamp-2 whitespace-normal break-words transition-colors duration-300 relative z-10" style={ { fontFamily: "'Montserrat', sans-serif" } } title={partner}>{ partner }</span>
                 </div>
               )) }
             </div>
             <div className="absolute top-0 animate-marquee2 whitespace-nowrap flex items-center gap-6 sm:gap-8 py-4">
               { [...exporters, ...exporters].map((partner, i) => (
-                <div key={ i } className="w-44 sm:w-60 h-18 sm:h-24 bg-white rounded-2xl border border-gray-100/80 shadow-sm hover:shadow-lg hover:shadow-[#2A5C32]/5 flex items-center justify-center shrink-0 mx-3 sm:mx-4 px-4 transition-all duration-300">
-                  <span className="text-sm font-bold text-gray-500 text-center line-clamp-2 whitespace-normal break-words" style={ { fontFamily: "'Montserrat', sans-serif" } } title={partner}>{ partner }</span>
+                <div key={ i } className="group w-44 sm:w-60 h-18 sm:h-24 bg-gradient-to-br from-white to-gray-50/50 rounded-2xl border border-gray-100/80 shadow-sm hover:shadow-xl hover:shadow-[#2A5C32]/10 hover:border-[#2A5C32]/20 flex items-center justify-center shrink-0 mx-3 sm:mx-4 px-4 transition-all duration-500 hover:scale-105 hover:-translate-y-1 relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#2A5C32]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-[#2A5C32]/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                    <span className="text-xs text-[#2A5C32] font-bold">✓</span>
+                  </div>
+                  <span className="text-sm font-bold text-gray-600 group-hover:text-[#2A5C32] text-center line-clamp-2 whitespace-normal break-words transition-colors duration-300 relative z-10" style={ { fontFamily: "'Montserrat', sans-serif" } } title={partner}>{ partner }</span>
                 </div>
               )) }
             </div>
@@ -640,66 +1036,10 @@ export default function Home() {
       </section>
 
       {/* ── Testimonials ── */}
-      {/* <section className="py-14 sm:py-20 md:py-24 bg-[#fdfbf7]">
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-6">
-          <div className="text-center mb-10 sm:mb-16">
-            <span className="text-xs font-bold uppercase tracking-widest" style={ { color: "#6B4226" } }>Testimonials</span>
-            <h2 className="mt-3 text-gray-900" style={ { fontFamily: "'Montserrat', sans-serif", fontWeight: 800, fontSize: "clamp(1.5rem, 3.5vw, 2.4rem)" } }>
-              What Our Partners Say
-            </h2>
-          </div>
-          <div className="flex md:grid md:grid-cols-3 gap-5 sm:gap-6 md:gap-8 overflow-x-auto md:overflow-visible pb-4 md:pb-0 snap-x snap-mandatory md:snap-none -mx-4 px-4 md:mx-0 md:px-0">
-            { [
-              { quote: "Natura Health Care has been an invaluable partner in our supply chain. Their commitment to quality and timely delivery is unmatched.", name: "Dr. Sarah Jenkins", role: "Director of Procurement, Global Health Network", image: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=150" },
-              { quote: "The regulatory support we received for market entry was exceptional. They navigated complex compliance requirements with ease.", name: "Michael Chen", role: "VP of Operations, APAC Pharma Dist.", image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=150" },
-              { quote: "Consistently high-quality products and a dedicated account management team make them our preferred supplier for critical care medicines.", name: "Elena Rodriguez", role: "Head of Pharmacy, Metro General Hospital", image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=150" }
-            ].map((testimonial, i) => (
-              <div key={ i } className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-gray-100 relative snap-start shrink-0 w-[82vw] sm:w-[70vw] md:w-auto">
-                <div className="text-[#2A5C32] opacity-20 absolute top-5 right-5 sm:top-6 sm:right-6">
-                  <svg width="36" height="36" viewBox="0 0 24 24" fill="currentColor"><path d="M14.017 21L16.41 14.592C16.657 13.935 16.78 13.25 16.78 12.536V3H24V12.536C24 15.36 23.14 17.82 21.42 19.916C19.7 22.012 17.51 23.33 14.85 23.87L14.017 21ZM3.017 21L5.41 14.592C5.657 13.935 5.78 13.25 5.78 12.536V3H13V12.536C13 15.36 12.14 17.82 10.42 19.916C8.7 22.012 6.51 23.33 3.85 23.87L3.017 21Z" /></svg>
-                </div>
-                <p className="text-gray-600 italic mb-6 sm:mb-8 relative z-10 leading-relaxed text-sm sm:text-base">&ldquo;{ testimonial.quote }&rdquo;</p>
-                <div className="flex items-center gap-3 sm:gap-4">
-                  <img loading="lazy" decoding="async" src={ testimonial.image } alt={ testimonial.name } className="w-11 h-11 sm:w-12 sm:h-12 rounded-full object-cover shrink-0" />
-                  <div>
-                    <h4 className="font-bold text-gray-900 text-sm" style={ { fontFamily: "'Montserrat', sans-serif" } }>{ testimonial.name }</h4>
-                    <p className="text-xs text-gray-500">{ testimonial.role }</p>
-                  </div>
-                </div>
-              </div>
-            )) }
-          </div>
-        </div>
-      </section> */}
+      
 
       {/* ── Latest News ── */}
-      {/* <section className="py-14 sm:py-20 md:py-24 bg-white">
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-6">
-          <div className="flex items-end justify-between mb-8 sm:mb-12">
-            <div>
-              <span className="text-xs font-bold uppercase tracking-widest" style={ { color: "#6B4226" } }>News & Updates</span>
-              <h2 className="mt-3 text-gray-900" style={ { fontFamily: "'Montserrat', sans-serif", fontWeight: 800, fontSize: "clamp(1.4rem, 3.5vw, 2.2rem)" } }>Latest from Natura</h2>
-            </div>
-            <Link href="/media#news" className="hidden md:flex items-center gap-1 text-sm font-semibold" style={ { color: "#2A5C32" } }>All News <ArrowRight size={ 15 } /></Link>
-          </div>
-          <div className="flex md:grid md:grid-cols-3 gap-5 sm:gap-6 md:gap-7 overflow-x-auto md:overflow-visible pb-4 md:pb-0 snap-x snap-mandatory md:snap-none -mx-4 px-4 md:mx-0 md:px-0">
-            { mediaNewsArticles.map((item, i) => (
-              <article key={ i } className="group rounded-2xl overflow-hidden border border-gray-100 hover:shadow-lg transition-all duration-300 bg-white snap-start shrink-0 w-[82vw] sm:w-[70vw] md:w-auto">
-                <div className="relative h-44 sm:h-48 overflow-hidden">
-                  <img loading="lazy" decoding="async" src={ item.image } alt={ item.title } className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                  <span className="absolute top-3 left-3 sm:top-4 sm:left-4 text-xs font-bold px-3 py-1 rounded-full text-white" style={ { backgroundColor: "#2A5C32" } }>{ item.category }</span>
-                </div>
-                <div className="p-5 sm:p-6">
-                  <div className="flex items-center gap-2 text-xs text-gray-400 mb-2 sm:mb-3"><Calendar size={ 11 } /> { item.date }</div>
-                  <h3 className="font-bold text-gray-900 mb-2 sm:mb-3 leading-snug group-hover:text-[#2A5C32] transition-colors text-sm sm:text-base" style={ { fontFamily: "'Montserrat', sans-serif" } }>{ item.title }</h3>
-                  <p className="text-xs sm:text-sm text-gray-500 leading-relaxed mb-3 sm:mb-4">{ item.excerpt }</p>
-                  <Link href="/media#news" className="flex items-center gap-1 text-sm font-semibold" style={ { color: "#2A5C32" } }>Read More <ExternalLink size={ 13 } /></Link>
-                </div>
-              </article>
-            )) }
-          </div>
-        </div>
-      </section> */}
+     
 
       {/* ── Purpose Banner ── */}
       <section className="py-16 sm:py-24 md:py-32 bg-white">
