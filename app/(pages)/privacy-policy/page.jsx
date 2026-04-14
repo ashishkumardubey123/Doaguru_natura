@@ -1,58 +1,97 @@
 import LegalLayout from "@/components/LegalLayout";
 
+const privacySections = [
+  {
+    id: "introduction",
+    title: "1. Introduction",
+    body: "Natura Health Care is committed to protecting your privacy. This policy explains what personal information we collect, why we collect it, and how we handle it when you use our website or contact our team.",
+  },
+  {
+    id: "data-we-collect",
+    title: "2. Data We Collect",
+    body: "We collect only the information required to provide business communication, support, and service improvements.",
+    bullets: [
+      "Identity Data: name, role, and organization details you submit through our forms.",
+      "Contact Data: email address, phone number, and related communication details.",
+      "Technical Data: IP address, browser type, device information, and site usage patterns.",
+      "Usage Data: page interactions, session behavior, and product interest signals.",
+    ],
+  },
+  {
+    id: "how-we-use",
+    title: "3. How We Use Personal Data",
+    body: "Your information is processed only for legitimate and lawful business purposes.",
+    bullets: [
+      "To respond to inquiries, quotations, and partnership requests.",
+      "To improve website performance, usability, and content relevance.",
+      "To maintain security, detect abuse, and prevent unauthorized access.",
+      "To comply with applicable legal and regulatory obligations.",
+    ],
+  },
+  {
+    id: "sharing-retention",
+    title: "4. Data Sharing and Retention",
+    body: "We do not sell personal data. Information may be shared with trusted service providers that support hosting, analytics, and communication systems under confidentiality controls. Data is retained only as long as required for operational, legal, or compliance purposes.",
+  },
+  {
+    id: "security-rights",
+    title: "5. Data Security and Your Rights",
+    body: "We apply technical and organizational safeguards to protect personal data against unauthorized access, alteration, disclosure, or loss. Subject to applicable law, you may request access, correction, or deletion of your information.",
+  },
+  {
+    id: "contact",
+    title: "6. Contact",
+    body: "For privacy requests or policy questions, contact our compliance team.",
+    contact: [
+      "Email: privacy@naturahealthcare.com",
+      "Phone: +41 44 123 4567",
+      "Address: Life Science Park, Pharma Boulevard, Zurich, Switzerland CH-8000",
+    ],
+  },
+];
+
 export default function PrivacyPolicy() {
   return (
-    <LegalLayout title="Privacy Policy" lastUpdated="March 1, 2026">
-      <section>
-        <h2 className="text-2xl font-bold text-gray-900 mb-4" style={{ fontFamily: "'Montserrat', sans-serif" }}>1. Introduction</h2>
-        <p>
-          Welcome to Natura Health Care. We respect your privacy and are committed to protecting your personal data. This privacy policy will inform you as to how we look after your personal data when you visit our website (regardless of where you visit it from) and tell you about your privacy rights and how the law protects you.
-        </p>
-      </section>
+    <LegalLayout
+      title="Privacy Policy"
+      lastUpdated="April 14, 2026"
+      subtitle="This page explains how Natura Health Care collects, uses, stores, and protects personal information across its digital touchpoints."
+      sections={ privacySections.map((section) => ({ id: section.id, label: section.title })) }
+    >
+      { privacySections.map((section) => (
+        <section
+          id={ section.id }
+          key={ section.id }
+          className="scroll-mt-28 rounded-2xl border border-gray-100 bg-gradient-to-b from-white to-gray-50/45 p-5 sm:p-6"
+        >
+          <h2
+            className="text-xl sm:text-2xl font-extrabold text-gray-900 mb-3"
+            style={ { fontFamily: "'Montserrat', sans-serif", letterSpacing: "-0.015em" } }
+          >
+            { section.title }
+          </h2>
+          <p className="text-gray-600 text-sm sm:text-base leading-relaxed">{ section.body }</p>
 
-      <section>
-        <h2 className="text-2xl font-bold text-gray-900 mb-4" style={{ fontFamily: "'Montserrat', sans-serif" }}>2. The Data We Collect About You</h2>
-        <p>
-          Personal data, or personal information, means any information about an individual from which that person can be identified. It does not include data where the identity has been removed (anonymous data).
-        </p>
-        <ul className="list-disc pl-6 mt-3 space-y-2">
-          <li><strong>Identity Data</strong> includes first name, maiden name, last name, username or similar identifier, marital status, title, date of birth and gender.</li>
-          <li><strong>Contact Data</strong> includes billing address, delivery address, email address and telephone numbers.</li>
-          <li><strong>Technical Data</strong> includes internet protocol (IP) address, your login data, browser type and version, time zone setting and location, browser plug-in types and versions, operating system and platform, and other technology on the devices you use to access this website.</li>
-          <li><strong>Usage Data</strong> includes information about how you use our website, products and services.</li>
-        </ul>
-      </section>
+          { Array.isArray(section.bullets) && section.bullets.length > 0 && (
+            <ul className="mt-4 space-y-2.5">
+              { section.bullets.map((item) => (
+                <li key={ item } className="flex gap-2.5 text-sm sm:text-base text-gray-600 leading-relaxed">
+                  <span className="mt-2 h-1.5 w-1.5 rounded-full bg-[#2A5C32] shrink-0" />
+                  <span>{ item }</span>
+                </li>
+              )) }
+            </ul>
+          ) }
 
-      <section>
-        <h2 className="text-2xl font-bold text-gray-900 mb-4" style={{ fontFamily: "'Montserrat', sans-serif" }}>3. How We Use Your Personal Data</h2>
-        <p>
-          We will only use your personal data when the law allows us to. Most commonly, we will use your personal data in the following circumstances:
-        </p>
-        <ul className="list-disc pl-6 mt-3 space-y-2">
-          <li>Where we need to perform the contract we are about to enter into or have entered into with you.</li>
-          <li>Where it is necessary for our legitimate interests (or those of a third party) and your interests and fundamental rights do not override those interests.</li>
-          <li>Where we need to comply with a legal obligation.</li>
-        </ul>
-      </section>
-
-      <section>
-        <h2 className="text-2xl font-bold text-gray-900 mb-4" style={{ fontFamily: "'Montserrat', sans-serif" }}>4. Data Security</h2>
-        <p>
-          We have put in place appropriate security measures to prevent your personal data from being accidentally lost, used or accessed in an unauthorised way, altered or disclosed. In addition, we limit access to your personal data to those employees, agents, contractors and other third parties who have a business need to know.
-        </p>
-      </section>
-
-      <section>
-        <h2 className="text-2xl font-bold text-gray-900 mb-4" style={{ fontFamily: "'Montserrat', sans-serif" }}>5. Contact Us</h2>
-        <p>
-          If you have any questions about this privacy policy or our privacy practices, please contact us at:
-        </p>
-        <p className="mt-2 font-medium text-gray-900">
-          Email: privacy@naturahealthcare.com<br />
-          Phone: +41 44 123 4567<br />
-          Address: Life Science Park, Pharma Boulevard, Zurich, Switzerland CH-8000
-        </p>
-      </section>
+          { Array.isArray(section.contact) && section.contact.length > 0 && (
+            <div className="mt-4 rounded-xl border border-emerald-100 bg-emerald-50/60 p-4 sm:p-5">
+              { section.contact.map((line) => (
+                <p key={ line } className="text-sm sm:text-base text-[#1a3c22] font-medium leading-relaxed">{ line }</p>
+              )) }
+            </div>
+          ) }
+        </section>
+      )) }
     </LegalLayout>
   );
 }
