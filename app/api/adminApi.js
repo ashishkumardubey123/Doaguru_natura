@@ -53,7 +53,10 @@ export const fetchPendingAdmins = async (token) => {
     const response = await axios.get(`${API_BASE_URL}/api/admin/pending`, getAuthConfig(token));
     return response.data;
   } catch (error) {
-    console.error('Error fetching pending admins:', error);
+  if (error.response?.status !== 403) {
+      console.error('Error fetching pending admins:', error);
+    }
+    // Error ko aage Context tak bhej do taaki wo apna kaam kar sake
     throw error;
   }
 };
