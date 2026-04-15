@@ -126,6 +126,18 @@ export default function AdminLogin() {
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
+              
+              {/* 👇 NAYA CODE: FORGOT PASSWORD LINK 👇 */}
+              <div className="flex justify-end mt-2 px-1">
+                <Link 
+                  href="/admin/forgot-password" 
+                  className="text-sm font-semibold text-[#2A5C32] hover:text-[#1a3c22] hover:underline transition-colors"
+                >
+                  Forgot Password?
+                </Link>
+              </div>
+              {/* 👆 YAHAN TAK 👆 */}
+
             </div>
           </div>
 

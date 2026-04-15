@@ -92,3 +92,36 @@ export const uploadExportShipments = async (formData, token) => {
     throw error;
   }
 };
+
+export const forgotPasswordApi = async (email) => {
+  try {
+    const response = await axios.post(`${API_BASE_URL}/api/admin/forgot-password`, { 
+      Email: email 
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error;
+  }
+};
+export const verifyOtpApi = async (email, otp) => {
+  try {
+    const response = await axios.post(`${API_BASE_URL}/api/admin/verify-otp`, { 
+      Email: email, 
+      otp: otp 
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error;
+  }
+};
+export const resetPasswordApi = async (email, newPassword) => {
+  try {
+    const response = await axios.post(`${API_BASE_URL}/api/admin/reset-password`, { 
+      Email: email, 
+      newPassword: newPassword 
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error;
+  }
+};
