@@ -21,7 +21,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="lg:col-span-2 lg:pr-10">
             <div className="flex items-center gap-3 mb-1 -mt-8">
-              <img src="./Logo/Footerlogo.webp" className="w-[320px] -ml-6" alt="logo" />
+              <img src="/Logo/Footerlogo.webp" className="w-[320px] -ml-6" alt="logo" />
             </div>
             <p className="text-green-100/40 text-sm leading-relaxed mb-7 max-w-sm font-light">
               Committed to improving global health through the development, manufacturing, and distribution of high-quality pharmaceutical products across 50+ countries.

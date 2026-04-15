@@ -188,7 +188,7 @@ export default function Navbar() {
         
         {/* Logo */}
         <Link href="/" className="flex items-center shrink-0">
-          <img src="./Logo/Navlogo.webp" className="w-40 sm:w-45 h-14 sm:h-16 object-contain" alt="Natura Logo" />
+          <img src="/Logo/Navlogo.webp" className="w-40 sm:w-45 h-14 sm:h-16 object-contain" alt="Natura Logo" />
         </Link>
 
         {/* Desktop Nav */}

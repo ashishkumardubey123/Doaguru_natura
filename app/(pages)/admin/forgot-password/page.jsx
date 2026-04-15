@@ -72,8 +72,6 @@ export default function ForgotPassword() {
   const styles = `
     @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap');
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     .fp-root {
       min-height: 100vh;
       background: #080f09;
