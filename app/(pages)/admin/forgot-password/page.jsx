@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { forgotPasswordApi, verifyOtpApi, resetPasswordApi } from '@/app/api/adminApi';
@@ -573,8 +573,8 @@ export default function ForgotPassword() {
           {/* Step Indicators */}
           <div className="fp-steps">
             {[1, 2, 3].map((s, i) => (
-              <>
-                <div key={`dot-${s}`} className={`fp-step-dot ${stepDone(s) ? 'done' : ''} ${stepActive(s) ? 'active' : ''}`}>
+              <React.Fragment key={s}>
+                <div className={`fp-step-dot ${stepDone(s) ? 'done' : ''} ${stepActive(s) ? 'active' : ''}`}>
                   {stepDone(s) ? (
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{width:12,height:12}}>
                       <polyline points="20 6 9 17 4 12"/>
@@ -582,11 +582,11 @@ export default function ForgotPassword() {
                   ) : s}
                 </div>
                 {i < 2 && (
-                  <div key={`line-${s}`} className="fp-step-line">
+                  <div className="fp-step-line">
                     <div className="fp-step-line-fill" style={{ width: step > s ? '100%' : '0%' }} />
                   </div>
                 )}
-              </>
+              </React.Fragment>
             ))}
           </div>
 
