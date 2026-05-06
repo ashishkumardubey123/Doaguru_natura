@@ -21,7 +21,7 @@ export default function RootLayout({ children }) {
           </main>
           <Footer />
           <FloatingContact />
-          <PopupBanner />
+          {/* <PopupBanner /> */}
         </AppProviders>
       </body>
     </html>

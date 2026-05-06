@@ -961,32 +961,56 @@ export default function Home() {
                 Globally Certified &amp; <br />Compliance-Ready
               </h2>
               <p className="text-green-100/60 leading-relaxed mb-4 max-w-lg text-sm sm:text-base lg:text-lg font-light">
-                Natura Health Care holds internationally recognised certifications for the trading and export of Herbal Nutra &amp; Food Supplements — issued by{ " " }
+                Natura Health Care holds internationally recognised certifications for the trading and export of Herbal Nutra &amp; Food Supplements  issued by{ " " }
                 <span className="text-green-300 font-semibold">IPQ Management System</span>, accredited with{ " " }
                 <span className="text-green-300 font-semibold">UKAF CERT LIMITED</span> (UK).
               </p>
               <p className="text-green-400/50 text-xs sm:text-sm mb-8 sm:mb-10 max-w-lg font-light">
                 Issued: 18 Feb 2026 &nbsp;|&nbsp; Valid until: 17 Feb 2029<br />Surveillance audits: Feb 2027 &amp; Feb 2028
               </p>
-              <Link href="/certifications" className="inline-flex items-center gap-2 text-[#1a3c22] font-bold px-8 sm:px-10 py-4 text-sm sm:text-base rounded-full transition-all duration-300 bg-white hover:bg-green-50 hover:shadow-xl hover:shadow-white/10 active:scale-95">
-                View Our Certifications <ArrowRight size={ 17 } />
-              </Link>
+             {/* <button
+  onClick={() => {
+    const certificates = [
+      "/Certificates/1809 FDA-FINAL NATURA HEALTH CARE.pdf",
+      "/Certificates/1810 HACCP-FINAL NATURA HEALTH CARE.pdf",
+      "/Certificates/1811 HALAL-FINAL NATURA HEALTH CARE.pdf",
+    ];
+
+    certificates.forEach((filePath, index) => {
+      setTimeout(() => {
+        window.open(filePath, "_blank");
+      }, index * 500);
+    });
+  }}
+  className="inline-flex items-center gap-2 text-[#1a3c22] font-bold px-8 sm:px-10 py-4 text-sm sm:text-base rounded-full transition-all duration-300 bg-white hover:bg-green-50 hover:shadow-xl hover:shadow-white/10 active:scale-95 cursor-pointer"
+>
+  View Our Certifications <ArrowRight size={17} />
+</button> */}
             </div>
 
             <div className="grid grid-cols-2 gap-4 sm:gap-5 lg:gap-6 mt-4 lg:mt-0">
               { [
-                { icon: Shield, label: "HACCP Certified", certNo: "HACCP-26021810", sub: "Hazard Analysis & Critical Control Points" },
-                { icon: Award, label: "U.S. FDA Compliant", certNo: "FDA-26021809", sub: "FDA Regulatory Guideline Compliance" },
-                { icon: FlaskConical, label: "HALAL Certified", certNo: "HALAL-26021811", sub: "Islamic Shariah Law — Lawful for Muslim Consumption" },
-                { icon: Activity, label: "UKAF Accredited", certNo: "UKAF-CB-021", sub: "IPQ Management System, London UK" },
+                { icon: Shield, label: "HACCP Certified", certNo: "HACCP-26021810", sub: "Hazard Analysis & Critical Control Points", pdfPath: "/Certificates/1810 HACCP-FINAL NATURA HEALTH CARE.pdf" },
+                { icon: Award, label: "U.S. FDA Compliant", certNo: "FDA-26021809", sub: "FDA Regulatory Guideline Compliance", pdfPath: "/Certificates/1809 FDA-FINAL NATURA HEALTH CARE.pdf" },
+                { icon: FlaskConical, label: "HALAL Certified", certNo: "HALAL-26021811", sub: "Islamic Shariah Law — Lawful for Muslim Consumption", pdfPath: "/Certificates/1811 HALAL-FINAL NATURA HEALTH CARE.pdf" },
+                { icon: Activity, label: "UKAF Accredited", certNo: "UKAF-CB-021", sub: "IPQ Management System, London UK", pdfPath: null },
               ].map((item) => (
-                <div key={ item.certNo } className="bg-white/[0.03] backdrop-blur-md rounded-3xl p-5 sm:p-7 border border-white/10 hover:bg-white/[0.08] hover:border-white/20 transition-all duration-500 group">
+                <div
+                  key={ item.certNo }
+                  onClick={ () => item.pdfPath && window.open(item.pdfPath, "_blank") }
+                  className={ `bg-white/[0.03] backdrop-blur-md rounded-3xl p-5 sm:p-7 border border-white/10 hover:bg-white/[0.08] hover:border-white/20 transition-all duration-500 group ${item.pdfPath ? "cursor-pointer hover:scale-[1.02]" : ""}` }
+                >
                   <div className="w-10 h-10 rounded-2xl bg-emerald-400/10 flex items-center justify-center mb-4 sm:mb-5 group-hover:bg-emerald-400/20 transition-colors duration-300">
                     <item.icon size={ 20 } className="text-green-400" />
                   </div>
                   <div className="text-white font-extrabold text-sm sm:text-base mb-1.5 leading-snug tracking-tight" style={ { fontFamily: "'Montserrat', sans-serif" } }>{ item.label }</div>
                   <div className="text-green-100/40 text-[10px] sm:text-xs mb-3 leading-snug font-light">{ item.sub }</div>
                   <div className="text-green-400/60 text-[10px] sm:text-xs font-mono tracking-wider">{ item.certNo }</div>
+                  { item.pdfPath && (
+                    <div className="mt-3 text-emerald-400/50 text-[10px] font-semibold uppercase tracking-widest flex items-center gap-1 group-hover:text-emerald-400 transition-colors duration-300">
+                      <span>View PDF</span> <span className="text-xs">↗</span>
+                    </div>
+                  ) }
                 </div>
               )) }
             </div>
@@ -1071,7 +1095,7 @@ export default function Home() {
         <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 text-center text-white relative z-10">
           <h2 className="mb-4 sm:mb-5" style={ { fontFamily: "'Montserrat', sans-serif", fontWeight: 800, fontSize: "clamp(1.6rem, 4.5vw, 3rem)", letterSpacing: "-0.02em" } }>Ready to Establish a Supply Partnership?</h2>
-          <p className="text-green-100/50 mb-8 sm:mb-10 max-w-2xl mx-auto text-sm sm:text-lg px-2 font-light leading-relaxed">Whether you&apos;re a healthcare distributor, import-export company, or institutional buyer — we have the capacity and portfolio to serve your needs.</p>
+          <p className="text-green-100/50 mb-8 sm:mb-10 max-w-2xl mx-auto text-sm sm:text-lg px-2 font-light leading-relaxed">Whether you&apos;re a healthcare distributor, import-export company, or institutional buyer  we have the capacity and portfolio to serve your needs.</p>
           <div className="flex justify-center gap-4 sm:gap-5 flex-wrap">
             <Link href="/contact" className="inline-flex items-center gap-2.5 bg-white text-[#1a3c22] font-bold px-8 sm:px-10 py-4 sm:py-4.5 text-sm sm:text-base rounded-full transition-all duration-300 hover:bg-green-50 hover:shadow-xl hover:shadow-white/10 active:scale-95">Start a Conversation <ArrowRight size={ 16 } /></Link>
             <Link href="/products" className="inline-flex items-center gap-2 border border-white/20 text-white font-semibold px-8 sm:px-10 py-4 sm:py-4.5 text-sm sm:text-base rounded-full hover:border-white/50 hover:bg-white/10 backdrop-blur-sm transition-all duration-300 active:scale-95">Browse Products</Link>
