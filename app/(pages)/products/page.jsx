@@ -82,6 +82,7 @@ function ProductCardGrid({ product, onShowImage, therapyFilters, dosageFilters }
   const TherapyIcon = therapyFilters?.find((f) => f.id === product.therapy)?.icon;
   const [ref, isVisible] = useScrollAnimation();
 
+      // console.log(product);
   return (
     <div 
       ref={ref}
@@ -96,6 +97,7 @@ function ProductCardGrid({ product, onShowImage, therapyFilters, dosageFilters }
       {/* Image OR icon area */}
       { product.image ? (
         <div className="relative h-52 overflow-hidden shrink-0 bg-gray-50/50">
+
           <img
             src={ product.image }
             alt={ product.name }
